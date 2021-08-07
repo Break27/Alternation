@@ -3,7 +3,6 @@ package com.github.break27;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.github.break27.screen.DemoScreen;
 import com.github.break27.screen.FinalizingScreen;
