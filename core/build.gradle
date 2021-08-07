@@ -1,0 +1,10 @@
+sourceCompatibility = 1.7
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+dependencies {
+    runtime fileTree(dir: 'build/libs', include: '*.jar')
+}
+
+eclipse.project.name = appName + "-core"
