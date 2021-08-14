@@ -20,7 +20,10 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+
 import com.github.break27.TodoGame;
+import net.mgsx.gltf.scene3d.scene.Scene;
+import net.mgsx.gltf.scene3d.scene.SceneAsset;
 
 /**
  *
@@ -60,7 +63,8 @@ public class InGameScreen implements Screen {
         batch = new ModelBatch();
         // 创建模型
         //createModel_block();
-        createModel_block_dirt();
+        //createModel_block_dirt();
+        createModel_block_dirt_demo();
     }
 
     @Override
@@ -124,6 +128,12 @@ public class InGameScreen implements Screen {
     private void createModel_block_dirt() {
         Model model_block_dirt = parent.Manager.get("model/dirt.obj", Model.class);
         modelInstance_block = new ModelInstance(model_block_dirt);
+    }
+    
+    private void createModel_block_dirt_demo() {
+        SceneAsset asset = parent.Manager.get("model/block_grass.gltf", SceneAsset.class);
+        Scene scene = new Scene(asset.scene);
+        modelInstance_block = scene.modelInstance;
     }
     
 }

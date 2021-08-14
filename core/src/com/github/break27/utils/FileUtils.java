@@ -59,7 +59,9 @@ public class FileUtils {
         }
         return lines;
     }
-    
+    /**
+     * @return String List or String
+     */
     public static Object fileReadLine(File file, int linenum) throws FileNotFoundException, UnsupportedEncodingException, IOException {
         List<String> lines = new ArrayList<>();
         String line = null;

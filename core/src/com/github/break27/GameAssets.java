@@ -9,7 +9,12 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import java.io.File;
+
+import net.mgsx.gltf.loaders.glb.GLBAssetLoader;
+import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader;
+import net.mgsx.gltf.scene3d.scene.SceneAsset;
 
 /**
  *
@@ -47,7 +52,8 @@ public class GameAssets {
         /** MenuScreen.class **/
         Manager.load("ui/uiskin.json", Skin.class);
         /** InGameScreen.class **/
-        Manager.load("model/dirt.obj", Model.class);
+        Manager.load("model/block_dirt.gltf", SceneAsset.class);
+        Manager.load("model/block_grass.gltf", SceneAsset.class);
         Manager.finishLoading();
         return true;
     }
@@ -60,5 +66,11 @@ public class GameAssets {
     
     public static void unload() {
         if( Manager != null ) Manager.dispose();
+    }
+    
+    public static void initGLTFLoader() {
+        // 设定 GLTF 模型加载器
+        Manager.setLoader(SceneAsset.class, ".gltf", new GLTFAssetLoader());
+        Manager.setLoader(SceneAsset.class, ".glb", new GLBAssetLoader());
     }
 }

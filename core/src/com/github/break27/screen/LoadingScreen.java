@@ -31,6 +31,8 @@ public class LoadingScreen implements Screen{
     public void show() {
         // 设定默认资源管理器
         GameAssets.setManager(parent.Manager);
+        // 初始化 GLTF 加载器
+        GameAssets.initGLTFLoader();
         // 载入游戏资源
         GameAssets.load();
     }
