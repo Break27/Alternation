@@ -6,7 +6,6 @@
 package com.github.break27.utils;
 
 import com.github.break27.GameAssets;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
@@ -23,8 +22,6 @@ import javax.swing.JEditorPane;
  */
 public class HtmlUtils {
     
-    // 声明图片文件
-    private static File file;
     // 声明缓冲图片
     private static BufferedImage image;
     // 声明图像
@@ -32,13 +29,11 @@ public class HtmlUtils {
     // 声明编辑器
     private static JEditorPane jep;
     
-    public static byte[] getImagebyte(String html, int width, int height) {
-        return getImageByHtml(html, width, height);
+    public static byte[] getImagebyte(String html, File file, int width, int height) {
+        return getImageByHtml(html, file, width, height);
     }
     
-    private static byte[] getImageByHtml(String html, int width, int height){
-        byte[] data = new byte[0];
-        file = GameAssets.getRAT_File();
+    private static byte[] getImageByHtml(String html, File file, int width, int height){
         // 实例化图片
         image = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
                 .getDefaultConfiguration().createCompatibleImage(width, height);
@@ -47,7 +42,7 @@ public class HtmlUtils {
         // 若文件为null则返回空数组
         if ( file == null ) return new byte[0];
         // 方法完成即删除文件
-        data = FileUtils.getbyteStream(file);
+        byte[] data = FileUtils.getbyteStream(file);
         file.delete();
         // 实现文件-字节数组转化
         return data;

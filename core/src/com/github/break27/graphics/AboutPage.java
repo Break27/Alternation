@@ -5,9 +5,11 @@
  */
 package com.github.break27.graphics;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.github.break27.TodoGame;
 import com.github.break27.utils.FileUtils;
 import com.github.break27.utils.HtmlUtils;
 import java.io.File;
@@ -33,14 +35,19 @@ public final class AboutPage {
     private int Width = 100, Height = 100;
     // 声明 html 文件
     private File htmlFile;
+    // 声明缓存文件
+    private File RATFile;
     // 声明“已渲染”布尔类型
     private boolean rendered = false;
+    private TodoGame parent;
     
-    public AboutPage() {
+    public AboutPage(TodoGame game) {
+        parent = game;
         render();
     }
     
-    public AboutPage(int width, int height) {
+    public AboutPage(int width, int height, TodoGame game) {
+        parent = game;
         setSize(width, height);
     }
 
@@ -59,11 +66,14 @@ public final class AboutPage {
         render();
     }
     
-    private void render() {
+    private boolean render() {
+        if ( parent == null ) {
+            Gdx.app.error(this.getClass().getName(), "Parent is Unset!");
+            return false;
+        }
         // 仅渲染一次
         if ( !rendered ) {
-            // 文件 -- debug
-            if ( htmlFile == null ) htmlFile = new File("misc/html/about.html");
+            htmlFile = Gdx.files.internal("misc/html/about.html").file();
             // 读取 html 文件，经渲染生成位图
             if ( htmlLine == null ) htmlLine = readFile(htmlFile);
             imagebyte = renderHtml(htmlLine, Width, Height);
@@ -73,12 +83,14 @@ public final class AboutPage {
             // “已渲染”标记
             rendered = true;
         }
+        return true;
     }
     
     private byte[] renderHtml(String line, int width, int height) {
         // 渲染，获取图像字节数据
         byte[] data = new byte[0];
-        data = HtmlUtils.getImagebyte(line, width, height);
+        RATFile = parent.Assets.getRAT_File();
+        data = HtmlUtils.getImagebyte(line, RATFile, width, height);
         return data;
     }
     

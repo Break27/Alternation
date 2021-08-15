@@ -32,6 +32,7 @@ public class TodoGame extends Game {
     public StretchViewport Viewport;
     // 声明资源加载器
     public AssetManager Manager;
+    public GameAssets Assets;
 
     public void changeScreen(int screen) {
         switch(screen) {
@@ -71,7 +72,7 @@ public class TodoGame extends Game {
         // 实例化资源加载器
         Manager = new AssetManager();
         // 设定游戏文件夹
-        GameAssets.setDefaultPath(Gdx.files.getExternalStoragePath());
+        Assets.setDefaultPath(Gdx.files.getExternalStoragePath());
         // 进入初始界面
         changeScreen(STARTUP);
     }

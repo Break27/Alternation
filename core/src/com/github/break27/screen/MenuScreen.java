@@ -109,7 +109,7 @@ public class MenuScreen implements Screen{
         // 创建表格
         createTable();
         // 实例化“关于”页面
-        g_about_page = new AboutPage();
+        g_about_page = new AboutPage(parent);
         // 实例化分割面板（右）
         split_pane_right = new SplitPane(scroll_pane_right, table, true, skin_ui);
         // 实例化分割面板（左）

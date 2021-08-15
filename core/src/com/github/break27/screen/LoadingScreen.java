@@ -9,7 +9,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.github.break27.GameAssets;
 import com.github.break27.TodoGame;
 
 /**
@@ -30,11 +29,11 @@ public class LoadingScreen implements Screen{
     @Override
     public void show() {
         // 设定默认资源管理器
-        GameAssets.setManager(parent.Manager);
+        parent.Assets.setManager(parent.Manager);
         // 初始化 GLTF 加载器
-        GameAssets.initGLTFLoader();
+        parent.Assets.initGLTFLoader();
         // 载入游戏资源
-        GameAssets.load();
+        parent.Assets.load();
     }
 
     @Override
