@@ -21,40 +21,13 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class DesktopLauncher implements Launcher {
     
-    //public static fxApp app;
     private static String[] arguments;
     public static void main (String[] args) {
-        /*
-            System.setProperty("file.encoding", "UTF-8");
-            //LwjglApplicationConfiguration config = getPrefs(); todo
-            LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-            new LwjglApplication(new TodoGame(), config);
-        */
-        /*
-        arguments = args;
-        app = new fxApp();
         System.setProperty("file.encoding", "UTF-8");
+        //LwjglApplicationConfiguration config = getPrefs(); todo
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         new LwjglApplication(new TodoGame(), config);
-        
-        app.loopRun();
-        fxAppThread.start();
-        while(true) app.passFrameData(TodoGame.getPixelData());
-        */
     }
-    /*
-    public static Thread fxAppThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            app.launch(fxApp.class, arguments);
-        }
-    });
-    
-    public static boolean isAppOnClose() {
-        return fxAppThread.isAlive();
-    }
-    */
-    
     /*
     private static LwjglApplicationConfiguration getPrefs() {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

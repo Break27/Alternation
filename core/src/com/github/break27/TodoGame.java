@@ -78,16 +78,4 @@ public class TodoGame extends Game {
         // 进入初始界面
         changeScreen(STARTUP);
     }
-    
-    /*
-    private static byte[] PixelData = new byte[0];
-    public static void collectData() {
-        byte[] data = ScreenUtils.getFrameBufferPixels(false);
-        if(data != null) PixelData = data;
-    }
-    
-    public static byte[] getPixelData() {
-        return PixelData;
-    }
-    */
 }
