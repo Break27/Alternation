@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package com.github.break27.system;
 
 /**
  *
  * @author break27
  */
-public class PrefsReader {
+public class VoxelMap {
     
-    //public static 
 }

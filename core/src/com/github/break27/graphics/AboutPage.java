@@ -88,9 +88,8 @@ public final class AboutPage {
     
     private byte[] renderHtml(String line, int width, int height) {
         // 渲染，获取图像字节数据
-        byte[] data = new byte[0];
         RATFile = parent.Assets.getRAT_File();
-        data = HtmlUtils.getImagebyte(line, RATFile, width, height);
+        byte[] data = HtmlUtils.getImagebyte(line, RATFile, width, height);
         return data;
     }
     

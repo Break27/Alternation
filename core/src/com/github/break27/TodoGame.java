@@ -3,6 +3,7 @@ package com.github.break27;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.github.break27.screen.DemoScreen;
 import com.github.break27.screen.FinalizingScreen;
@@ -71,9 +72,22 @@ public class TodoGame extends Game {
         Viewport = new StretchViewport(width, height);
         // 实例化资源加载器
         Manager = new AssetManager();
+        Assets = new GameAssets();
         // 设定游戏文件夹
         Assets.setDefaultPath(Gdx.files.getExternalStoragePath());
         // 进入初始界面
         changeScreen(STARTUP);
     }
+    
+    /*
+    private static byte[] PixelData = new byte[0];
+    public static void collectData() {
+        byte[] data = ScreenUtils.getFrameBufferPixels(false);
+        if(data != null) PixelData = data;
+    }
+    
+    public static byte[] getPixelData() {
+        return PixelData;
+    }
+    */
 }

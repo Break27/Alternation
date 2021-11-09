@@ -71,7 +71,4 @@ public class HtmlUtils {
             Logger.getLogger(HtmlUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    
 }
