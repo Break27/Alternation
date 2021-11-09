@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class DesktopLauncher implements Launcher {
     
-    public static fxApp app;
+    //public static fxApp app;
     private static String[] arguments;
     public static void main (String[] args) {
         /*
