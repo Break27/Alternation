@@ -58,11 +58,8 @@ public class StartupScreen implements Screen{
 
     @Override
     public void render(float delta) {
-<<<<<<< Updated upstream
-=======
         //debug
         TodoGame.collectData();
->>>>>>> Stashed changes
         // 将背景设为白色
         Gdx.gl.glClearColor(1,1,1,1);
         // 清屏

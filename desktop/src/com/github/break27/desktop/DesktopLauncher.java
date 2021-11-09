@@ -3,15 +3,6 @@ package com.github.break27.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.github.break27.TodoGame;
-
-<<<<<<< Updated upstream
-public class DesktopLauncher {
-	public static void main (String[] arg) {
-                System.setProperty("file.encoding", "UTF-8");
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new TodoGame(), config);
-	}
-=======
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -88,5 +79,4 @@ public class DesktopLauncher implements Launcher {
         }
     }
     */
->>>>>>> Stashed changes
 }

@@ -3,6 +3,7 @@ package com.github.break27;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.github.break27.screen.DemoScreen;
 import com.github.break27.screen.FinalizingScreen;
@@ -76,8 +77,6 @@ public class TodoGame extends Game {
         // 进入初始界面
         changeScreen(STARTUP);
     }
-<<<<<<< Updated upstream
-=======
     
     private static byte[] PixelData = new byte[0];
     public static void collectData() {
@@ -88,5 +87,4 @@ public class TodoGame extends Game {
     public static byte[] getPixelData() {
         return PixelData;
     }
->>>>>>> Stashed changes
 }
