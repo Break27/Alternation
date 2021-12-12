@@ -9,16 +9,14 @@ package com.github.break27.graphics.ui.button;
  *
  * @author break27
  */
-public class CollapseButton extends TitleButton {
+public class CloseButton extends TitleButton {
     
-    /** Compatible with VisImageButton.
-     */
-    public CollapseButton() {
-        provider.setStyle("icon_collapse", "alter::icon-collapse");
+    public CloseButton() {
+        provider.setStyle("icon_close", "alter::icon-close");
     }
-
+    
     @Override
     public void styleApply() {
-        setImage(provider.getStyle("icon_collapse"));
+        setImage(provider.getStyle("icon_close"));
     }
 }

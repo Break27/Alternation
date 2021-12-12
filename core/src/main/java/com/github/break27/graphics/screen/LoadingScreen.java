@@ -7,9 +7,9 @@ package com.github.break27.graphics.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.github.break27.TodoGame3;
+import com.github.break27.graphics.ui.Style;
 import com.kotcrab.vis.ui.VisUI;
 import net.mgsx.gltf.loaders.glb.GLBAssetLoader;
 import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader;
@@ -27,16 +27,16 @@ public class LoadingScreen extends AbstractScreen {
     
     @Override
     public int getId() {
-        return LOADING;
+        return ScreenType.LOADING;
     }
     
     @Override
     public void show() {
         initGltfLoader();
         VisUI.load();
+        Style.loadDefault();
         /* MainScreen.class */
         parent.Asset.load("ui/legacy/uiskin.json", Skin.class);
-        parent.Asset.load("ui/visui/skin.atlas", TextureAtlas.class);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class LoadingScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         state += Gdx.graphics.getDeltaTime();
         // To be removed
-        if (state > 1) super.changeTo(new MainScreen(parent));
+        if (state > 1) super.change(new MainScreen(parent));
     }
 
     @Override

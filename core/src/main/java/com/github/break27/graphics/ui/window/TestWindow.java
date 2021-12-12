@@ -13,23 +13,36 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  *
  * @author break27
  */
-public class TestWindow extends CollapsibleWindow {
+public class TestWindow extends SerializableWindow {
+    Image image;
+    Texture texture;
     
     public TestWindow(String name) {
         super(name);
-        Image image = new Image(new Texture(Gdx.files.internal("banner/libgdx.png")));
-        addContent(image);
-        pack();
-    }
-    
-    @Override
-    public void create() {
-        setTitleImage(new Image(atlas.createSprite("icon20-info-wb")));
+        addCloseButton();
+        provider.setStyle("icon_info", "alter::icon20-application");
     }
     
     @Override
     public int getWindowType() {
-        return TEST;
+        return WindowType.TEST;
     }
     
+    @Override
+    public void create() {
+        texture = new Texture(Gdx.files.internal("banner/libgdx.png"));
+        image = new Image(texture);
+        setContent(image);
+    }
+    
+    @Override
+    public void destroy() {
+        image.remove();
+        texture.dispose();
+    }
+    
+    @Override
+    public void styleApply() {
+        setTitleImage(provider.getStyle("icon_info"));
+    }
 }

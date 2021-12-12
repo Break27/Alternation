@@ -6,38 +6,34 @@
 package com.github.break27.graphics.ui.window;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.github.break27.graphics.Viewpoint;
-import com.github.break27.graphics.ui.menu.WindowTitleMenu;
+import com.github.break27.graphics.ui.StyleProvider;
+import com.github.break27.graphics.ui.menu.TitleMenu;
 
 /**
  *
  * @author break27
  */
 public class ViewpointWindow extends CollapsibleWindow {
-    public ViewpointWindow(String name, TextureAtlas atlas, int width, int height) {
-        super(name, atlas);
-        viewpoint = new Viewpoint(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), width, height);
-        createViewpoint();
+    public ViewpointWindow(String name, int width, int height) {
+        super(name);
+        provider.setStyle("title_icon", "alter::icon20-game-map");
         
-        image = viewpoint.getFrameImage();
-        addContent(image);
-        this.padBottom(5f);
-        pack();
+        addCollapseButton();
+        this.viewpointWidth = width;
+        this.viewpointHeight = height;
     }
     
     Viewpoint viewpoint;
     Image image;
-    SpriteBatch batch;
-    Image titleImage;
+    
+    int viewpointWidth;
+    int viewpointHeight;
+    boolean destroyed = false;
     
     public void update() {
-        if(!isCollapsed()) {
+        if(!isCollapsed() && !destroyed) {
             viewpoint.update();
             image.setDrawable(viewpoint.getFrameImage().getDrawable());
         }
@@ -45,31 +41,50 @@ public class ViewpointWindow extends CollapsibleWindow {
     
     @Override
     public void create() {
-        setTitleImage(new Image(atlas.createSprite("icon20-game-map")));
-        WindowTitleMenu menu = new WindowTitleMenu(getStage(), this, atlas);
+        this.viewpoint = new Viewpoint(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), viewpointWidth, viewpointHeight, false);
+        createViewpoint();
+        image = viewpoint.getFrameImage();
+        setContent(image);
+        this.padBottom(5f);
+
+        TitleMenu menu = new TitleMenu(this);
         menu.listenTo(this.getTitleTable());
         // default value: focused
         setFocus();
     }
     
     @Override
+    public void styleApply() {
+        setTitleImage(provider.getStyle("title_icon"));
+    }
+    
+    @Deprecated
+    @Override
+    public void setSize(float width, float height) {
+    }
+    
+    @Override
+    public void destroy() {
+        viewpoint.destory();
+    }
+    
+    @Override
     public int getWindowType() {
-        return VIEW;
+        return WindowType.VIEW;
     }
     
     public void setViewpoint(Viewpoint viewpoint) {
         this.viewpoint = viewpoint;
     }
     
+    public void resize(int width, int height) {
+        super.setSize(width, height);
+        this.viewpoint.resize(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), width, height);
+    }
+    
     private void createViewpoint() {
-        batch = new SpriteBatch();
-        Sprite spr = new Sprite(new Texture(Gdx.files.internal("banner/snapshot.png")));
         viewpoint.setRenderer(() -> {
-            Gdx.gl.glClearColor(1, 1, 1, 0);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            batch.begin();
-            batch.draw(spr, 0, 0);
-            batch.end();
+            
         });
     }
 }

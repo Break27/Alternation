@@ -5,17 +5,10 @@
  */
 package com.github.break27.util;
 
-import com.badlogic.gdx.files.FileHandle;
-import java.io.File;
-
 /**
  *
  * @author break27
  */
-public class FileUtils {
-    
-    public static File getTempFile(Class<?> c) {
-        return FileHandle.tempFile(c.getName()).file();
-    }
-    
+public class ClassUtils {
+
 }

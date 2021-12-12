@@ -8,8 +8,9 @@ package com.github.break27.graphics.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.github.break27.TodoGame3;
 
 /**
@@ -21,35 +22,14 @@ public class BannerScreen extends AbstractScreen {
     public BannerScreen(TodoGame3 game) {
         super(game);
     }
-
-    Texture libgdx_img_tex;
-    Texture cdpt_img_tex;
-    Sprite image_spr;
-    Sprite cdpt_img_spr;
-    // 屏幕大小
-    float height;
-    float width;
+    
+    BannerActor banner;
     
     @Override
     public void show() {
-        batch = new SpriteBatch();
-        // 实例化 LibGDX 材质
-        libgdx_img_tex = new Texture(Gdx.files.internal("banner/libgdx.png"));
-        // 实例化 LibGDX 精灵
-        image_spr = new Sprite(libgdx_img_tex);
-        // 实例化 CDPT 材质
-        cdpt_img_tex = new Texture(Gdx.files.internal("banner/cdpt_bk337.png"));
-        // 实例化 CDPT 精灵
-        cdpt_img_spr = new Sprite(cdpt_img_tex);
-        // 获取游戏界面大小
-        this.height = parent.Height;
-        this.width = parent.Width;
-        /*
-        * 将精灵位置设为屏幕中心
-        * 算法： {X：屏幕宽度一半－精灵宽度一半，Y：屏幕高度一半－精灵高度一半}
-        */
-        image_spr.setPosition(width/2-image_spr.getWidth()/2, height/2-image_spr.getHeight()/2);
-        cdpt_img_spr.setPosition(width/2-cdpt_img_spr.getWidth()/2, height/2-cdpt_img_spr.getHeight()/2);
+        stage = new Stage(defaultViewport);
+        banner = new BannerActor(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.addActor(banner);
     }
 
     @Override
@@ -60,23 +40,17 @@ public class BannerScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         state += Gdx.graphics.getDeltaTime();
         // 6秒后进入加载画面
-        if (state >= 6) super.changeTo(new LoadingScreen(parent));
-        batch.begin();
+        if (state >= 6) change(new LoadingScreen(parent));
         // 先绘制 LibGDX 再绘制 CDPT（等待3秒）
         if (state >= 3) {
-            image_spr.set(cdpt_img_spr);
+            banner.switchBanner();
         }
-        image_spr.draw(batch);
-        batch.end();
+        stage.draw();
     }
     
     @Override
     public int getId() {
-        return BANNER;
-    }
-    
-    @Override
-    public void resize(int width, int height) {
+        return ScreenType.BANNER;
     }
 
     @Override
@@ -93,5 +67,32 @@ public class BannerScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
+        banner.dispose();
+    }
+}
+
+class BannerActor extends Actor {
+    Texture texture;
+    float x;
+    float y;
+    
+    public BannerActor(float width, float height) {
+        this.texture = new Texture(Gdx.files.internal("banner/libgdx.png"));
+        // centers the actor itself
+        this.x = width/2-texture.getWidth()/2;
+        this.y = height/2-texture.getHeight()/2;
+    }
+    
+    public void switchBanner() {
+        this.texture = new Texture(Gdx.files.internal("banner/cdpt_bk337.png"));
+    }
+    
+    @Override
+    public void draw(Batch batch, float alpha) {
+        batch.draw(texture, x, y);
+    }
+    
+    public void dispose() {
+        this.texture.dispose();
     }
 }

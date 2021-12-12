@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
  *
@@ -22,14 +23,19 @@ public class Viewpoint {
     protected Image image;
     protected Renderer renderer;
     protected TextureRegion texture;
+    protected TextureRegionDrawable drawable;
     
     protected int imageWidth;
     protected int imageHeight;
     
     public boolean isHdpiSupported = false;
     
-    public Viewpoint(int width, int height, int imageWidth, int imageHeight) {
-        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+    boolean hasDepth;
+    boolean disabled;
+    
+    public Viewpoint(int width, int height, int imageWidth, int imageHeight, boolean hasDepth) {
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, hasDepth);
+        this.hasDepth = hasDepth;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
     }
@@ -44,25 +50,42 @@ public class Viewpoint {
         return image;
     }
     
-    public void update() {
+    public boolean update() {
+        if(disabled) return false;
         if(isHdpiSupported) HdpiUtils.setMode(HdpiMode.Pixels);
         fbo.begin();
         renderer.render();
         fbo.end();
         if(isHdpiSupported) HdpiUtils.setMode(HdpiMode.Logical);
+        
         // trying to avoid performance issues
-        if(image != null || texture != null) {
-            image = null;
-            texture = null;
-            System.gc();
+        if(texture == null) {
+            texture = new TextureRegion();
+            drawable = new TextureRegionDrawable();
+            image = new Image();
+            // it doesn't do anything except passing the parameters for ui design
+            image.setWidth(imageWidth);
+            image.setHeight(imageHeight);
         }
-        texture = new TextureRegion(fbo.getColorBufferTexture(), 0, 0, imageWidth, imageHeight);
+        
+        texture.setRegion(fbo.getColorBufferTexture());
+        texture.setRegionWidth(imageWidth);
+        texture.setRegionHeight(imageHeight);
         texture.flip(false, true);
-        image = new Image(texture);
+        
+        drawable.setRegion(texture);
+        image.setDrawable(drawable);
+        return true;
     }
     
     public void setRenderer(Renderer renderer) {
         this.renderer = renderer;
+    }
+    
+    public void resize(int width, int height, int imageWidth, int imageHeight) {
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, hasDepth);
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
     }
     
     /** Toggling the support in HDPI mode.
@@ -71,5 +94,13 @@ public class Viewpoint {
      */
     public void setHdpiSupport(boolean supported) {
         this.isHdpiSupported = supported;
+    }
+    
+    public void destory() {
+        fbo.dispose();
+        image.remove();
+        texture = null;
+        drawable = null;
+        disabled = true;
     }
 }

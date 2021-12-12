@@ -6,12 +6,12 @@
 package com.github.break27.graphics.ui.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.github.break27.graphics.ui.AlternativeWidget;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
@@ -19,21 +19,15 @@ import com.kotcrab.vis.ui.widget.VisWindow;
  *
  * @author break27
  */
-public abstract class AbstractMenu extends VisWindow {
+public abstract class AlternativeMenu extends VisWindow implements AlternativeWidget {
     
-    TextureAtlas atlas;
     AlternativePopupMenu menu;
     boolean isEntered = false;
     
-    public AbstractMenu(String name, Stage stage) {
-        this(name, null, stage);
-    }
-    
-    public AbstractMenu(String name, TextureAtlas atlas, Stage stage) {
+    public AlternativeMenu(String name, Stage stage) {
         super(name, false);
         setStage(stage);
         menu = new AlternativePopupMenu();
-        this.atlas = atlas;
         getTitleTable().clear();
         pad(0);
         setVisible(false);
@@ -41,14 +35,17 @@ public abstract class AbstractMenu extends VisWindow {
     }
     
     public abstract void listenTo(Table parent);
+    public abstract void update();
     
-    protected abstract void create(PopupMenu menu, TextureAtlas atlas);
+    protected abstract void create(PopupMenu menu);
     
     public void createListeners() {
         getStage().addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if(!isEntered) hide();
+                // update input
+                update();
                 return true;
             }
         });
@@ -73,7 +70,7 @@ public abstract class AbstractMenu extends VisWindow {
     }
     
     public void show (float x, float y) {
-        if((Gdx.graphics.getHeight() - y) < getHeight()) y -= getHeight();
+        if(Gdx.input.getY() < getHeight()) y -= getHeight();
         setPosition(x, y);
         setVisible(true);
     }
@@ -88,7 +85,7 @@ public abstract class AbstractMenu extends VisWindow {
     
     @Override
     public void pack() {
-        create(this.menu, this.atlas);
+        create(this.menu);
         add(menu).expand().fill();
         createListeners();
         super.pack();

@@ -7,14 +7,13 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.github.break27.graphics.screen.BannerScreen;
 import com.github.break27.graphics.screen.FinalizingScreen;
 import com.github.break27.graphics.screen.LoadingScreen;
+import com.github.break27.graphics.screen.TestScreen;
 import com.github.break27.launcher.LauncherAdapter;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class TodoGame3 extends Game {
     public AssetManager Asset;
     public LauncherAdapter Launcher;
-    public int Width;
-    public int Height;
     
     public TodoGame3(LauncherAdapter launcher) {
         this.Launcher = launcher;
@@ -23,13 +22,12 @@ public class TodoGame3 extends Game {
     @Override
     public void create() {
         initialize();
-        //setScreen(new BannerScreen(game));
+        //setScreen(new BannerScreen(this));
         setScreen(new LoadingScreen(this));
+        //setScreen(new TestScreen(this));
     }
     
     private void initialize() {
-        this.Width = Gdx.graphics.getWidth();
-        this.Height = Gdx.graphics.getHeight();
         this.Asset = new AssetManager();
         
         Gdx.app.addLifecycleListener(new GameExitEventListener(this));
