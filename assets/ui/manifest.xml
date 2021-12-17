@@ -1,0 +1,6 @@
+<manifest>
+    <list>
+        <resource name="alter" type="skin" location="alter/skin.json"></resource>
+        <resource name="visui" type="skin" location="visui/skin.json"></resource>
+    </list>
+</manifest>

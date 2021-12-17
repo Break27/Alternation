@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.break27.TodoGame3;
 import com.github.break27.graphics.Viewpoint;
-import com.github.break27.graphics.ui.Style;
+import com.github.break27.system.Resource;
 import com.github.break27.graphics.ui.window.TestWindow;
 import com.github.break27.graphics.ui.window.ViewpointWindow;
 
@@ -49,7 +49,6 @@ public class MainScreen extends AbstractScreen {
         window.append(stage);
         window2.append(stage);
         Gdx.input.setInputProcessor(stage);
-        Style.apply();
     }
 
     @Override

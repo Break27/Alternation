@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.github.break27.graphics.ui.AlternativeWidget;
-import com.github.break27.graphics.ui.StyleProvider;
 import com.github.break27.graphics.ui.button.CloseButton;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisTable;
@@ -31,7 +30,6 @@ public abstract class AlternativeWindow extends VisWindow implements Alternative
     Table titleBarButtonsTable;
     
     Image titleImage;
-    StyleProvider provider;
 
     int labelHeight;
     int contentHeight;
@@ -48,7 +46,7 @@ public abstract class AlternativeWindow extends VisWindow implements Alternative
         add(contentTable).expand().fill().top();
         setFooterTable();
         
-        provider = createStyleProvider();
+        enableStyle();
     }
     
     public abstract void create();
@@ -56,7 +54,7 @@ public abstract class AlternativeWindow extends VisWindow implements Alternative
     public abstract void destroy();
     
     public abstract void setListeners();
-
+    
     public Cell setContent(Actor actor) {
         contentTable.setHeight(actor.getHeight());
         return contentTable.add(actor);

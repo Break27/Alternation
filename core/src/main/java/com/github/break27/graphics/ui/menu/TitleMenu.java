@@ -14,8 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.github.break27.graphics.ui.StyleProvider;
 import com.github.break27.graphics.ui.window.CollapsibleWindow;
+import com.github.break27.graphics.ui.window.ViewpointWindow;
+import com.github.break27.system.Resource;
 import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
@@ -39,18 +40,9 @@ public class TitleMenu extends AlternativeMenu {
     Drawable icon_maximize;
     Drawable icon_close;
     
-    StyleProvider provider;
-    
     public TitleMenu(CollapsibleWindow window) {
         super("titleMenu", window.getStage());
         this.window = window;
-        
-        provider = createStyleProvider();
-        provider.setStyle("icon_restore", "alter::icon-window-restore");
-        provider.setStyle("icon_collapse", "alter::icon-window-collapse");
-        provider.setStyle("icon_extend", "alter::icon-window-extend");
-        provider.setStyle("icon_maximize", "alter::icon-window-maximize");
-        provider.setStyle("icon_close", "alter::icon-window-close");
     }
     
     @Override
@@ -89,7 +81,8 @@ public class TitleMenu extends AlternativeMenu {
         window_resize = new MenuItem("Resize", new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                    System.out.println("Resize!");
+                if(window instanceof ViewpointWindow)
+                    ((ViewpointWindow)window).resizeDialogAppend();
             }
         });
         window_collapse = new MenuItem("Collapse", new Image(), new ChangeListener() {
@@ -121,11 +114,16 @@ public class TitleMenu extends AlternativeMenu {
     
     @Override
     public void styleApply() {
-        window_restore.getImage().setDrawable(icon_restore = provider.getStyle("icon_restore"));
-        window_collapse.getImage().setDrawable(icon_collapse = provider.getStyle("icon_collapse"));
-        icon_extend = provider.getStyle("icon_extend");
-        window_maximize.getImage().setDrawable(icon_maximize = provider.getStyle("icon_maximize"));
-        window_close.getImage().setDrawable(icon_close = provider.getStyle("icon_close"));
+        window_restore.getImage().setDrawable(icon_restore = getAlterSkin().getDrawable("icon-window-restore"));
+        window_collapse.getImage().setDrawable(icon_collapse = getAlterSkin().getDrawable("icon-window-collapse"));
+        icon_extend = getAlterSkin().getDrawable("icon-window-extend");
+        window_maximize.getImage().setDrawable(icon_maximize = getAlterSkin().getDrawable("icon-window-maximize"));
+        window_close.getImage().setDrawable(icon_close = getAlterSkin().getDrawable("icon-window-close"));
+    }
+    
+    @Override
+    public void localeApply() {
+        
     }
 
     private void collapseProcess() {

@@ -3,16 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.break27.graphics.ui.button;
+package com.github.break27.system;
 
 /**
  *
  * @author break27
  */
-public class CollapseButton extends TitleButton {
-
-    @Override
-    public void styleApply() {
-        setImage(getAlterSkin().getDrawable("icon-collapse"));
-    }
+public class Locale {
+    
 }

@@ -6,8 +6,7 @@
 package com.github.break27.graphics.screen;
 
 import com.github.break27.TodoGame3;
-import com.github.break27.graphics.ui.Style;
-import com.kotcrab.vis.ui.VisUI;
+import com.github.break27.system.ResourceLoader;
 
 /**
  *
@@ -28,8 +27,7 @@ public class FinalizingScreen extends AbstractScreen {
     public void show() {
         /* FINALIZING */
         parent.Asset.finishLoading();
-        VisUI.dispose();
-        Style.clear();
+        ResourceLoader.dispose();
     }
 
     @Override

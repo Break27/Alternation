@@ -32,7 +32,7 @@ public abstract class SerializableWindow extends AlternativeWindow {
         windows.put(ID, this);
     }
     
-    public abstract int getWindowType();
+    public abstract int getType();
     
     public int getId() {
         return this.ID;

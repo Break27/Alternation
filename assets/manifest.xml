@@ -1,0 +1,14 @@
+<manifest>
+    <meta>
+        <name>Default Resource Set</name>
+        <version>0.0.3</version>
+        <authors>
+            <author>break27</author>
+        </authors>
+        <copyright location=""></copyright>
+    </meta>
+    
+    <list>
+        <resource type="manifest" location="ui/manifest.xml"></resource>
+    </list>
+</manifest>

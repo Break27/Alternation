@@ -8,7 +8,7 @@ package com.github.break27.graphics.ui.window;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.github.break27.graphics.Viewpoint;
-import com.github.break27.graphics.ui.StyleProvider;
+import com.github.break27.graphics.ui.dialog.WindowResizeDialog;
 import com.github.break27.graphics.ui.menu.TitleMenu;
 
 /**
@@ -18,13 +18,13 @@ import com.github.break27.graphics.ui.menu.TitleMenu;
 public class ViewpointWindow extends CollapsibleWindow {
     public ViewpointWindow(String name, int width, int height) {
         super(name);
-        provider.setStyle("title_icon", "alter::icon20-game-map");
         
         addCollapseButton();
         this.viewpointWidth = width;
         this.viewpointHeight = height;
     }
     
+    WindowResizeDialog resizeDialog;
     Viewpoint viewpoint;
     Image image;
     
@@ -49,13 +49,20 @@ public class ViewpointWindow extends CollapsibleWindow {
 
         TitleMenu menu = new TitleMenu(this);
         menu.listenTo(this.getTitleTable());
+        
+        resizeDialog = new WindowResizeDialog("Resize");
         // default value: focused
         setFocus();
     }
     
     @Override
     public void styleApply() {
-        setTitleImage(provider.getStyle("title_icon"));
+        setTitleImage(getAlterSkin().getDrawable("icon20-game-map"));
+    }
+    
+    @Override
+    public void localeApply() {
+        
     }
     
     @Deprecated
@@ -69,17 +76,21 @@ public class ViewpointWindow extends CollapsibleWindow {
     }
     
     @Override
-    public int getWindowType() {
+    public int getType() {
         return WindowType.VIEW;
+    }
+    
+    public void resize(int width, int height) {
+        super.setSize(width, height);
+        this.viewpoint.resize(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), width, height);
     }
     
     public void setViewpoint(Viewpoint viewpoint) {
         this.viewpoint = viewpoint;
     }
     
-    public void resize(int width, int height) {
-        super.setSize(width, height);
-        this.viewpoint.resize(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), width, height);
+    public void resizeDialogAppend() {
+        resizeDialog.show(getStage());
     }
     
     private void createViewpoint() {

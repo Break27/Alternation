@@ -8,7 +8,6 @@ package com.github.break27.graphics.ui.button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.github.break27.graphics.ui.AlternativeWidget;
-import com.github.break27.graphics.ui.StyleProvider;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
 /**
@@ -17,12 +16,11 @@ import com.kotcrab.vis.ui.widget.VisImageButton;
  */
 public abstract class AlternativeButton extends VisImageButton implements AlternativeWidget {
     
-    StyleProvider provider;
     Image image;
     
     public AlternativeButton(Drawable icon) {
         super(icon);
-        provider = createStyleProvider();
+        enableStyle();
     }
     
     public void setImage(Drawable drawable) {

@@ -9,8 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.github.break27.TodoGame3;
-import com.github.break27.graphics.ui.Style;
-import com.kotcrab.vis.ui.VisUI;
+import com.github.break27.system.ResourceLoader;
 import net.mgsx.gltf.loaders.glb.GLBAssetLoader;
 import net.mgsx.gltf.loaders.gltf.GLTFAssetLoader;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
@@ -33,8 +32,7 @@ public class LoadingScreen extends AbstractScreen {
     @Override
     public void show() {
         initGltfLoader();
-        VisUI.load();
-        Style.loadDefault();
+        ResourceLoader.loadDefault();
         /* MainScreen.class */
         parent.Asset.load("ui/legacy/uiskin.json", Skin.class);
     }

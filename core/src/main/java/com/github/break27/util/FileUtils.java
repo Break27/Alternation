@@ -17,5 +17,4 @@ public class FileUtils {
     public static File getTempFile(Class<?> c) {
         return FileHandle.tempFile(c.getName()).file();
     }
-    
 }

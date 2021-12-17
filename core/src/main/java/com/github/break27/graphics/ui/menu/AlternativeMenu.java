@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.github.break27.graphics.ui.AlternativeWidget;
+import com.github.break27.system.Resource;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
@@ -20,7 +21,7 @@ import com.kotcrab.vis.ui.widget.VisWindow;
  * @author break27
  */
 public abstract class AlternativeMenu extends VisWindow implements AlternativeWidget {
-    
+
     AlternativePopupMenu menu;
     boolean isEntered = false;
     
@@ -32,6 +33,8 @@ public abstract class AlternativeMenu extends VisWindow implements AlternativeWi
         pad(0);
         setVisible(false);
         pack();
+        
+        enableStyle();
     }
     
     public abstract void listenTo(Table parent);

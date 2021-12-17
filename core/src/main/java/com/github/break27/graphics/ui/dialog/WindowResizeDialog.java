@@ -5,36 +5,24 @@
  */
 package com.github.break27.graphics.ui.dialog;
 
-import com.github.break27.graphics.ui.window.AlternativeWindow;
-
 /**
  *
  * @author break27
  */
-public class WindowResizeDialog extends AlternativeWindow {
+public class WindowResizeDialog extends AlternativeDialog {
     
     public WindowResizeDialog(String name) {
         super(name);
-    }
-    
-    @Override
-    public void create() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void destroy() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setListeners() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        addCloseButton();
+        text("This is a test.");
     }
 
     @Override
     public void styleApply() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        setTitleImage(getAlterSkin().getDrawable("icon20-application"));
     }
     
+    @Override
+    public void localeApply() {
+    }
 }

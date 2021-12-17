@@ -25,4 +25,8 @@ public abstract class TitleButton extends AlternativeButton {
             }
         });
     }
+    
+    @Override
+    public void localeApply() {
+    }
 }

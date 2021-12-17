@@ -20,11 +20,10 @@ public class TestWindow extends SerializableWindow {
     public TestWindow(String name) {
         super(name);
         addCloseButton();
-        provider.setStyle("icon_info", "alter::icon20-application");
     }
     
     @Override
-    public int getWindowType() {
+    public int getType() {
         return WindowType.TEST;
     }
     
@@ -43,6 +42,14 @@ public class TestWindow extends SerializableWindow {
     
     @Override
     public void styleApply() {
-        setTitleImage(provider.getStyle("icon_info"));
+        setTitleImage(getAlterSkin().getDrawable("icon20-application"));
+        
+        // only for debuging
+        //setSkin(VisUI.getSkin());
+    }
+    
+    @Override
+    public void localeApply() {
+        
     }
 }
