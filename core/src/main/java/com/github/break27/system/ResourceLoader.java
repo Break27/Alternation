@@ -35,8 +35,8 @@ public class ResourceLoader {
             FileHandle sibling = manifest.sibling(element.getAttribute("location"));
             if(type.equals("manifest")) {
                 loadManifest(sibling);
-            } else if(name != null && type.equals("skin")) {
-                loadSkin(name, sibling);
+            } else if(name != null) {
+                if(type.equals("skin")) loadSkin(name, sibling);
             }
         });
     }

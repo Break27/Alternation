@@ -33,8 +33,6 @@ public class LoadingScreen extends AbstractScreen {
     public void show() {
         initGltfLoader();
         ResourceLoader.loadDefault();
-        /* MainScreen.class */
-        parent.Asset.load("ui/legacy/uiskin.json", Skin.class);
     }
 
     @Override

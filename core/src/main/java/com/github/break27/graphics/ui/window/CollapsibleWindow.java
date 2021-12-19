@@ -42,10 +42,10 @@ public abstract class CollapsibleWindow extends SerializableWindow {
         contentTable.setVisible(Collapsed);
         if(!Collapsed) {
             super.setHeight(labelHeight);
-            super.setPosition(super.getX(), super.getY() + contentHeight);
+            super.setPosition(super.getX(), super.getY() + contentHeight - labelHeight);
         } else {
-            super.setHeight(labelHeight + contentHeight);
-            super.setPosition(super.getX(), super.getY() - contentHeight);
+            super.setHeight(contentHeight);
+            super.setPosition(super.getX(), super.getY() - contentHeight + labelHeight);
         }
         Collapsed = !Collapsed;
     }

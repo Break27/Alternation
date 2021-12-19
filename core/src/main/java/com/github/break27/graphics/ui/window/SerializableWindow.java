@@ -15,8 +15,9 @@ import java.util.HashMap;
  */
 public abstract class SerializableWindow extends AlternativeWindow {
     public static final class WindowType {
+        public static final int TEST = 0;
         public static final int VIEW = 1;
-        public static final int TEST = 2;
+        public static final int HTML = 2;
     }
     
     private boolean ignoreFocus = false;

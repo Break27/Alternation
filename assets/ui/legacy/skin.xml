@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<skin>
+    <!--
+        This file is only an example.
+    -->
+    <atlas location="uiskin.atlas"></atlas>
+    <class name="com.badlogic.gdx.graphics.g2d.BitmapFont">
+        <default-font>
+            <file>default.fnt</file>
+        </default-font>
+    </class>
+    <class name="com.badlogic.gdx.graphics.Color">
+        <green>
+            <a>1</a>
+            <b>0</b>
+            <g>1</g>
+            <r>0</r>
+        </green>
+        <white>
+            <a>1</a>
+            <b>1</b>
+            <g>1</g>
+            <r>1</r>
+        </white>
+        <red>
+            <a>1</a>
+            <b>0</b>
+            <g>0</g>
+            <r>1</r>
+        </red>
+        <black>
+            <a>1</a>
+            <b>0</b>
+            <g>0</g>
+            <r>0</r>
+        </black>
+        <gray>
+            <a>1</a>
+            <b>0.8</b>
+            <g>0.8</g>
+            <r>0.8</r>
+        </gray>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable">
+        <dialogDim>
+            <name>white</name>
+            <color>
+                <r>0</r>
+                <g>0</g>
+                <b>0</b>
+                <a>0.45</a>
+            </color>
+        </dialogDim>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle">
+        <default>
+            <down>default-round-down</down>
+            <up>default-round</up>
+            <disabled>default-round</disabled>
+        </default>
+        <toggle>
+            <parent>default</parent>
+            <checked>default-round-down</checked>
+        </toggle>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle">
+        <default>
+            <parent>default</parent>
+            <font>default-font</font>
+            <fontColor>white</fontColor>
+            <disabledFontColor>gray</disabledFontColor>
+        </default>
+        <toggle>
+            <parent>default</parent>
+            <checked>default-round-down</checked>
+            <downFontColor>red</downFontColor>
+        </toggle>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle">
+        <default>
+            <vScroll>default-scroll</vScroll>
+            <hScrollKnob>default-round-large</hScrollKnob>
+            <background>default-rect</background>
+            <hScroll>default-scroll</hScroll>
+            <vScrollKnob>default-round-large</vScrollKnob>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle">
+        <default>
+            <font>default-font</font>
+            <fontColor>white</fontColor>
+            <background>default-select</background>
+            <scrollStyle>default</scrollStyle>
+            <listStyle>
+                <font>default-font</font>
+                <selection>default-select-selection</selection>
+            </listStyle>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle">
+        <default-vertical>
+            <handle>default-splitpane-vertical</handle>
+        </default-vertical>
+        <default-horizontal>
+            <handle>default-splitpane</handle>
+        </default-horizontal>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle">
+        <default>
+            <titleFont>default-font</titleFont>
+            <background>default-window</background>
+            <titleFontColor>white</titleFontColor>
+        </default>
+        <dialog>
+            <parent>default</parent>
+            <stageBackground>dialogDim</stageBackground>
+        </dialog>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle">
+        <default-horizontal>
+            <background>default-slider</background>
+            <knob>default-slider-knob</knob>
+        </default-horizontal>
+        <default-vertical>
+            <background>default-slider</background>
+            <knob>default-round-large</knob>
+        </default-vertical>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle">
+        <default-horizontal>
+            <parent>default-horizontal</parent>
+        </default-horizontal>
+        <default-vertical>
+            <parent>default-vertical</parent>
+        </default-vertical>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle">
+        <default>
+            <font>default-font</font>
+            <fontColor>white</fontColor>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle">
+        <default>
+            <selection>selection</selection>
+            <background>textfield</background>
+            <font>default-font</font>
+            <fontColor>white</fontColor>
+            <cursor>cursor</cursor>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle">
+        <default>
+            <checkboxOn>check-on</checkboxOn>
+            <checkboxOff>check-off</checkboxOff>
+            <font>default-font</font>
+            <fontColor>white</fontColor>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle">
+        <default>
+            <fontColorUnselected>gray</fontColorUnselected>
+            <selection>selection</selection>
+            <fontColorSelected>white</fontColorSelected>
+            <font>default-font</font>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle">
+        <default>
+            <background>default-pane</background>
+            <knob>default-round-large</knob>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle">
+        <default>
+            <minus>tree-minus</minus>
+            <plus>tree-plus</plus>
+            <selection>default-select-selection</selection>
+        </default>
+    </class>
+    <class name="com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle">
+        <default>
+            <label>
+                <font>default-font</font>
+                <fontColor>white</fontColor>
+            </label>
+            <background>default-pane</background>
+            <wrapWidth>150</wrapWidth>
+        </default>
+    </class>
+</skin>

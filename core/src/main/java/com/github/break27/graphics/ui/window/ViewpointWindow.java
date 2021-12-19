@@ -22,6 +22,7 @@ public class ViewpointWindow extends CollapsibleWindow {
         addCollapseButton();
         this.viewpointWidth = width;
         this.viewpointHeight = height;
+        super.setSize(width, height);
     }
     
     WindowResizeDialog resizeDialog;
@@ -41,7 +42,8 @@ public class ViewpointWindow extends CollapsibleWindow {
     
     @Override
     public void create() {
-        this.viewpoint = new Viewpoint(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), viewpointWidth, viewpointHeight, false);
+        this.viewpoint = new Viewpoint(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), 
+                viewpointWidth, viewpointHeight, false);
         createViewpoint();
         image = viewpoint.getFrameImage();
         setContent(image);
@@ -62,9 +64,12 @@ public class ViewpointWindow extends CollapsibleWindow {
     
     @Override
     public void localeApply() {
-        
     }
     
+    /** Replaced by {@code resize(int,int)}.
+     *  @param width
+     *  @param height
+     */
     @Deprecated
     @Override
     public void setSize(float width, float height) {

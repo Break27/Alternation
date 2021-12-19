@@ -5,6 +5,7 @@
  */
 package com.github.break27.system;
 
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.AlternativeWidget;
@@ -14,7 +15,11 @@ import java.util.HashMap;
  *
  * @author break27
  */
-public abstract class Resource {
+public class Resource {
+    public static interface SerializableResource extends Disposable {
+        
+    }
+    
     public static final class DefaultType {
         public static final String SKIN = "skin";
     }
