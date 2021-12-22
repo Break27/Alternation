@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <manifest>
     <meta>
         <name>Default Resource Set</name>
@@ -10,5 +11,6 @@
     
     <list>
         <resource type="manifest" location="ui/manifest.xml"></resource>
+        <resource type="manifest" location="font/font.xml"></resource>
     </list>
 </manifest>

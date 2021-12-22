@@ -7,6 +7,7 @@ import com.github.break27.launcher.LauncherAdapter;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
+    
     public static void main(String[] args) {
         createApplication(new Launcher());
     }
@@ -33,7 +34,7 @@ public class Lwjgl3Launcher {
 class Launcher implements LauncherAdapter {
     
     @Override
-    public String getGameDataLocation() {
+    public String getGameDataPath() {
         String osName = System.getProperty("os.name").toLowerCase();
         String home = System.getProperty("user.home");
         if (osName.contains("windows")) return home + "/Documents/MyLibGdxGame/";

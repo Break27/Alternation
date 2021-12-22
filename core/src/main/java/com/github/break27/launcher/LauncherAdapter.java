@@ -15,5 +15,5 @@ public interface LauncherAdapter {
     public static final String RELEASE = "SNAPSHOT";
     
     // game filepaths
-    public String getGameDataLocation();
+    public String getGameDataPath();
 }

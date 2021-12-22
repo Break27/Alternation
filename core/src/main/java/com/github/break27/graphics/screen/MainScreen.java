@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.break27.TodoGame3;
 import com.github.break27.graphics.Viewpoint;
+import com.github.break27.graphics.ui.window.BrowserWindow;
 import com.github.break27.graphics.ui.window.HtmlViewerWindow;
 import com.github.break27.system.Resource;
 import com.github.break27.graphics.ui.window.TestWindow;
@@ -34,6 +35,7 @@ public class MainScreen extends AbstractScreen {
     ViewpointWindow window;
     TestWindow window2;
     HtmlViewerWindow window3;
+    BrowserWindow window4;
     Viewpoint viewpoint;
     
     @Override
@@ -43,22 +45,24 @@ public class MainScreen extends AbstractScreen {
     
     @Override
     public void show() {
-        window = new ViewpointWindow("Main View", 300, 300);
-        window2 = new TestWindow("Test Window");
-        window3 = new HtmlViewerWindow("HTML Viewer", 500, 500);
+        window = new ViewpointWindow("Main View 中T文E测S试T", 300, 300);
+        window2 = new TestWindow("Test Window 中文测试 - 0123456789");
+        window3 = new HtmlViewerWindow("HTML Viewer 中文测试", 500, 500);
+        window4 = new BrowserWindow("Browser", 500, 500);
         window.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         
         stage = new Stage(defaultViewport);
         window.append(stage);
         window2.append(stage);
         window3.append(stage);
+        window4.append(stage);
         Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render(float delta) {
         state += Gdx.graphics.getDeltaTime();
-        window.update();
+        //window.update();
         Gdx.gl.glClearColor(1f,1f,1f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();

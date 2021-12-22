@@ -20,7 +20,7 @@ public abstract class AlternativeButton extends VisImageButton implements Altern
     
     public AlternativeButton(Drawable icon) {
         super(icon);
-        enableStyle();
+        setStyleEnabled();
     }
     
     public void setImage(Drawable drawable) {
@@ -30,5 +30,9 @@ public abstract class AlternativeButton extends VisImageButton implements Altern
         } else {
             image.setDrawable(drawable);
         }
+    }
+    
+    @Override
+    public void destroy() {
     }
 }

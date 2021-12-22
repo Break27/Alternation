@@ -7,7 +7,6 @@ package com.github.break27.graphics.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.github.break27.TodoGame3;
 import com.github.break27.system.ResourceLoader;
 import net.mgsx.gltf.loaders.glb.GLBAssetLoader;
@@ -38,7 +37,7 @@ public class LoadingScreen extends AbstractScreen {
     @Override
     public void render(float delta) {
         parent.Asset.update();
-        // ½«±³¾°ÉèÎªºÚÉ«
+        // å°†èƒŒæ™¯è®¾ä¸ºé»‘è‰²
         Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         state += Gdx.graphics.getDeltaTime();
@@ -67,7 +66,7 @@ public class LoadingScreen extends AbstractScreen {
     }
     
     private void initGltfLoader() {
-        // Éè¶¨ GLTF Ä£ÐÍ¼ÓÔØÆ÷
+        // è®¾å®š GLTF æ¨¡åž‹åŠ è½½å™¨
         parent.Asset.setLoader(SceneAsset.class, ".gltf", new GLTFAssetLoader());
         parent.Asset.setLoader(SceneAsset.class, ".glb", new GLBAssetLoader());
     }

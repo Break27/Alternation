@@ -25,7 +25,7 @@ public abstract class AlternativeDialog extends VisDialog implements Alternative
     
     public AlternativeDialog(String name) {
         super(name);
-        enableStyle();
+        setStyleEnabled();
     }
     
     public void setTitleImage(Drawable drawable) {
@@ -54,7 +54,7 @@ public abstract class AlternativeDialog extends VisDialog implements Alternative
 
     @Override
     public void close() {
-        closeButton.getColor().a = 0;
+        destroy();
         super.close();
     }
     
@@ -62,5 +62,10 @@ public abstract class AlternativeDialog extends VisDialog implements Alternative
     public VisDialog show(Stage stage) {
         closeButton.getColor().a = 1f;
         return super.show(stage);
+    }
+    
+    @Override
+    public void destroy() {
+        closeButton.getColor().a = 0;
     }
 }

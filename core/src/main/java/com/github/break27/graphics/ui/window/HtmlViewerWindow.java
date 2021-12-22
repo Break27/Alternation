@@ -19,8 +19,8 @@ public class HtmlViewerWindow extends CollapsibleWindow {
     HtmlRenderer renderer;
     
     public HtmlViewerWindow(String name, int width, int height) {
-        super(name);
-        super.setSize(width, height);
+        super(name, width, height);
+        padBottom(5f);
         addCollapseButton();
         renderer = new HtmlRenderer(width, height, false);
     }
@@ -41,8 +41,7 @@ public class HtmlViewerWindow extends CollapsibleWindow {
         renderer.render();
         Image image = renderer.getImage();
         AlterScrollPane scrollpane = new AlterScrollPane(image);
-        setContent(scrollpane);
-        this.padBottom(5f);
+        getContentTable().add(scrollpane);
     }
 
     @Override

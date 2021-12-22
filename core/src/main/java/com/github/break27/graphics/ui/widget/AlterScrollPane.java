@@ -20,7 +20,7 @@ public class AlterScrollPane extends VisScrollPane implements AlternativeWidget 
     
     public AlterScrollPane(Actor widget) {
         super(widget);
-        enableStyle();
+        setStyleEnabled();
     }
     
     public void listenTo(SerializableWindow window) {
@@ -35,5 +35,9 @@ public class AlterScrollPane extends VisScrollPane implements AlternativeWidget 
 
     @Override
     public void localeApply() {
+    }
+    
+    @Override
+    public void destroy() {
     }
 }

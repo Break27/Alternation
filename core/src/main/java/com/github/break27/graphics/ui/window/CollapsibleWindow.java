@@ -19,8 +19,19 @@ public abstract class CollapsibleWindow extends SerializableWindow {
     VisImageButton collapseButton;
     private boolean Collapsed = false;
     
-    public CollapsibleWindow(String name) {
+    int labelHeight;
+    int width;
+    int height;
+    
+    public CollapsibleWindow(String name, int width, int height) {
         super(name);
+        this.width = width;
+        this.height = height;
+        labelHeight = (int) getMinHeight();
+        
+        setWidth(width);
+        setHeight(height + labelHeight);
+        getContentTable().setSize(width, height);
     }
     
     public boolean isCollapsed() {
@@ -29,7 +40,7 @@ public abstract class CollapsibleWindow extends SerializableWindow {
     
     public void addCollapseButton() {
         collapseButton = new CollapseButton();
-        addTitleBarButton(collapseButton);
+        addTitleTableButton(collapseButton);
         collapseButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
@@ -38,15 +49,33 @@ public abstract class CollapsibleWindow extends SerializableWindow {
         });
     }
     
+    public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    /** Make window collapsed.
+     */
     public void collapse() {
+        int footerHeight = (int) getFooterTable().getHeight();
+        int menuHeight = (int) getMenuTable().getHeight();
         contentTable.setVisible(Collapsed);
         if(!Collapsed) {
-            super.setHeight(labelHeight);
-            super.setPosition(super.getX(), super.getY() + contentHeight - labelHeight);
+            setPosition(getX(), getY() + height + menuHeight + footerHeight);
+            setHeight(labelHeight);
         } else {
-            super.setHeight(contentHeight);
-            super.setPosition(super.getX(), super.getY() - contentHeight + labelHeight);
+            setPosition(getX(), getY() - height - menuHeight - footerHeight);
+            setHeight(height + labelHeight + menuHeight + footerHeight);
         }
         Collapsed = !Collapsed;
+    }
+    
+    /** Replaced by {@code resize(int,int)}.
+     *  @param width
+     *  @param height
+     */
+    @Deprecated
+    @Override
+    public void setSize(float width, float height) {
     }
 }

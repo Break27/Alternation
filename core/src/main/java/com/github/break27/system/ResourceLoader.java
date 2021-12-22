@@ -7,9 +7,13 @@ package com.github.break27.system;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
+import com.github.break27.graphics.ui.AlternativeFont;
 import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.launcher.LauncherAdapter;
 import com.kotcrab.vis.ui.VisUI;
@@ -36,6 +40,20 @@ public class ResourceLoader {
             if(type.equals("manifest")) {
                 loadManifest(sibling);
             } else if(name != null) {
+                /* Font */
+                if(type.equals("font")) {
+                    FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+                    // Font size
+                    parameter.size = Integer.valueOf(element.getAttribute("size", "12"));
+                    // Inherited and Extended Characters
+                    if(element.getParent().hasChild("inherit")) 
+                        parameter.characters = element.getParent().getChildByName("inherit").getText();
+                    if(element.hasChild("extended")) 
+                        parameter.characters += element.getChildByName("extended").getText();
+                    
+                    loadFont(name, sibling, parameter);
+                }
+                /* Skin */
                 if(type.equals("skin")) loadSkin(name, sibling);
             }
         });
@@ -50,8 +68,23 @@ public class ResourceLoader {
         if(skin.exists())
             Resource.loadSkin(name, new AlternativeSkin(skin));
         else
-            Gdx.app.log(ResourceLoader.class.getName(), "Skin file \"" + skin.path() + 
+            Gdx.app.log(ResourceLoader.class.getName(), "Skin file \"" + skin + 
                     "\" does not exist! Skin \"" + name + "\" is not loaded.");
+    }
+    
+    private static void loadFont(String name, FileHandle ttf, FreeTypeFontParameter parameter) {
+        if(ttf.exists()) {
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(ttf);
+            // Load in default characters
+            parameter.characters += FreeTypeFontGenerator.DEFAULT_CHARS;
+            // Generate Font
+            BitmapFont font = generator.generateFont(parameter);
+            generator.dispose();
+            Resource.loadFont(name, new AlternativeFont(font.getData(), font.getRegions(), true));
+        } else {
+            Gdx.app.log(ResourceLoader.class.getName(), "Font file \"" + ttf + 
+                    "\" does not exist! Skin \"" + name + "\" is not loaded.");
+        }
     }
     
     private static void loadVisUI() {

@@ -26,17 +26,20 @@ public abstract class AlternativeMenu extends VisWindow implements AlternativeWi
     
     public AlternativeMenu(String name, Stage stage) {
         super(name, false);
-        setStage(stage);
         menu = new AlternativePopupMenu();
+        setStage(stage);
+        stage.addActor(this);
+        
         getTitleTable().clear();
         pad(0);
         setVisible(false);
         pack();
         
-        enableStyle();
+        setStyleEnabled();
     }
     
     public abstract void listenTo(Table parent);
+    
     public abstract void update();
     
     protected abstract void create(PopupMenu menu);
@@ -94,13 +97,12 @@ public abstract class AlternativeMenu extends VisWindow implements AlternativeWi
     }
     
     @Override
-    public void setStage(Stage stage) {
-        super.setStage(stage);
-        stage.addActor(this);
+    public void destroy() {
     }
 }
 
 class AlternativePopupMenu extends PopupMenu {
+    
     public AlternativePopupMenu() {
     }
 
@@ -113,5 +115,3 @@ class AlternativePopupMenu extends PopupMenu {
         return super.remove();
     }
 }
-
-

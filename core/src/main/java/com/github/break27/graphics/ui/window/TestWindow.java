@@ -31,7 +31,7 @@ public class TestWindow extends SerializableWindow {
     public void create() {
         texture = new Texture(Gdx.files.internal("banner/libgdx.png"));
         image = new Image(texture);
-        setContent(image);
+        getContentTable().add(image);
     }
     
     @Override
@@ -43,9 +43,6 @@ public class TestWindow extends SerializableWindow {
     @Override
     public void styleApply() {
         setTitleImage(getAlterSkin().getDrawable("icon20-application"));
-        
-        // only for debuging
-        //setSkin(VisUI.getSkin());
     }
     
     @Override

@@ -45,7 +45,7 @@ public class Viewpoint {
         this.imageHeight = height;
     }
     
-    public Image getFrameImage() {
+    public Image getImage() {
         if(image == null) update();
         return image;
     }

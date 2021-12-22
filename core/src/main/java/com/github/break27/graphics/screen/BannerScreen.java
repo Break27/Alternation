@@ -34,14 +34,14 @@ public class BannerScreen extends AbstractScreen {
 
     @Override
     public void render(float delta) {
-        // ½«±³¾°ÉèÎª°×É«
+        // å°†èƒŒæ™¯è®¾ä¸ºç™½è‰²
         Gdx.gl.glClearColor(1,1,1,1);
-        // ÇåÆÁ
+        // æ¸…å±
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         state += Gdx.graphics.getDeltaTime();
-        // 6Ãëºó½øÈë¼ÓÔØ»­Ãæ
+        // 6ç§’åŽè¿›å…¥åŠ è½½ç”»é¢
         if (state >= 6) change(new LoadingScreen(parent));
-        // ÏÈ»æÖÆ LibGDX ÔÙ»æÖÆ CDPT£¨µÈ´ý3Ãë£©
+        // å…ˆç»˜åˆ¶ LibGDX å†ç»˜åˆ¶ CDPTï¼ˆç­‰å¾…3ç§’ï¼‰
         if (state >= 3) {
             banner.switchBanner();
         }

@@ -4,10 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.assets.AssetManager;
-import com.github.break27.graphics.screen.BannerScreen;
 import com.github.break27.graphics.screen.FinalizingScreen;
 import com.github.break27.graphics.screen.LoadingScreen;
-import com.github.break27.graphics.screen.TestScreen;
 import com.github.break27.launcher.LauncherAdapter;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */

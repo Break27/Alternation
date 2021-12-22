@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.github.break27.graphics.ui.window.CollapsibleWindow;
 import com.github.break27.graphics.ui.window.ViewpointWindow;
-import com.github.break27.system.Resource;
 import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
@@ -41,7 +40,7 @@ public class TitleMenu extends AlternativeMenu {
     Drawable icon_close;
     
     public TitleMenu(CollapsibleWindow window) {
-        super("titleMenu", window.getStage());
+        super("TitleMenu", window.getStage());
         this.window = window;
     }
     

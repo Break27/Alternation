@@ -6,10 +6,15 @@
 package com.github.break27.graphics.ui.window;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.github.break27.graphics.Viewpoint;
 import com.github.break27.graphics.ui.dialog.WindowResizeDialog;
 import com.github.break27.graphics.ui.menu.TitleMenu;
+import com.github.break27.system.Resource;
 
 /**
  *
@@ -17,12 +22,12 @@ import com.github.break27.graphics.ui.menu.TitleMenu;
  */
 public class ViewpointWindow extends CollapsibleWindow {
     public ViewpointWindow(String name, int width, int height) {
-        super(name);
-        
-        addCollapseButton();
+        super(name, width, height);
+        this.padBottom(5f);
         this.viewpointWidth = width;
         this.viewpointHeight = height;
-        super.setSize(width, height);
+        
+        addCollapseButton();
     }
     
     WindowResizeDialog resizeDialog;
@@ -36,7 +41,7 @@ public class ViewpointWindow extends CollapsibleWindow {
     public void update() {
         if(!isCollapsed() && !destroyed) {
             viewpoint.update();
-            image.setDrawable(viewpoint.getFrameImage().getDrawable());
+            image.setDrawable(viewpoint.getImage().getDrawable());
         }
     }
     
@@ -45,12 +50,11 @@ public class ViewpointWindow extends CollapsibleWindow {
         this.viewpoint = new Viewpoint(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), 
                 viewpointWidth, viewpointHeight, false);
         createViewpoint();
-        image = viewpoint.getFrameImage();
-        setContent(image);
-        this.padBottom(5f);
+        image = viewpoint.getImage();
+        getContentTable().add(image);
 
         TitleMenu menu = new TitleMenu(this);
-        menu.listenTo(this.getTitleTable());
+        menu.listenTo(getTitleTable());
         
         resizeDialog = new WindowResizeDialog("Resize");
         // default value: focused
@@ -66,18 +70,10 @@ public class ViewpointWindow extends CollapsibleWindow {
     public void localeApply() {
     }
     
-    /** Replaced by {@code resize(int,int)}.
-     *  @param width
-     *  @param height
-     */
-    @Deprecated
-    @Override
-    public void setSize(float width, float height) {
-    }
-    
     @Override
     public void destroy() {
         viewpoint.destory();
+        destroyed = true;
     }
     
     @Override
@@ -85,8 +81,9 @@ public class ViewpointWindow extends CollapsibleWindow {
         return WindowType.VIEW;
     }
     
+    @Override
     public void resize(int width, int height) {
-        super.setSize(width, height);
+        super.resize(width, height);
         this.viewpoint.resize(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), width, height);
     }
     
@@ -98,9 +95,14 @@ public class ViewpointWindow extends CollapsibleWindow {
         resizeDialog.show(getStage());
     }
     
+    SpriteBatch batch = new SpriteBatch();
+    Sprite sprite = new Sprite(getTitleLabel().getStyle().font.getRegion());
+    
     private void createViewpoint() {
         viewpoint.setRenderer(() -> {
-            
+            batch.begin();
+            sprite.draw(batch);
+            batch.end();
         });
     }
 }

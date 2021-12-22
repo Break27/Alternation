@@ -14,5 +14,6 @@ dependencies {
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
 	api "com.strongjoshua:libgdx-inGameConsole:$inGameConsoleVersion"
 	api "de.tomgrill.gdxdialogs:gdx-dialogs-core:$dialogsVersion"
+        api "net.sf.cssbox:cssbox:$cssboxVersion"
 	api project(':shared')
 }
