@@ -1,8 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/**************************************************************************
+ * Copyright (c) 2021 Breakerbear
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 package com.github.break27.system;
 
 import com.badlogic.gdx.Gdx;
@@ -11,6 +23,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.github.break27.graphics.ui.AlternativeFont;
@@ -28,17 +41,25 @@ public class ResourceLoader {
     static boolean read = false;
     
     public static void loadDefault() {
-        loadManifest(Gdx.files.internal("manifest.xml"));
+        loadManifest(Gdx.files.internal("manifest.xml"), new Array<>());
         loadVisUI();
     }
     
-    public static void loadManifest(FileHandle manifest) {
+    public static void loadManifest(FileHandle manifest, final Array<FileHandle> files) {
         findResources(manifest).forEach(element -> {
             String name = element.getAttribute("name", null);
             String type = element.getAttribute("type");
             FileHandle sibling = manifest.sibling(element.getAttribute("location"));
             if(type.equals("manifest")) {
-                loadManifest(sibling);
+                // preventing from infinite recursive loop
+                if(sibling.path().contains("..")) {
+                    throw new GdxRuntimeException("Unsupported Operation: No access to parent directory: " + sibling);
+                } else if(files.contains(sibling, false) || sibling.equals(manifest)) {
+                    throw new GdxRuntimeException("Unsupported Operation: Manifest has already loaded: " + sibling);
+                } else {
+                    files.add(sibling);
+                    loadManifest(sibling, files);
+                }
             } else if(name != null) {
                 /* Font */
                 if(type.equals("font")) {
@@ -88,10 +109,7 @@ public class ResourceLoader {
     }
     
     private static void loadVisUI() {
-        if(Resource.has(Resource.DefaultType.SKIN, "visui"))
-            VisUI.load(Resource.getSkin("visui"));
-        else
-            VisUI.load();
+        VisUI.load();
     }
     
     private static Array<Element> findResources(FileHandle file) {

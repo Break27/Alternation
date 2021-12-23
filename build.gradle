@@ -26,7 +26,7 @@ configure(subprojects) {
 
 subprojects {
 	version = '0.0.3'
-	ext.appName = 'TodoGame3'
+	ext.appName = 'Alternation'
 	repositories {
 		mavenCentral()
 		mavenLocal()
@@ -37,4 +37,4 @@ subprojects {
 	}
 }
 
-eclipse.project.name = 'TodoGame3' + '-parent'
+eclipse.project.name = 'Alternation' + '-parent'

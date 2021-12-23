@@ -1,8 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/**************************************************************************
+ * Copyright (c) 2021 Breakerbear
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 package com.github.break27.graphics;
 
 import com.badlogic.gdx.Gdx;
@@ -37,11 +49,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- *
  * @author break27
  */
 public class Browser {
-    
+
     static BrowserTable table;
     static AlterLabel titleLabel;
     
@@ -66,13 +77,13 @@ public class Browser {
     }
     
     /** Create a Browser with Image size, Display size
-     *  (or screen resolution) specified.
-     *  @param width Width of the returned Image.
-     *  @param height Height of the returned Image.
-     *  @param displayWidth Width of the Canvas.
-     *  @param displayHeight Height of the Canvas.
-     *  @param isClipped If true, the returned Image would be
-     *  clipped to the expected size.
+     * (or screen resolution) specified.
+     * @param width Width of the returned Image.
+     * @param height Height of the returned Image.
+     * @param displayWidth Width of the Canvas.
+     * @param displayHeight Height of the Canvas.
+     * @param isClipped If true, the returned Image would be
+     * clipped to the expected size.
      */
     public Browser(int width, int height, int displayWidth, int displayHeight, boolean isClipped) {
         table = new BrowserTable();
@@ -109,9 +120,9 @@ public class Browser {
     }
     
     /** To load a html document from URL.
-     *  Note: the protocol should be announced.
-     *  Otherwise it is considered as following HTTP Protocol.
-     *  @param url
+     * Note: the protocol should be announced,
+     * otherwise it is considered as following HTTP Protocol.
+     * @param url
      */
     public void load(String url) {
         if (!url.startsWith("http:") 
@@ -127,7 +138,7 @@ public class Browser {
     }
     
     /** To load a html document from URI
-     *  @param uri
+     * @param uri
      */
     public void load(URI uri) {
         if(!BrowserModule.isLoading) {
@@ -139,7 +150,7 @@ public class Browser {
     }
     
     /** Basic Modules of the Browser.
-     *  @author break27
+     * @author break27
      */
     protected static class BrowserModule {
     
@@ -262,9 +273,9 @@ public class Browser {
             }
             
             /** Strip all Non-Printing Characters of a String Object.
-             *  Any character with an ASCII Code below 32 or of 127
-             *  will be deleted.
-             */
+            * Any character with an ASCII Code below 32 or of 127
+            * will be deleted.
+            */
             private String stripNPC(String string) {
                 char[] chars = string.toCharArray();
                 if(chars.length > 0) {

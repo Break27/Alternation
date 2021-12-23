@@ -1,8 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/**************************************************************************
+ * Copyright (c) 2021 Breakerbear
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *************************************************************************/
+
 package com.github.break27.graphics.ui;
 
 import com.badlogic.gdx.Gdx;
@@ -18,6 +30,7 @@ import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.github.break27.system.Resource.SerializableResource;
 import com.github.break27.system.misc.SkinBuilder;
+import com.kotcrab.vis.ui.VisUI;
 
 /**
  *
@@ -32,6 +45,18 @@ public class AlternativeSkin extends Skin implements SerializableResource {
     
     public AlternativeSkin(FileHandle file) {
         load(file);
+    }
+    
+    @Override
+    public <T> T get(String name, Class<T> type) {
+        try {
+            return super.get(name, type);
+        } catch(GdxRuntimeException ignored) {
+        }
+        // turn to VisUI skin if no resource available
+        Gdx.app.debug(getClass().getName(), "No Resource of " + name+"@"+type.getName() 
+                + " Available, turning to VisUI.");
+        return VisUI.getSkin().get(name, type);
     }
     
     @Override
@@ -74,11 +99,11 @@ public class AlternativeSkin extends Skin implements SerializableResource {
         XmlReader reader = new XmlReader();
         Json json = new Json();
         // build json string
-        SkinBuilder builder = parseXml(xmlFile, reader, new SkinBuilder());
+        SkinBuilder builder = parseXml(xmlFile, reader, new SkinBuilder(), new Array<>());
         return json.toJson(builder);
     }
     
-    private SkinBuilder parseXml(FileHandle xmlFile, XmlReader reader, final SkinBuilder builder) {
+    private SkinBuilder parseXml(FileHandle xmlFile, XmlReader reader, final SkinBuilder builder, final Array<FileHandle> list) {
         Element root = reader.parse(xmlFile);
         /* Includes */
         if(root.hasChild("include")) {
@@ -92,11 +117,17 @@ public class AlternativeSkin extends Skin implements SerializableResource {
                 }
                 
                 if(file != null && file.exists()) {
-                    // recursive
-                    if(!file.equals(xmlFile)) parseXml(file, reader, builder);
-                    else Gdx.app.error(getClass().getName(), "Operation Unsupported: File is including itself! Ignored.");
+                    // preventing from infinite recursive loop
+                    if(file.equals(xmlFile)) 
+                        Gdx.app.error(getClass().getName(), "Unsupported Operation: File is including itself! Ignored.");
+                    else if(list.contains(file, false)) 
+                        throw new SerializationException(file + ": Target file has already loaded: " + xmlFile);
+                    else {
+                        list.add(file);
+                        parseXml(file, reader, builder, list);
+                    }
                 } else {
-                    Gdx.app.error(getClass().getName(), "Include file not found: " + file + ". Ignored.");
+                    Gdx.app.error(getClass().getName(), xmlFile + ": Include file not found: " + file + ". Ignored.");
                 }
             });
         }

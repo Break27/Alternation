@@ -1,8 +1,5 @@
 <manifest>
     <list>
-        <resource name="alter" type="skin" location="alter/skin.xml"></resource>
-        <resource name="visui" type="skin" location="visui/skin.json"></resource>
-        <resource name="legacy" type="skin" location="legacy/skin.xml"></resource>
         <resource name="default" type="skin" location="default/skin.xml"></resource>
     </list>
 </manifest>
