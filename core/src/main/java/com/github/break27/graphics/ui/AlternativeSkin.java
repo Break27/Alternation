@@ -143,7 +143,7 @@ public class AlternativeSkin extends Skin implements SerializableResource {
         } else if(defaultFile.exists()) {
             addRegions(new TextureAtlas(defaultFile));
         } else {
-            throw new SerializationException("Invaild skin file: No .atlas file found.");
+            throw new SerializationException("Invalid skin file: No .atlas file found.");
         }
         /* Parse <Class> element */
         if(root.hasChild("class")) {

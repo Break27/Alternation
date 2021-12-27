@@ -25,8 +25,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import com.github.break27.graphics.ui.AlternativeWidget;
+import com.github.break27.graphics.ui.LocalizableWidget;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.CloseButton;
+import com.github.break27.graphics.ui.dialog.WindowResizeDialog;
 import com.github.break27.graphics.ui.widget.AlterLabel;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisTable;
@@ -36,7 +38,8 @@ import com.kotcrab.vis.ui.widget.VisWindow;
  *
  * @author break27
  */
-public abstract class AlternativeWindow extends VisWindow implements AlternativeWidget {
+public abstract class AlternativeWindow extends VisWindow
+        implements StyleAppliedWidget, LocalizableWidget {
     VisTable menuTable;
     VisTable contentTable;
     VisTable footerTable;
@@ -45,6 +48,8 @@ public abstract class AlternativeWindow extends VisWindow implements Alternative
     
     Image titleImage;
     AlterLabel titleLabel;
+
+    WindowResizeDialog resizeDialog;
 
     private boolean windowCreated = false;
     
@@ -64,8 +69,9 @@ public abstract class AlternativeWindow extends VisWindow implements Alternative
         getTitleTable().add(titleBarButtonsTable).padRight(-getPadRight() + 0.7f).right();
         // panel
         add(createPanel());
+        resizeDialog = new WindowResizeDialog();
         
-        setStyleEnabled();
+        register();
     }
     
     public abstract void create();
@@ -87,11 +93,9 @@ public abstract class AlternativeWindow extends VisWindow implements Alternative
     public Table getSubTitleTable() {
         return subTitleTable;
     }
-    
-    @Override
-    public Label getTitleLabel() {
-        if(titleLabel == null) titleLabel = new AlterLabel(super.getTitleLabel().getText().toString());
-        return titleLabel;
+
+    public void appendResizeDialog() {
+        resizeDialog.show(getStage());
     }
     
     public void setTitleImage(Drawable drawable) {
@@ -120,12 +124,23 @@ public abstract class AlternativeWindow extends VisWindow implements Alternative
             windowCreated = true;
         }
     }
-    
+
+    @Override
+    public Label getTitleLabel() {
+        if(titleLabel == null) titleLabel = new AlterLabel(super.getTitleLabel().getText().toString());
+        return titleLabel;
+    }
+
     @Override
     public void styleApply() {
         setStyle(getAlterSkin().get(WindowStyle.class));
     }
-    
+
+    @Override
+    public void localeApply() {
+        getTitleLabel().setText(translate("TITLE"));
+    }
+
     @Override
     public void addCloseButton() {
         CloseButton closeButton = new CloseButton();

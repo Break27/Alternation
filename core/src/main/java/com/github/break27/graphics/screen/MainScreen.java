@@ -19,18 +19,10 @@ package com.github.break27.graphics.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.break27.Game3;
-import com.github.break27.graphics.Viewpoint;
 import com.github.break27.graphics.ui.window.BrowserWindow;
 import com.github.break27.graphics.ui.window.HtmlViewerWindow;
-import com.github.break27.system.Resource;
 import com.github.break27.graphics.ui.window.TestWindow;
 import com.github.break27.graphics.ui.window.ViewpointWindow;
 
@@ -48,7 +40,6 @@ public class MainScreen extends AbstractScreen {
     TestWindow window2;
     HtmlViewerWindow window3;
     BrowserWindow window4;
-    Viewpoint viewpoint;
     
     @Override
     public int getId() {
@@ -95,5 +86,89 @@ public class MainScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
+    }
+}
+
+class MultiWindowScreen extends AbstractScreen {
+
+    public MultiWindowScreen(Game3 game) {
+        super(game);
+    }
+
+    @Override
+    public int getId() {
+        return ScreenType.MULTI;
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void render(float delta) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+}
+
+class SingleWindowScreen extends AbstractScreen {
+
+    public SingleWindowScreen(Game3 game) {
+        super(game);
+    }
+
+    @Override
+    public int getId() {
+        return ScreenType.SINGLE;
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void render(float delta) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
+
     }
 }

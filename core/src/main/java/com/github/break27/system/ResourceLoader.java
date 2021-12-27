@@ -18,18 +18,23 @@
 package com.github.break27.system;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
+import com.github.break27.Game3;
 import com.github.break27.graphics.ui.AlternativeFont;
 import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.launcher.LauncherAdapter;
 import com.kotcrab.vis.ui.VisUI;
+
+import java.util.Locale;
 
 /**
  *
@@ -47,11 +52,16 @@ public class ResourceLoader {
     
     public static void loadManifest(FileHandle manifest, final Array<FileHandle> files) {
         findResources(manifest).forEach(element -> {
-            String name = element.getAttribute("name", null);
-            String type = element.getAttribute("type");
-            FileHandle sibling = manifest.sibling(element.getAttribute("location"));
+            String name = element.getAttribute("name", "default");
+            String type = element.getAttribute("type", null);
+            FileHandle sibling;
+            // Only manifest with location attribute is a valid one.
+            if(element.hasAttribute("location"))
+                sibling = manifest.sibling(element.getAttribute("location"));
+            else throw new GdxRuntimeException(manifest + ": Invalid Manifest: " +
+                    "\"location\" Attribute is not found.");
             if(type.equals("manifest")) {
-                // preventing from infinite recursive loop
+                // prevent from infinite recursive loop
                 if(sibling.path().contains("..")) {
                     throw new GdxRuntimeException("Unsupported Operation: No access to parent directory: " + sibling);
                 } else if(files.contains(sibling, false) || sibling.equals(manifest)) {
@@ -60,12 +70,12 @@ public class ResourceLoader {
                     files.add(sibling);
                     loadManifest(sibling, files);
                 }
-            } else if(name != null) {
+            } else {
                 /* Font */
                 if(type.equals("font")) {
                     FreeTypeFontParameter parameter = new FreeTypeFontParameter();
                     // Font size
-                    parameter.size = Integer.valueOf(element.getAttribute("size", "12"));
+                    parameter.size = Integer.parseInt(element.getAttribute("size", "12"));
                     // Inherited and Extended Characters
                     if(element.getParent().hasChild("inherit")) 
                         parameter.characters = element.getParent().getChildByName("inherit").getText();
@@ -76,6 +86,8 @@ public class ResourceLoader {
                 }
                 /* Skin */
                 if(type.equals("skin")) loadSkin(name, sibling);
+                /* I18N */
+                if(type.equals("i18n")) loadI18N(name, sibling, getLocale());
             }
         });
     }
@@ -107,7 +119,12 @@ public class ResourceLoader {
                     "\" does not exist! Skin \"" + name + "\" is not loaded.");
         }
     }
-    
+
+    private static void loadI18N(String name, FileHandle bundleFile, Locale locale) {
+        // ensure using UTF-8 encoding.
+        Locales.putBundle(name, I18NBundle.createBundle(bundleFile, locale, "UTF-8"));
+    }
+
     private static void loadVisUI() {
         VisUI.load();
     }
@@ -149,5 +166,20 @@ public class ResourceLoader {
             }
             read = true;
         }
+    }
+
+    private static Locale getLocale() {
+        Preferences prefs = Gdx.app.getPreferences(Game3.Launcher.tmpDataPath());
+        String language = "zh", country = "CN", variant = "";
+        if(prefs.contains("locale")) {
+            String[] localeName = prefs.getString("locale").split("_", 2);
+            if(localeName.length >= 2) {
+                language = localeName[0];
+                country = localeName[1];
+            }
+            if(localeName.length == 3) variant = localeName[2];
+        }
+        System.out.println(language + country + variant);
+        return new Locale(language, country, variant);
     }
 }

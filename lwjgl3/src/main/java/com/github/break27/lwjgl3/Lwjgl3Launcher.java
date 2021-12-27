@@ -17,6 +17,8 @@
 
 package com.github.break27.lwjgl3;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.github.break27.Game3;
@@ -31,6 +33,13 @@ public class Lwjgl3Launcher {
 
     private static Lwjgl3Application createApplication(Launcher launcher) {
         return new Lwjgl3Application(new Game3(launcher), getDefaultConfiguration());
+    }
+
+    private static Lwjgl3ApplicationConfiguration getConfiguration(Launcher launcher) {
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        Preferences prefs = Gdx.app.getPreferences(launcher.getGameDataPath());
+        // todo
+        return config;
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
@@ -49,7 +58,7 @@ public class Lwjgl3Launcher {
 }
 
 class Launcher implements LauncherAdapter {
-    
+
     @Override
     public String getGameDataPath() {
         String osName = System.getProperty("os.name").toLowerCase();
@@ -57,5 +66,10 @@ class Launcher implements LauncherAdapter {
         if (osName.contains("windows")) return home + "/Documents/MyLibGdxGame/";
         // For Linux, OSX and other Unix-like OSs.
         return home + "/.config/MyLibGdxGame/";
+    }
+
+    @Override
+    public String tmpDataPath() {
+        return Gdx.files.internal("misc/tmp").file().getAbsolutePath() + "/";
     }
 }

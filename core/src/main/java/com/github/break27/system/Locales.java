@@ -17,10 +17,34 @@
 
 package com.github.break27.system;
 
+import com.badlogic.gdx.utils.I18NBundle;
+
+import java.util.HashMap;
+
 /**
- *
  * @author break27
  */
-public class Locale {
-    
+public class Locales {
+
+    private static HashMap<String, I18NBundle> Bundles = new HashMap<>();
+
+    public static I18NBundle getBundle(String name) {
+        return Bundles.get(name);
+    }
+
+    public static void putBundle(String name, I18NBundle bundle) {
+        Bundles.put(name, bundle);
+    }
+
+    public static String translate(String bundleName, String type, String name) {
+        return Bundles.get(bundleName).get(parse(type, name));
+    }
+
+    public static String translate(String bundleName, String type, String name, Object... args) {
+        return Bundles.get(bundleName).format(parse(type, name), args);
+    }
+
+    private static String parse(String type, String name) {
+        return type + "_" + name;
+    }
 }

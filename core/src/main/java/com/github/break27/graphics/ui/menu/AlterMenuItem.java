@@ -15,30 +15,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.ui.widget;
+package com.github.break27.graphics.ui.menu;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
-import com.kotcrab.vis.ui.widget.VisScrollPane;
+import com.kotcrab.vis.ui.widget.MenuItem;
 
 /**
- *
  * @author break27
  */
-public class AlterScrollPane extends VisScrollPane implements StyleAppliedWidget {
-    
-    public AlterScrollPane(Actor widget) {
-        super(widget);
-        setScrollbarsOnTop(true);
-        setupFadeScrollBars(0.75f, 1);
+public class AlterMenuItem extends MenuItem implements StyleAppliedWidget {
+
+    public AlterMenuItem(String text, ChangeListener changeListener) {
+        this(text, null, changeListener);
+    }
+
+    public AlterMenuItem(String text, Image image, ChangeListener changeListener) {
+        super(text, image, changeListener);
         register();
     }
-    
-    @Override
-    public void styleApply() {
-    }
-    
+
     @Override
     public void destroy() {
+    }
+
+    @Override
+    public void styleApply() {
+        getLabel().setStyle(new Label.LabelStyle(getAlterFont(), Color.WHITE));
     }
 }

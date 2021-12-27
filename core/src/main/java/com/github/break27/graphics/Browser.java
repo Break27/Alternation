@@ -27,7 +27,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.github.break27.graphics.ui.AlternativeWidget;
+import com.github.break27.graphics.ui.LocalizableWidget;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.widget.AlterLabel;
 import cz.vutbr.web.css.MediaSpec;
 import java.io.ByteArrayOutputStream;
@@ -55,10 +56,9 @@ public class Browser {
 
     static BrowserTable table;
     static AlterLabel titleLabel;
-    
-    ByteArrayOutputStream out;
+
     Dimension windowSize;
-    
+
     BrowserModule.BrowserParser Parser;
     BrowserModule.BrowserRenderer Renderer;
     
@@ -88,10 +88,9 @@ public class Browser {
     public Browser(int width, int height, int displayWidth, int displayHeight, boolean isClipped) {
         table = new BrowserTable();
         titleLabel = new AlterLabel();
-        titleLabel.setEllipsis(true);
-        titleLabel.setWidth(100f);
+        titleLabel.setWrap(true);
         
-        table.warning("No content loaded.");
+        table.warning("NO-CONTENT");
         windowSize = new Dimension(displayWidth, displayHeight);
         Parser = new BrowserModule.BrowserParser(windowSize);
         Renderer = new BrowserModule.BrowserRenderer(width, height, isClipped);
@@ -213,14 +212,14 @@ public class Browser {
              */
             private void parseHtml(DocumentSource source) throws IOException, SAXException {
                 titleLabel.setText("");
-                table.info("Connecting to " + source.getURL() + "...");
+                table.info("CONNECT", source.getURL());
                 try {
                     isLoading = true;
                     DOMSource parser = new DefaultDOMSource(source);
                     // utf-8 support
                     parser.setContentType("text/html;charset=utf-8");
                     Document doc = parser.parse();
-                    table.info("Loading " + source.getURL() + "...");
+                    table.info("LOADING", source.getURL());
                     // create the media specification
                     MediaSpec media = new MediaSpec("screen");
                     media.setDimensions(windowSize.width, windowSize.height);
@@ -252,17 +251,17 @@ public class Browser {
                     contentCanvas.getConfig().setLoadImages(true);
                     contentCanvas.getConfig().setLoadBackgroundImages(true);
 
-                    table.loading("Rendering...");
+                    table.loading("RENDER");
                     contentCanvas.createLayout(windowSize);
                     ImageIO.write(contentCanvas.getImage(), "png", out);
                     
                 } catch(IOException | DOMException | SAXException ex) {
-                    table.error("Error: " + ex.getMessage());
+                    table.error("ERROR", ex.getMessage());
                     throw ex;
                 } finally {
                     source.close();
                 }
-                table.success("Browser Ready.");
+                table.success("READY");
                 isLoading = false;
                 /*
                 * post Rendering thread to render thread
@@ -336,7 +335,7 @@ public class Browser {
     }
 }
 
-class BrowserTable extends Table implements AlternativeWidget {
+class BrowserTable extends Table implements StyleAppliedWidget, LocalizableWidget {
     
     private Image badge;
     private AlterLabel label;
@@ -349,38 +348,36 @@ class BrowserTable extends Table implements AlternativeWidget {
     public BrowserTable(String text) {
         badge = new Image();
         label = new AlterLabel(text);
+        label.setWrap(true);
         add(badge).center();
         add(label).spaceLeft(5f);
         
-        label.setEllipsis(true);
-        label.setWidth(125f);
-        
-        setStyleEnabled();
+        register();
     }
-    
-    public void loading(String text) {
+
+    public void loading(String code, Object... args) {
         badge.setDrawable(loading);
-        label.setText(text);
+        label.setText(translate("label", code, args));
     }
-    
-    public void warning(String text) {
+
+    public void warning(String code, Object... args) {
         badge.setDrawable(warning);
-        label.setText(text);
+        label.setText(translate("label", code, args));
     }
-    
-    public void error(String text) {
+
+    public void error(String code, Object... args) {
         badge.setDrawable(error);
-        label.setText(text);
+        label.setText(translate("label", code, args));
     }
-    
-    public void success(String text) {
+
+    public void success(String code, Object... args) {
         badge.setDrawable(success);
-        label.setText(text);
+        label.setText(translate("label", code, args));
     }
-    
-    public void info(String text) {
+
+    public void info(String code, Object... args) {
         badge.setDrawable(info);
-        label.setText(text);
+        label.setText(translate("label", code, args));
     }
     
     @Override

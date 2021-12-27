@@ -17,12 +17,19 @@
 
 package com.github.break27.graphics.ui.window;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.github.break27.graphics.Browser;
+import com.github.break27.graphics.ui.LocalizableWidget;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.OptionButton;
+import com.github.break27.graphics.ui.menu.AlterMenuItem;
+import com.github.break27.graphics.ui.menu.TitleMenu;
 import com.github.break27.graphics.ui.widget.AlterScrollPane;
+import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
 /**
@@ -30,7 +37,7 @@ import com.kotcrab.vis.ui.widget.PopupMenu;
  * @author break27
  */
 public class BrowserWindow extends CollapsibleWindow {
-    
+
     Browser browser;
     Image optionImage;
     
@@ -38,9 +45,14 @@ public class BrowserWindow extends CollapsibleWindow {
         super(name, width, height);
         padBottom(5f);
         browser = new Browser(width, height, false);
+
         addOptionButton();
     }
-    
+
+    public void appendLinkDialog() {
+
+    }
+
     @Override
     public int getType() {
         return WindowType.BROW;
@@ -48,15 +60,17 @@ public class BrowserWindow extends CollapsibleWindow {
 
     @Override
     public void create() {
-        browser.load("https://www.bilibili.com");
-        //browser.load("https://www.un.org/zh/about-us/universal-declaration-of-human-rights");
-        //browser.load("https://e621.net/posts/2977638?q=monomasa");
+        //browser.load("https://www.bilibili.com");
+        browser.load("https://www.un.org/zh/about-us/universal-declaration-of-human-rights");
         //browser.load("https://www.youtube.com");
         //browser.load(Gdx.files.internal("misc/html/about.html").file().toURI());
         Table table = browser.getBrowserTable();
         Image image = browser.getImage();
         AlterScrollPane scrollpane = new AlterScrollPane(image);
         scrollpane.setOverscroll(false, false);
+
+        TitleMenu menu = new TitleMenu(this);
+        menu.listenTo(getTitleTable());
         
         getSubTitleTable().add(browser.getBrowserLabel()).left();
         getContentTable().add(scrollpane);
@@ -78,17 +92,65 @@ public class BrowserWindow extends CollapsibleWindow {
         super.styleApply();
         setTitleImage(getAlterSkin().getDrawable("icon20-application"));
     }
-
-    @Override
-    public void localeApply() {
-    }
     
     private void addOptionButton() {
-        OptionButton button = new OptionButton();
+        OptionButton button = new OptionButton(new BrowserOptionMenu());
         addTitleTableButton(button);
     }
-}
 
-class BrowserPopupMenu extends PopupMenu {
+    private class BrowserOptionMenu extends PopupMenu
+            implements StyleAppliedWidget, LocalizableWidget {
 
+        AlterMenuItem browser_link;
+        AlterMenuItem browser_reload;
+        AlterMenuItem window_close;
+
+        public BrowserOptionMenu() {
+            createMenu();
+            register();
+            pack();
+        }
+
+        private void createMenu() {
+            browser_link = new AlterMenuItem("Link...", new Image(), new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    appendLinkDialog();
+                }
+            });
+            browser_reload = new AlterMenuItem("Reload", new Image(), new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+
+                }
+            });
+            window_close = new AlterMenuItem("Close", new Image(), new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    close();
+                }
+            });
+
+            addItem(browser_link);
+            addItem(browser_reload);
+            addSeparator();
+            addItem(window_close);
+        }
+
+        @Override
+        public void styleApply() {
+            window_close.getImage().setDrawable(getAlterSkin().getDrawable("icon-window-close"));
+        }
+
+        @Override
+        public void localeApply() {
+            browser_link.setText(translate("LINK"));
+            browser_reload.setText(translate("RELOAD"));
+            window_close.setText(translate("CLOSE"));
+        }
+
+        @Override
+        public void destroy() {
+        }
+    }
 }

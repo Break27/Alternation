@@ -36,10 +36,11 @@ public class HtmlViewerWindow extends CollapsibleWindow {
         addCollapseButton();
         renderer = new HtmlRenderer(width, height, false);
     }
-    
-    public void resizeViewer(int width, int height) {
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
         renderer.resize(width, height);
-        super.setSize(width, height);
     }
     
     @Override
@@ -65,18 +66,5 @@ public class HtmlViewerWindow extends CollapsibleWindow {
     public void styleApply() {
         super.styleApply();
         setTitleImage(getAlterSkin().getDrawable("icon20-info-wb"));
-    }
-
-    @Override
-    public void localeApply() {
-    }
-    
-    /** Replaced by {@code resize(int, int)}.
-     *  @param width
-     *  @param height
-     */
-    @Deprecated
-    @Override
-    public void setSize(float width, float height) {
     }
 }

@@ -23,9 +23,11 @@ package com.github.break27.launcher;
  */
 public interface LauncherAdapter {
     // package info
-    public static final String VERSION = "0.0.3";
-    public static final String RELEASE = "SNAPSHOT";
+    String VERSION = "0.0.3";
+    String RELEASE = "SNAPSHOT";
     
-    // game filepaths
-    public String getGameDataPath();
+    // game file-paths
+    String getGameDataPath();
+
+    String tmpDataPath();
 }

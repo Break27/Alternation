@@ -18,12 +18,20 @@
 package com.github.break27.graphics.ui.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.github.break27.graphics.ui.AlternativeWidget;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.github.break27.graphics.ui.LocalizableWidget;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
+import com.github.break27.graphics.ui.widget.AlterLabel;
+import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
@@ -31,14 +39,15 @@ import com.kotcrab.vis.ui.widget.VisWindow;
  *
  * @author break27
  */
-public abstract class AlternativeMenu extends VisWindow implements AlternativeWidget {
+public abstract class AlternativeMenu extends VisWindow
+        implements StyleAppliedWidget, LocalizableWidget {
 
-    AlternativePopupMenu menu;
+    AlterPopupMenu menu;
     boolean isEntered = false;
     
     public AlternativeMenu(String name, Stage stage) {
         super(name, false);
-        menu = new AlternativePopupMenu();
+        menu = new AlterPopupMenu();
         setStage(stage);
         stage.addActor(this);
         
@@ -47,7 +56,7 @@ public abstract class AlternativeMenu extends VisWindow implements AlternativeWi
         setVisible(false);
         pack();
         
-        setStyleEnabled();
+        register();
     }
     
     public abstract void listenTo(Table parent);
@@ -113,12 +122,14 @@ public abstract class AlternativeMenu extends VisWindow implements AlternativeWi
     }
 }
 
-class AlternativePopupMenu extends PopupMenu {
+class AlterPopupMenu extends PopupMenu {
     
-    public AlternativePopupMenu() {
+    public AlterPopupMenu() {
+
     }
 
     @Override
+    @Deprecated
     public boolean remove() {
         return false;
     }

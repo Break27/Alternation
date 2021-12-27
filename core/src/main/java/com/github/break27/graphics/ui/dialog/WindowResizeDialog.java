@@ -23,8 +23,8 @@ package com.github.break27.graphics.ui.dialog;
  */
 public class WindowResizeDialog extends AlternativeDialog {
     
-    public WindowResizeDialog(String name) {
-        super(name);
+    public WindowResizeDialog() {
+        super("Dialog");
         addCloseButton();
         text("This is a test.");
     }
@@ -37,5 +37,6 @@ public class WindowResizeDialog extends AlternativeDialog {
     
     @Override
     public void localeApply() {
+        getTitleLabel().setText(translate("TITLE"));
     }
 }

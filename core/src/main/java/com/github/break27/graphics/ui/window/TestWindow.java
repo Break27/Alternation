@@ -57,9 +57,4 @@ public class TestWindow extends SerializableWindow {
         super.styleApply();
         setTitleImage(getAlterSkin().getDrawable("icon20-application"));
     }
-    
-    @Override
-    public void localeApply() {
-        
-    }
 }

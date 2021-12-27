@@ -18,15 +18,15 @@
 package com.github.break27.graphics.ui.widget;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.github.break27.graphics.ui.AlternativeWidget;
+import com.github.break27.graphics.ui.LocalizableWidget;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.kotcrab.vis.ui.widget.VisLabel;
 
 /**
  *
  * @author break27
  */
-public class AlterLabel extends VisLabel implements AlternativeWidget {
+public class AlterLabel extends VisLabel implements StyleAppliedWidget {
     
     Color color;
     
@@ -41,16 +41,12 @@ public class AlterLabel extends VisLabel implements AlternativeWidget {
     public AlterLabel(String text, Color color) {
         super(text);
         this.color = color;
-        setStyleEnabled();
+        register();
     }
     
     @Override
     public void styleApply() {
         setStyle(new LabelStyle(getAlterFont(), color));
-    }
-
-    @Override
-    public void localeApply() {
     }
     
     @Override

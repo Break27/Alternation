@@ -39,11 +39,11 @@ public class TitleMenu extends AlternativeMenu {
     
     CollapsibleWindow window;
     // items
-    MenuItem window_restore;
-    MenuItem window_resize;
-    MenuItem window_collapse;
-    MenuItem window_maximize;
-    MenuItem window_close;
+    AlterMenuItem window_restore;
+    AlterMenuItem window_resize;
+    AlterMenuItem window_collapse;
+    AlterMenuItem window_maximize;
+    AlterMenuItem window_close;
     // icons
     Drawable icon_restore;
     Drawable icon_collapse;
@@ -83,32 +83,31 @@ public class TitleMenu extends AlternativeMenu {
     
     @Override
     protected void create(PopupMenu menu) {
-        window_restore = new MenuItem("Restore", new Image(), new ChangeListener() {
+        window_restore = new AlterMenuItem("Restore", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
                 System.out.println("Restore!");
             }
         });
-        window_resize = new MenuItem("Resize", new ChangeListener() {
+        window_resize = new AlterMenuItem("Resize", new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                if(window instanceof ViewpointWindow)
-                    ((ViewpointWindow)window).resizeDialogAppend();
+                window.appendResizeDialog();
             }
         });
-        window_collapse = new MenuItem("Collapse", new Image(), new ChangeListener() {
+        window_collapse = new AlterMenuItem("Collapse", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
                 window.collapse();
             }
         });
-        window_maximize = new MenuItem("Maximize", new Image(), new ChangeListener() {
+        window_maximize = new AlterMenuItem("Maximize", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
                 System.out.println("Maximize!");
             }
         });
-        window_close = new MenuItem("Close", new Image(), new ChangeListener() {
+        window_close = new AlterMenuItem("Close", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
                 window.close();
@@ -134,17 +133,20 @@ public class TitleMenu extends AlternativeMenu {
     
     @Override
     public void localeApply() {
-        
+        window_restore.setText(translate("RESTORE"));
+        window_resize.setText(translate("RESIZE"));
+        window_maximize.setText(translate("MAXIMIZE"));
+        window_close.setText(translate("CLOSE"));
     }
 
     private void collapseProcess() {
         window_restore.setDisabled(window.isCollapsed());
         window_resize.setDisabled(window.isCollapsed());
         if(window.isCollapsed()) {
-            window_collapse.setText("Extend");
+            window_collapse.setText(translate("EXTEND"));
             window_collapse.getImage().setDrawable(icon_extend);
         } else {
-            window_collapse.setText("Collapse");
+            window_collapse.setText(translate("COLLAPSE"));
             window_collapse.getImage().setDrawable(icon_collapse);
         }
     }

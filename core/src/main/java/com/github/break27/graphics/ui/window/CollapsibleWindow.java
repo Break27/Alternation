@@ -30,7 +30,7 @@ public abstract class CollapsibleWindow extends SerializableWindow {
     
     VisImageButton collapseButton;
     private boolean Collapsed = false;
-    
+
     int labelHeight;
     int width;
     int height;
@@ -60,8 +60,13 @@ public abstract class CollapsibleWindow extends SerializableWindow {
             }
         });
     }
-    
+
+    /** Replaced by {@code resize(int, int)}.
+     *  @param width
+     *  @param height
+     */
     public void resize(int width, int height) {
+        super.setSize(width, height);
         this.width = width;
         this.height = height;
     }
@@ -69,15 +74,13 @@ public abstract class CollapsibleWindow extends SerializableWindow {
     /** Make window collapsed.
      */
     public void collapse() {
-        int footerHeight = (int) getFooterTable().getHeight();
-        int menuHeight = (int) getMenuTable().getHeight();
         contentTable.setVisible(Collapsed);
         if(!Collapsed) {
-            setPosition(getX(), getY() + height + menuHeight + footerHeight);
+            setPosition(getX(), getY() + height);
             setHeight(labelHeight);
         } else {
-            setPosition(getX(), getY() - height - menuHeight - footerHeight);
-            setHeight(height + labelHeight + menuHeight + footerHeight);
+            setPosition(getX(), getY() - height);
+            setHeight(height + labelHeight);
         }
         Collapsed = !Collapsed;
     }

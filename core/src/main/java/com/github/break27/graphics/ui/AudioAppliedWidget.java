@@ -15,12 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics;
+package com.github.break27.graphics.ui;
 
-/**
- *
- * @author break27
- */
-public interface Renderer {
-    void render();
+public interface AudioAppliedWidget extends AlternativeWidget {
+
+    void audioApply();
 }

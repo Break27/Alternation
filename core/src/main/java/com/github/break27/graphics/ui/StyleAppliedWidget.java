@@ -15,12 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.game;
+package com.github.break27.graphics.ui;
 
-/**
- *
- * @author break27
- */
-public class PreferenceLoader {
-    
+public interface StyleAppliedWidget extends AlternativeWidget {
+
+    void styleApply();
 }

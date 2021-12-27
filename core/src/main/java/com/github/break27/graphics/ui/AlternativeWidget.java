@@ -19,6 +19,7 @@ package com.github.break27.graphics.ui;
 
 import com.badlogic.gdx.utils.Array;
 import com.github.break27.system.Resource;
+
 import java.util.HashMap;
 
 /**
@@ -27,66 +28,114 @@ import java.util.HashMap;
  */
 public interface AlternativeWidget {
     
-    public static final class Widgets {
+    final class Widgets {
         
-        static final HashMap<Class, Array<AlternativeWidget>> Map = new HashMap();
+        private static final HashMap<Class, Array<AlternativeWidget>> Map = new HashMap<>();
         
         private static final class Methods {
             private static final int STYLE = 0;
             private static final int LOCALE = 1;
+            private static final int AUDIO = 2;
         }
         
-        /**
-         * @author break27
-         */
+        /** Apply style attributes to all widgets
+         *
+         * */
         public static void applyStyle() {
-            apply(null, null, Methods.STYLE);
+            applyStyle(null, null);
         }
 
         public static void applyStyle(AlternativeWidget widget) {
-            apply(widget, null, Methods.STYLE);
+            applyStyle(widget, null);
         }
 
         public static void applyStyle(Class type) {
-            apply(null, type, Methods.STYLE);
+            applyStyle(null, type);
         }
-        
+
+        /** Apply style attribute to a specific widget with
+         * a specific type.
+         * */
         public static void applyStyle(AlternativeWidget widget, Class type) {
             apply(widget, type, Methods.STYLE);
         }
 
-        /**
-         * @author break27
-         */
+        /** Apply locale attribute to all widgets.
+         *
+         * */
         public static void applyLocale() {
-            apply(null, null, Methods.LOCALE);
+            applyLocale(null, null);
         }
 
-        public static void applyLocale(AlternativeWidget widget) {
-            apply(widget, null, Methods.LOCALE);
+        public static void applyLocale(LocalizableWidget widget) {
+            applyLocale(widget, null);
         }
 
         public static void applyLocale(Class type) {
-            apply(null, type, Methods.LOCALE);
+            applyLocale(null, type);
         }
-        
-        public static void applyLocale(AlternativeWidget widget, Class type) {
+
+        /** Apply locale attribute to a specific widget
+         * with a specific type.
+         * */
+        public static void applyLocale(LocalizableWidget widget, Class type) {
             apply(widget, type, Methods.LOCALE);
         }
-        
-        private static void apply(AlternativeWidget widget, Class type, int methodInvoke) {
+
+        /** Apply audio attribute to all widgets.
+         *
+         * */
+        public static void applyAudio() {
+            applyAudio(null, null);
+        }
+
+        public static void applyAudio(AudioAppliedWidget widget) {
+            applyAudio(widget, null);
+        }
+
+        public static void applyAudio(Class type) {
+            applyAudio(null, type);
+        }
+
+        /** Apply audio attribute to a specific widget
+         * with a specific type.
+         * */
+        public static void applyAudio(AudioAppliedWidget widget, Class type) {
+            apply(widget, type, Methods.AUDIO);
+        }
+
+        /** Apply specific attributes to specific widgets.
+         *
+         * */
+        private static void apply(AlternativeWidget widget, Class type, int invoke) {
             Map.forEach((Class C, Array<AlternativeWidget> A) -> {
+                // check if the specific type is of the same class
                 if(type == null || C.getName().equals(type.getName())) {
                     A.forEach((AlternativeWidget W) -> {
+                        // check if hashcode equals
                         if(widget == null || widget.hashCode() == W.hashCode()) {
-                            if(methodInvoke == Methods.STYLE) W.styleApply();
-                            if(methodInvoke == Methods.LOCALE) W.localeApply();
+                            if(invoke == -1 || invoke == Methods.STYLE) {
+                                if(W instanceof StyleAppliedWidget)
+                                    ((StyleAppliedWidget) W).styleApply();
+                            }
+                            if(invoke == -1 || invoke == Methods.LOCALE) {
+                                if(W instanceof LocalizableWidget)
+                                    ((LocalizableWidget) W).localeApply();
+                            }
+                            if(invoke == -1 || invoke == Methods.AUDIO) {
+                                if(W instanceof AudioAppliedWidget) {
+                                    ((AudioAppliedWidget) W).audioApply();
+                                }
+                            }
                         }
                     });
                 }
             });
         }
-        
+
+        /** Destroy all registered widgets.
+         *
+         * */
         public static void destroyAll() {
             Map.values().forEach(Widgets -> {
                 for(AlternativeWidget widget : Widgets) {
@@ -96,36 +145,34 @@ public interface AlternativeWidget {
         }
     }
     
-    
-    
-    /** Enable style management on a widget.
-     *  Every class could contain multiple instances (or Widgets).
+    /** Register a widget to Map.
      */
-    public default void setStyleEnabled() {
+    default void register() {
         if(Widgets.Map.containsKey(this.getClass())) {
             Widgets.Map.get(this.getClass()).add(this);
         } else {
-            Widgets.Map.put(this.getClass(), new Array(new AlternativeWidget[]{this}));
+            Widgets.Map.put(this.getClass(), new Array<>(new AlternativeWidget[]{this}));
         }
-        /* Apply to itself immediately */
-        styleApply();
-        localeApply();
+        // Apply to itself immediately.
+        Widgets.apply(this, this.getClass(), -1);
     }
     
     /** Get default Skin.
      *  @return AlternativeSkin
      */
-    public default AlternativeSkin getAlterSkin() {
+    default AlternativeSkin getAlterSkin() {
         return Resource.getSkin("default");
     }
-    
-    public default AlternativeFont getAlterFont() {
+
+    /** Get default Font.
+     * @return AlternativeFont
+     * */
+    default AlternativeFont getAlterFont() {
         return Resource.getFont("default-font");
     }
-    
-    public void styleApply();
-    
-    public void localeApply();
-    
-    public void destroy();
+
+    /** Destroy widget. Note: Normally it would not
+     * remove the widget from the stage directly.
+     * */
+    void destroy();
 }

@@ -28,7 +28,7 @@ import com.github.break27.launcher.LauncherAdapter;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Game3 extends Game {
     public AssetManager Asset;
-    public LauncherAdapter Launcher;
+    public static LauncherAdapter Launcher;
     
     public Game3() {
     }

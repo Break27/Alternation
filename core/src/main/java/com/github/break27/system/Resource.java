@@ -37,6 +37,7 @@ public class Resource {
     public static final class DefaultType {
         public static final String SKIN = "skin";
         public static final String FONT = "font";
+        public static final String LOCALE = "locale";
     }
     
     private static final HashMap<String, SerializableResource> Resources = new HashMap();

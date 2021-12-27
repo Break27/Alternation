@@ -20,36 +20,50 @@ package com.github.break27.graphics.ui.dialog;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import com.github.break27.graphics.ui.AlternativeWidget;
+import com.github.break27.graphics.ui.LocalizableWidget;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.CloseButton;
+import com.github.break27.graphics.ui.widget.AlterLabel;
 import com.kotcrab.vis.ui.widget.VisDialog;
 
 /**
  *
  * @author break27
  */
-public abstract class AlternativeDialog extends VisDialog implements AlternativeWidget {
+public abstract class AlternativeDialog extends VisDialog
+        implements StyleAppliedWidget, LocalizableWidget {
+
     Image titleImage;
     CloseButton closeButton;
+    AlterLabel titleLabel;
     
     public AlternativeDialog(String name) {
         super(name);
-        setStyleEnabled();
+        getTitleTable().clear();
+        getTitleTable().add(getTitleLabel()).expand().left();
+        register();
     }
     
     public void setTitleImage(Drawable drawable) {
         if(titleImage == null) {
             titleImage = new Image(drawable);
-            getTitleTable().getCell(getTitleLabel()).padLeft(titleImage.getWidth() + 5f);
+            getTitleTable().getCell(getTitleLabel()).padLeft(titleImage.getWidth() + 2.5f);
             getTitleTable().addActorAt(0, titleImage);
         } else {
             titleImage.setDrawable(drawable);
         }
     }
-    
+
+    @Override
+    public Label getTitleLabel() {
+        if(titleLabel == null) titleLabel = new AlterLabel(super.getTitleLabel().getText().toString());
+        return titleLabel;
+    }
+
     @Override
     public void addCloseButton() {
         closeButton = new CloseButton();

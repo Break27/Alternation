@@ -41,8 +41,7 @@ public class ViewpointWindow extends CollapsibleWindow {
         
         addCollapseButton();
     }
-    
-    WindowResizeDialog resizeDialog;
+
     Viewpoint viewpoint;
     Image image;
     
@@ -67,8 +66,7 @@ public class ViewpointWindow extends CollapsibleWindow {
 
         TitleMenu menu = new TitleMenu(this);
         menu.listenTo(getTitleTable());
-        
-        resizeDialog = new WindowResizeDialog("Resize");
+
         // default value: focused
         setFocus();
     }
@@ -77,10 +75,6 @@ public class ViewpointWindow extends CollapsibleWindow {
     public void styleApply() {
         super.styleApply();
         setTitleImage(getAlterSkin().getDrawable("icon20-game-map"));
-    }
-    
-    @Override
-    public void localeApply() {
     }
     
     @Override
@@ -97,15 +91,11 @@ public class ViewpointWindow extends CollapsibleWindow {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        this.viewpoint.resize(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), width, height);
+        viewpoint.resize(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), width, height);
     }
     
     public void setViewpoint(Viewpoint viewpoint) {
         this.viewpoint = viewpoint;
-    }
-    
-    public void resizeDialogAppend() {
-        resizeDialog.show(getStage());
     }
     
     SpriteBatch batch = new SpriteBatch();

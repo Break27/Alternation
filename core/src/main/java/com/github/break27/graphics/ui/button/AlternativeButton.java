@@ -19,20 +19,21 @@ package com.github.break27.graphics.ui.button;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.github.break27.graphics.ui.AlternativeWidget;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
 /**
  *
  * @author break27
  */
-public abstract class AlternativeButton extends VisImageButton implements AlternativeWidget {
+public abstract class AlternativeButton extends VisImageButton
+        implements StyleAppliedWidget {
     
     Image image;
     
     public AlternativeButton(Drawable icon) {
         super(icon);
-        setStyleEnabled();
+        register();
     }
     
     public void setImage(Drawable drawable) {

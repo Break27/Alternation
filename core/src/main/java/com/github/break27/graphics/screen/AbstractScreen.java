@@ -30,11 +30,13 @@ import com.github.break27.Game3;
  */
 public abstract class AbstractScreen extends InputAdapter implements Screen {
     public static final class ScreenType {
+        public static final int TEST = -1;
         public static final int BANNER = 0;
         public static final int LOADING = 1;
         public static final int MAIN = 2;
+        public static final int MULTI = 21;
+        public static final int SINGLE = 22;
         public static final int FINAL = 3;
-        public static final int TEST = 4;
     }
     
     final Game3 parent;
