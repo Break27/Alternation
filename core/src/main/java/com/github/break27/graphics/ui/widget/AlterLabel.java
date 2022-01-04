@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,36 @@
 package com.github.break27.graphics.ui.widget;
 
 import com.badlogic.gdx.graphics.Color;
-import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisLabel;
 
 /**
- *
  * @author break27
  */
 public class AlterLabel extends VisLabel implements StyleAppliedWidget {
-    
-    Color color;
-    
+
     public AlterLabel() {
         this("");
     }
-    
-    public AlterLabel(String text) {
+
+    public AlterLabel(CharSequence text) {
         this(text, Color.WHITE);
     }
-    
-    public AlterLabel(String text, Color color) {
-        super(text);
-        this.color = color;
+
+    public AlterLabel(CharSequence text, Color color) {
+        super(text, color);
         register();
     }
-    
-    @Override
-    public void styleApply() {
-        setStyle(new LabelStyle(getAlterFont(), color));
-    }
-    
+
     @Override
     public void destroy() {
+    }
+
+    @Override
+    public void styleApply(AlterAssetManager assets) {
+        LabelStyle style = assets.getSkin().get(LabelStyle.class);
+        style.font = assets.getSkin().getDefaultFont();
+        setStyle(style);
     }
 }

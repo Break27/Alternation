@@ -11,7 +11,6 @@
     
     <list>
         <resource type="manifest" location="ui/manifest.xml"></resource>
-        <resource type="manifest" location="font/font.xml"></resource>
         <resource type="manifest" location="locales/i18n.xml"></resource>
     </list>
 </manifest>

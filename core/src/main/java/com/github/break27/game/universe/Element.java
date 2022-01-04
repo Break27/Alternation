@@ -21,6 +21,6 @@ package com.github.break27.game.universe;
  *
  * @author break27
  */
-public class Element {
+public abstract class Element {
     
 }

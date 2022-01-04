@@ -20,14 +20,15 @@ package com.github.break27;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.LifecycleListener;
-import com.badlogic.gdx.assets.AssetManager;
 import com.github.break27.graphics.screen.FinalizingScreen;
 import com.github.break27.graphics.screen.LoadingScreen;
 import com.github.break27.launcher.LauncherAdapter;
+import com.github.break27.system.AlterAssetManager;
+import com.github.break27.system.AlterFileHandleResolver;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Game3 extends Game {
-    public AssetManager Asset;
+    public AlterAssetManager Asset;
     public static LauncherAdapter Launcher;
     
     public Game3() {
@@ -46,7 +47,7 @@ public class Game3 extends Game {
     }
     
     private void initialize() {
-        this.Asset = new AssetManager();
+        this.Asset = new AlterAssetManager(new AlterFileHandleResolver());
         Gdx.app.addLifecycleListener(new GameExitEventListener(this));
     }
 }
@@ -58,11 +59,9 @@ class GameExitEventListener implements LifecycleListener {
         this.parent = parent;
     }
     @Override
-    public void pause() {
-    }
+    public void pause() { }
     @Override
-    public void resume() {
-    }
+    public void resume() { }
     @Override
     public void dispose() {
         parent.setScreen(new FinalizingScreen(parent));

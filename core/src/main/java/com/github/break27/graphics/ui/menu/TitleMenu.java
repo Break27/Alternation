@@ -27,8 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.github.break27.graphics.ui.window.CollapsibleWindow;
-import com.github.break27.graphics.ui.window.ViewpointWindow;
-import com.kotcrab.vis.ui.widget.MenuItem;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
 /**
@@ -50,18 +49,18 @@ public class TitleMenu extends AlternativeMenu {
     Drawable icon_extend;
     Drawable icon_maximize;
     Drawable icon_close;
-    
+
     public TitleMenu(CollapsibleWindow window) {
         super("TitleMenu", window.getStage());
         this.window = window;
     }
-    
+
     @Override
     public void update() {
         collapseProcess();
     }
-    
-        
+
+
     @Override
     public void listenTo(Table parent) {
         Group grand = parent.getParent();
@@ -80,7 +79,7 @@ public class TitleMenu extends AlternativeMenu {
             }
         });
     }
-    
+
     @Override
     protected void create(PopupMenu menu) {
         window_restore = new AlterMenuItem("Restore", new Image(), new ChangeListener() {
@@ -123,12 +122,13 @@ public class TitleMenu extends AlternativeMenu {
     }
     
     @Override
-    public void styleApply() {
-        window_restore.getImage().setDrawable(icon_restore = getAlterSkin().getDrawable("icon-window-restore"));
-        window_collapse.getImage().setDrawable(icon_collapse = getAlterSkin().getDrawable("icon-window-collapse"));
-        icon_extend = getAlterSkin().getDrawable("icon-window-extend");
-        window_maximize.getImage().setDrawable(icon_maximize = getAlterSkin().getDrawable("icon-window-maximize"));
-        window_close.getImage().setDrawable(icon_close = getAlterSkin().getDrawable("icon-window-close"));
+    public void styleApply(AlterAssetManager assets) {
+        // image styles
+        window_restore.getImage().setDrawable(icon_restore = assets.getSkin().getDrawable("icon-window-restore"));
+        window_collapse.getImage().setDrawable(icon_collapse = assets.getSkin().getDrawable("icon-window-collapse"));
+        icon_extend = assets.getSkin().getDrawable("icon-window-extend");
+        window_maximize.getImage().setDrawable(icon_maximize = assets.getSkin().getDrawable("icon-window-maximize"));
+        window_close.getImage().setDrawable(icon_close = assets.getSkin().getDrawable("icon-window-close"));
     }
     
     @Override

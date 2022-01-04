@@ -18,23 +18,20 @@
 package com.github.break27.graphics.ui.window;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.github.break27.graphics.Viewpoint;
-import com.github.break27.graphics.ui.dialog.WindowResizeDialog;
 import com.github.break27.graphics.ui.menu.TitleMenu;
-import com.github.break27.system.Resource;
+import com.github.break27.system.AlterAssetManager;
 
 /**
  *
  * @author break27
  */
 public class ViewpointWindow extends CollapsibleWindow {
-    public ViewpointWindow(String name, int width, int height) {
-        super(name, width, height);
+    public ViewpointWindow(int width, int height) {
+        super("Main View", width, height);
         this.padBottom(5f);
         this.viewpointWidth = width;
         this.viewpointHeight = height;
@@ -72,9 +69,9 @@ public class ViewpointWindow extends CollapsibleWindow {
     }
     
     @Override
-    public void styleApply() {
-        super.styleApply();
-        setTitleImage(getAlterSkin().getDrawable("icon20-game-map"));
+    public void styleApply(AlterAssetManager assets) {
+        super.styleApply(assets);
+        setTitleImage(assets.getSkin().getDrawable("icon20-game-map"));
     }
     
     @Override

@@ -30,7 +30,6 @@ public class SkinBuilder implements Json.Serializable {
     private SkinStyle Styles;
     private SkinAttribute Attributes;
     
-    
     public SkinBuilder() {
         Classes = new OrderedMap();
     }
@@ -57,8 +56,8 @@ public class SkinBuilder implements Json.Serializable {
 
     @Override
     public void write(Json json) {
-        Classes.forEach(styles -> {
-            json.writeValue(styles.key, styles.value);
+        Classes.forEach(entry -> {
+            json.writeValue(entry.key, entry.value);
         });
     }
 
@@ -76,8 +75,8 @@ class SkinStyle implements Json.Serializable {
     
     @Override
     public void write(Json json) {
-        Styles.forEach(attri -> {
-            json.writeValue(attri.key, attri.value);
+        Styles.forEach(entry -> {
+            json.writeValue(entry.key, entry.value);
         });
     }
 
@@ -95,8 +94,8 @@ class SkinAttribute implements Json.Serializable {
     
     @Override
     public void write(Json json) {
-        Attributes.forEach(a -> {
-            json.writeValue(a.key, a.value);
+        Attributes.forEach(entry -> {
+            json.writeValue(entry.key, entry.value);
         });
     }
 

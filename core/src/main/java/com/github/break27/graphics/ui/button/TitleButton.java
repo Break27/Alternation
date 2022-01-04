@@ -24,7 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  *
  * @author break27
  */
-public abstract class TitleButton extends AlternativeButton {
+public abstract class TitleButton extends AlterImageButton {
     
     public TitleButton() {
         super(null);

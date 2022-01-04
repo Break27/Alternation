@@ -21,6 +21,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.github.break27.Game3;
+import com.github.break27.graphics.ui.Widgets;
 import com.github.break27.graphics.ui.window.BrowserWindow;
 import com.github.break27.graphics.ui.window.HtmlViewerWindow;
 import com.github.break27.graphics.ui.window.TestWindow;
@@ -48,17 +49,20 @@ public class MainScreen extends AbstractScreen {
     
     @Override
     public void show() {
-        window = new ViewpointWindow("Main View 中T文E测S试T", 300, 300);
-        window2 = new TestWindow("Test Window 中文测试 - 0123456789");
-        window3 = new HtmlViewerWindow("HTML Viewer 中文测试", 500, 500);
-        window4 = new BrowserWindow("Browser", 500, 500);
+        Widgets.setTemporaryAssets(parent.Asset);
+
+        window = new ViewpointWindow(300, 300);
+        window2 = new TestWindow("Test Window 中文测试 - 01234");
+        window3 = new HtmlViewerWindow(500, 500);
+        window4 = new BrowserWindow(500, 500);
         window.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-        
         stage = new Stage(defaultViewport);
+
         window.append(stage);
         window2.append(stage);
         window3.append(stage);
         window4.append(stage);
+
         Gdx.input.setInputProcessor(stage);
     }
 

@@ -21,16 +21,16 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.github.break27.graphics.Browser;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.OptionButton;
+import com.github.break27.graphics.ui.dialog.AlternativeDialog;
 import com.github.break27.graphics.ui.menu.AlterMenuItem;
 import com.github.break27.graphics.ui.menu.TitleMenu;
-import com.github.break27.graphics.ui.widget.AlterScrollPane;
-import com.kotcrab.vis.ui.widget.MenuItem;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.PopupMenu;
+import com.kotcrab.vis.ui.widget.VisScrollPane;
 
 /**
  *
@@ -41,8 +41,8 @@ public class BrowserWindow extends CollapsibleWindow {
     Browser browser;
     Image optionImage;
     
-    public BrowserWindow(String name, int width, int height) {
-        super(name, width, height);
+    public BrowserWindow(int width, int height) {
+        super("Browser", width, height);
         padBottom(5f);
         browser = new Browser(width, height, false);
 
@@ -66,8 +66,10 @@ public class BrowserWindow extends CollapsibleWindow {
         //browser.load(Gdx.files.internal("misc/html/about.html").file().toURI());
         Table table = browser.getBrowserTable();
         Image image = browser.getImage();
-        AlterScrollPane scrollpane = new AlterScrollPane(image);
+        VisScrollPane scrollpane = new VisScrollPane(image);
         scrollpane.setOverscroll(false, false);
+        scrollpane.setScrollbarsOnTop(true);
+        scrollpane.setupFadeScrollBars(0.75f, 1);
 
         TitleMenu menu = new TitleMenu(this);
         menu.listenTo(getTitleTable());
@@ -88,9 +90,9 @@ public class BrowserWindow extends CollapsibleWindow {
     }
     
     @Override
-    public void styleApply() {
-        super.styleApply();
-        setTitleImage(getAlterSkin().getDrawable("icon20-application"));
+    public void styleApply(AlterAssetManager assets) {
+        super.styleApply(assets);
+        setTitleImage(assets.getSkin().getDrawable("icon20-application"));
     }
     
     private void addOptionButton() {
@@ -121,7 +123,7 @@ public class BrowserWindow extends CollapsibleWindow {
             browser_reload = new AlterMenuItem("Reload", new Image(), new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-
+                    //todo
                 }
             });
             window_close = new AlterMenuItem("Close", new Image(), new ChangeListener() {
@@ -138,8 +140,9 @@ public class BrowserWindow extends CollapsibleWindow {
         }
 
         @Override
-        public void styleApply() {
-            window_close.getImage().setDrawable(getAlterSkin().getDrawable("icon-window-close"));
+        public void styleApply(AlterAssetManager assets) {
+            window_close.getImage().setDrawable(assets.getSkin().getDrawable("icon-window-close"));
+            setStyle(assets.getSkin().get(WindowStyle.class));
         }
 
         @Override
@@ -151,6 +154,23 @@ public class BrowserWindow extends CollapsibleWindow {
 
         @Override
         public void destroy() {
+        }
+    }
+
+    private class BrowserLinkDialog extends AlternativeDialog {
+
+        public BrowserLinkDialog() {
+            super("Dialog");
+        }
+
+        @Override
+        public void create() {
+
+        }
+
+        @Override
+        public void localeApply() {
+
         }
     }
 }

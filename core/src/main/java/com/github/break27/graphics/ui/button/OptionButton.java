@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
 /**
@@ -50,9 +51,9 @@ public class OptionButton extends TitleButton {
     }
     
     @Override
-    public void styleApply() {
-        super.styleApply();
-        setImage(getAlterSkin().getDrawable("icon-bars-horizontal"));
+    public void styleApply(AlterAssetManager assets) {
+        super.styleApply(assets);
+        setImage(assets.getSkin().getDrawable("icon-bars-horizontal"));
     }
 
     private void createListeners() {

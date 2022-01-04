@@ -20,6 +20,7 @@ package com.github.break27.graphics.ui.window;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.github.break27.system.AlterAssetManager;
 
 /**
  *
@@ -53,8 +54,12 @@ public class TestWindow extends SerializableWindow {
     }
     
     @Override
-    public void styleApply() {
-        super.styleApply();
-        setTitleImage(getAlterSkin().getDrawable("icon20-application"));
+    public void styleApply(AlterAssetManager assets) {
+        super.styleApply(assets);
+        setTitleImage(assets.getSkin().getDrawable("icon20-application"));
+    }
+
+    @Override
+    public void localeApply() {
     }
 }

@@ -20,7 +20,8 @@ package com.github.break27.graphics.ui.window;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.github.break27.graphics.HtmlRenderer;
-import com.github.break27.graphics.ui.widget.AlterScrollPane;
+import com.github.break27.system.AlterAssetManager;
+import com.kotcrab.vis.ui.widget.VisScrollPane;
 
 /**
  *
@@ -30,8 +31,8 @@ public class HtmlViewerWindow extends CollapsibleWindow {
     
     HtmlRenderer renderer;
     
-    public HtmlViewerWindow(String name, int width, int height) {
-        super(name, width, height);
+    public HtmlViewerWindow(int width, int height) {
+        super("HTML Viewer", width, height);
         padBottom(5f);
         addCollapseButton();
         renderer = new HtmlRenderer(width, height, false);
@@ -53,7 +54,10 @@ public class HtmlViewerWindow extends CollapsibleWindow {
         renderer.load(Gdx.files.internal("misc/html/about.html").readString("UTF-8"));
         renderer.render();
         Image image = renderer.getImage();
-        AlterScrollPane scrollpane = new AlterScrollPane(image);
+        VisScrollPane scrollpane = new VisScrollPane(image);
+        scrollpane.setOverscroll(false, false);
+        scrollpane.setScrollbarsOnTop(true);
+        scrollpane.setupFadeScrollBars(0.75f, 1);
         getContentTable().add(scrollpane);
     }
 
@@ -63,8 +67,8 @@ public class HtmlViewerWindow extends CollapsibleWindow {
     }
 
     @Override
-    public void styleApply() {
-        super.styleApply();
-        setTitleImage(getAlterSkin().getDrawable("icon20-info-wb"));
+    public void styleApply(AlterAssetManager assets) {
+        super.styleApply(assets);
+        setTitleImage(assets.getSkin().getDrawable("icon20-info-wb"));
     }
 }

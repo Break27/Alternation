@@ -41,6 +41,7 @@ public abstract class AbstractScreen extends InputAdapter implements Screen {
     
     final Game3 parent;
     final ScreenViewport defaultViewport;
+
     float delta;
     float state;
     

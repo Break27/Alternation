@@ -18,8 +18,8 @@
 package com.github.break27.graphics.screen;
 
 import com.github.break27.Game3;
-import com.github.break27.graphics.ui.AlternativeWidget.Widgets;
-import com.github.break27.system.ResourceLoader;
+import com.github.break27.graphics.ui.Widgets;
+import com.github.break27.system.Resource;
 
 /**
  *
@@ -39,8 +39,7 @@ public class FinalizingScreen extends AbstractScreen {
     @Override
     public void show() {
         /* FINALIZING */
-        parent.Asset.finishLoading();
-        ResourceLoader.dispose();
+        Resource.dispose();
         Widgets.destroyAll();
     }
 

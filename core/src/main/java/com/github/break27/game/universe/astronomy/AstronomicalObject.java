@@ -21,6 +21,6 @@ package com.github.break27.game.universe.astronomy;
  *
  * @author break27
  */
-public class AstronomicalObject {
+public abstract class AstronomicalObject {
     
 }

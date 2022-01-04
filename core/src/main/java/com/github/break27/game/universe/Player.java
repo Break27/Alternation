@@ -15,30 +15,47 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.ui.widget;
+package com.github.break27.game.universe;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.github.break27.graphics.ui.StyleAppliedWidget;
-import com.kotcrab.vis.ui.widget.VisScrollPane;
+import com.badlogic.gdx.files.FileHandle;
 
 /**
- *
  * @author break27
  */
-public class AlterScrollPane extends VisScrollPane implements StyleAppliedWidget {
-    
-    public AlterScrollPane(Actor widget) {
-        super(widget);
-        setScrollbarsOnTop(true);
-        setupFadeScrollBars(0.75f, 1);
-        register();
+public class Player {
+
+    float x, y, z;
+    Profiles profiles;
+
+    public Player() {
+
     }
-    
-    @Override
-    public void styleApply() {
+
+    public Player(FileHandle saveFile) {
+
     }
-    
-    @Override
-    public void destroy() {
+
+    public Player(float x, float y, float z, Profiles profiles) {
+
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getZ() {
+        return z;
+    }
+
+    public Profiles getProfiles() {
+        return profiles;
+    }
+
+    public class Profiles {
+
     }
 }

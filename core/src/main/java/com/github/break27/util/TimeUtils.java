@@ -89,7 +89,7 @@ public class TimeUtils {
         }
     }
     
-    public static interface Trigger {
-        public void fire();
+    public interface Trigger {
+        void fire();
     }
 }

@@ -30,6 +30,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.widget.AlterLabel;
+import com.github.break27.system.AlterAssetManager;
+import com.kotcrab.vis.ui.widget.VisLabel;
 import cz.vutbr.web.css.MediaSpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -381,12 +383,13 @@ class BrowserTable extends Table implements StyleAppliedWidget, LocalizableWidge
     }
     
     @Override
-    public void styleApply() {
-        info = getAlterSkin().getDrawable("icon-info-circle");
-        loading = getAlterSkin().getDrawable("icon-monitor-go");
-        warning = getAlterSkin().getDrawable("icon-warning");
-        error = getAlterSkin().getDrawable("icon-world-delete");
-        success = getAlterSkin().getDrawable("icon-tick");
+    public void styleApply(AlterAssetManager assets) {
+        // image styles
+        info = assets.getSkin().getDrawable("icon-info-circle");
+        loading = assets.getSkin().getDrawable("icon-monitor-go");
+        warning = assets.getSkin().getDrawable("icon-warning");
+        error = assets.getSkin().getDrawable("icon-world-delete");
+        success = assets.getSkin().getDrawable("icon-tick");
     }
 
     @Override

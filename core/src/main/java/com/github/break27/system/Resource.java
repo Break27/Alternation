@@ -18,80 +18,135 @@
 package com.github.break27.system;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.github.break27.graphics.ui.AlternativeFont;
+import com.badlogic.gdx.utils.I18NBundle;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.github.break27.Game3;
 import com.github.break27.graphics.ui.AlternativeSkin;
+import com.github.break27.launcher.LauncherAdapter;
 import com.kotcrab.vis.ui.VisUI;
-import java.util.HashMap;
+
+import java.util.Locale;
 
 /**
  *
  * @author break27
  */
 public class Resource {
-    public static interface SerializableResource extends Disposable {
-        
-    }
-    
-    public static final class DefaultType {
-        public static final String SKIN = "skin";
-        public static final String FONT = "font";
-        public static final String LOCALE = "locale";
-    }
-    
-    private static final HashMap<String, SerializableResource> Resources = new HashMap();
 
-    public static AlternativeSkin getSkin(String name) {
-        return (AlternativeSkin) getResource(DefaultType.SKIN, name, AlternativeSkin.class);
+    static XmlReader reader = new XmlReader();
+    static boolean read = false;
+    
+    public static void loadDefault(AlterAssetManager manager) {
+        loadManifest(manager, Gdx.files.internal("manifest.xml"), new Array<>());
+        manager.finishLoading();
+        loadVisUI(manager);
     }
     
-    public static AlternativeFont getFont(String name) {
-        if(has(DefaultType.FONT, name))
-            return (AlternativeFont) getResource(DefaultType.FONT, name, AlternativeFont.class);
-        Gdx.app.error(Resource.class.getName(), "No font \"" + name + "\" found. Using default.");
-        return new AlternativeFont(VisUI.getSkin().getFont("default-font"));
-    }
-    
-    public static SerializableResource getResource(String type, String name, Class clazz) {
-        if(type == null || name == null || clazz == null) throw new IllegalArgumentException("type, name or class cannot be null.");
-        if(!has(type, name)) throw new GdxRuntimeException("No resource registered with name: " + name);
-
-        SerializableResource resource = Resources.get(parse(type, name));
-        if(resource.getClass() != clazz) throw new GdxRuntimeException("Resource type mismatched. \"" + name +
-                "\" is registered with class: " + resource.getClass());
-        return resource;
-    }
-    
-    public static boolean has(String typename, String name) {
-        if(Resources.get(parse(typename, name)) == null) return false;
-        return Resources.containsKey(parse(typename, name));
-    }
-    
-    static void dispose() {
-        Resources.values().forEach(resource -> {
-            resource.dispose();
+    public static void loadManifest(AlterAssetManager manager, FileHandle manifest, final Array<FileHandle> files) {
+        findResources(manifest).forEach(element -> {
+            String name = element.getAttribute("name", "default");
+            String type = element.getAttribute("type", null);
+            FileHandle sibling;
+            // Only manifest with location attribute is a valid one.
+            if(element.hasAttribute("location"))
+                sibling = manifest.sibling(element.getAttribute("location"));
+            else throw new GdxRuntimeException(manifest + ": Invalid Manifest: " +
+                    "\"location\" Attribute is not found.");
+            if(type.equals("manifest")) {
+                // prevent from infinite recursive loop
+                if(sibling.path().contains("../")) {
+                    throw new GdxRuntimeException("Unsupported Operation: No access to parent directory: " + sibling);
+                } else if(files.contains(sibling, false) || sibling.equals(manifest)) {
+                    throw new GdxRuntimeException("Unsupported Operation: Manifest has already loaded: " + sibling);
+                } else {
+                    files.add(sibling);
+                    loadManifest(manager, sibling, files);
+                }
+            } else {
+                /* Skin */
+                if(type.equals("skin")) loadSkin(manager, name, sibling);
+                /* I18N */
+                if(type.equals("i18n")) loadI18N(name, sibling, getLocale());
+            }
         });
     }
     
-    static void loadSkin(String name, AlternativeSkin skin) {
-        load(DefaultType.SKIN, name, skin);
+    public static void dispose() {
+        VisUI.dispose();
     }
     
-    static void loadFont(String name, AlternativeFont font) {
-        load(DefaultType.FONT, name, font);
+    private static void loadSkin(AlterAssetManager manager, String name, FileHandle skin) {
+        if(skin.exists())
+            manager.load(name, skin.path(), AlternativeSkin.class);
+        else
+            Gdx.app.log(Resource.class.getName(), "Skin file \"" + skin +
+                    "\" does not exist! Skin \"" + name + "\" is not loaded.");
+    }
+
+    private static void loadI18N(String name, FileHandle bundleFile, Locale locale) {
+        // ensure using UTF-8 encoding.
+        Locales.putBundle(name, I18NBundle.createBundle(bundleFile, locale, "UTF-8"));
+    }
+
+    private static void loadVisUI(AlterAssetManager manager) {
+        VisUI.load(manager.getSkin());
     }
     
-    private static void load(String typename, String name, SerializableResource resource) {
-        String fullname = parse(typename, name);
-        if(Resources.containsKey(fullname)) {
-            Resources.replace(fullname, resource);
-        } else {
-            Resources.put(fullname, resource);
+    private static Array<Element> findResources(FileHandle file) {
+        Element element = reader.parse(file);
+        loadMetaInfo(element.getChildByName("meta"));
+        return element.getChildByName("list").getChildrenByNameRecursively("resource");
+    }
+    
+    private static void loadMetaInfo(Element metainfo) {
+        if(!read) {
+            /* Name */
+            Element E_name = metainfo.getChildByName("name");
+            String name = E_name == null ? "Resource Set" : E_name.getText();
+            /* Version */
+            Element E_version = metainfo.getChildByName("version");
+            if(E_version != null) {
+                String val = E_version.getText().replace(".", "");
+                // Only numbers are accepted.
+                if(val.matches("^[0-9]+$")) {
+                    int version = Integer.parseInt(val);
+                    int gamever = Integer.parseInt(LauncherAdapter.VERSION.replace(".", ""));
+                    if(version < gamever) Gdx.app.log(Resource.class.getName(), "Currently loading a resource set "
+                            + "from an older version of the game. Some texture might be unable to display.");
+                    if(version > gamever) Gdx.app.log(Resource.class.getName(), "Currently loading a resource set "
+                            + "from a newer version of the game.");
+                } else {
+                    Gdx.app.log(Resource.class.getName(), "Version element of the resource set is unreadable, ignored.");
+                }
+            }
+            /* Authors */
+            Element E_authors = metainfo.getChildByName("authors");
+            if(E_authors != null) {
+                Array<String> authors = new Array<>();
+                E_authors.getChildrenByNameRecursively("author").forEach(author -> {
+                    authors.add(author.getText());
+                });
+            }
+            read = true;
         }
     }
-    
-    private static String parse(String typename, String name) {
-        return typename + "@" + name;
+
+    private static Locale getLocale() {
+        Preferences prefs = Gdx.app.getPreferences(Game3.Launcher.tmpDataPath());
+        String language = "zh", country = "CN", variant = "";
+        if(prefs.contains("locale")) {
+            String[] localeName = prefs.getString("locale").split("_", 3);
+            if(localeName.length >= 2) {
+                language = localeName[0];
+                country = localeName[1];
+            }
+            if(localeName.length == 3) variant = localeName[2];
+        }
+        return new Locale(language, country, variant);
     }
 }

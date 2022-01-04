@@ -30,6 +30,7 @@ import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.CloseButton;
 import com.github.break27.graphics.ui.dialog.WindowResizeDialog;
 import com.github.break27.graphics.ui.widget.AlterLabel;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisWindow;
@@ -69,7 +70,7 @@ public abstract class AlternativeWindow extends VisWindow
         getTitleTable().add(titleBarButtonsTable).padRight(-getPadRight() + 0.7f).right();
         // panel
         add(createPanel());
-        resizeDialog = new WindowResizeDialog();
+        resizeDialog = new WindowResizeDialog(this);
         
         register();
     }
@@ -132,8 +133,13 @@ public abstract class AlternativeWindow extends VisWindow
     }
 
     @Override
-    public void styleApply() {
-        setStyle(getAlterSkin().get(WindowStyle.class));
+    public void styleApply(AlterAssetManager assets) {
+        // window style
+        setStyle(assets.getSkin().get(WindowStyle.class));
+        // title label style
+        Label.LabelStyle labelStyle = assets.getSkin().get(Label.LabelStyle.class);
+        labelStyle.font = assets.getSkin().getDefaultFont();
+        getTitleLabel().setStyle(labelStyle);
     }
 
     @Override

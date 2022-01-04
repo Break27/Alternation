@@ -18,20 +18,13 @@
 package com.github.break27.graphics.ui.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
-import com.github.break27.graphics.ui.widget.AlterLabel;
-import com.kotcrab.vis.ui.widget.MenuItem;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 import com.kotcrab.vis.ui.widget.VisWindow;
 
@@ -125,7 +118,6 @@ public abstract class AlternativeMenu extends VisWindow
 class AlterPopupMenu extends PopupMenu {
     
     public AlterPopupMenu() {
-
     }
 
     @Override

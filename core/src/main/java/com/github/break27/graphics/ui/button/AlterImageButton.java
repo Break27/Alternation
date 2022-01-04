@@ -20,18 +20,18 @@ package com.github.break27.graphics.ui.button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisImageButton;
 
 /**
  *
  * @author break27
  */
-public abstract class AlternativeButton extends VisImageButton
-        implements StyleAppliedWidget {
+public class AlterImageButton extends VisImageButton implements StyleAppliedWidget {
     
     Image image;
-    
-    public AlternativeButton(Drawable icon) {
+
+    public AlterImageButton(Drawable icon) {
         super(icon);
         register();
     }
@@ -46,10 +46,10 @@ public abstract class AlternativeButton extends VisImageButton
     }
     
     @Override
-    public void styleApply() {
-        setStyle(getAlterSkin().get(VisImageButtonStyle.class));
+    public void styleApply(AlterAssetManager assets) {
+        setStyle(assets.getSkin().get(VisImageButtonStyle.class));
     }
-    
+
     @Override
     public void destroy() {
     }

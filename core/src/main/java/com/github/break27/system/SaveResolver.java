@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.ui;
+package com.github.break27.system;
 
-import com.github.break27.system.AlterAssetManager;
+/**
+ * @author break27
+ */
+public class SaveResolver {
 
-public interface AudioAppliedWidget extends AlternativeWidget {
-
-    void audioApply(AlterAssetManager assets);
 }

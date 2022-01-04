@@ -20,14 +20,13 @@ package com.github.break27.graphics.ui.dialog;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.CloseButton;
-import com.github.break27.graphics.ui.widget.AlterLabel;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisDialog;
 
 /**
@@ -39,15 +38,17 @@ public abstract class AlternativeDialog extends VisDialog
 
     Image titleImage;
     CloseButton closeButton;
-    AlterLabel titleLabel;
     
     public AlternativeDialog(String name) {
         super(name);
         getTitleTable().clear();
         getTitleTable().add(getTitleLabel()).expand().left();
+        create();
         register();
     }
-    
+
+    public abstract void create();
+
     public void setTitleImage(Drawable drawable) {
         if(titleImage == null) {
             titleImage = new Image(drawable);
@@ -56,12 +57,6 @@ public abstract class AlternativeDialog extends VisDialog
         } else {
             titleImage.setDrawable(drawable);
         }
-    }
-
-    @Override
-    public Label getTitleLabel() {
-        if(titleLabel == null) titleLabel = new AlterLabel(super.getTitleLabel().getText().toString());
-        return titleLabel;
     }
 
     @Override
@@ -91,8 +86,8 @@ public abstract class AlternativeDialog extends VisDialog
     }
     
     @Override
-    public void styleApply() {
-        setStyle(getAlterSkin().get(WindowStyle.class));
+    public void styleApply(AlterAssetManager assets) {
+        setStyle(assets.getSkin().get(WindowStyle.class));
     }
     
     @Override

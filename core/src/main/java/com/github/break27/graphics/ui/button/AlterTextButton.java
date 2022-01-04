@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +15,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.ui;
+package com.github.break27.graphics.ui.button;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.system.AlterAssetManager;
+import com.kotcrab.vis.ui.widget.VisTextButton;
 
-public interface AudioAppliedWidget extends AlternativeWidget {
+/**
+ * @author break27
+ */
+public class AlterTextButton extends VisTextButton implements StyleAppliedWidget {
 
-    void audioApply(AlterAssetManager assets);
+    public AlterTextButton(String text) {
+        this(text, "default");
+    }
+
+    public AlterTextButton(String text, String styleName) {
+        super(text, styleName);
+        register();
+    }
+
+    @Override
+    public void destroy() {
+    }
+
+    @Override
+    public void styleApply(AlterAssetManager assets) {
+        Label.LabelStyle style = assets.getSkin().get(Label.LabelStyle.class);
+        style.font = assets.getSkin().getDefaultFont();
+        getLabel().setStyle(style);
+    }
 }

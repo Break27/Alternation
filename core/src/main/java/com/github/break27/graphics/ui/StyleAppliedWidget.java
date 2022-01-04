@@ -17,7 +17,9 @@
 
 package com.github.break27.graphics.ui;
 
+import com.github.break27.system.AlterAssetManager;
+
 public interface StyleAppliedWidget extends AlternativeWidget {
 
-    void styleApply();
+    void styleApply(AlterAssetManager assets);
 }

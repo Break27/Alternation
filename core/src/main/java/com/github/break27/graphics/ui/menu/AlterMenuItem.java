@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2021-2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,10 @@
 
 package com.github.break27.graphics.ui.menu;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
+import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.MenuItem;
 
 /**
@@ -43,7 +42,9 @@ public class AlterMenuItem extends MenuItem implements StyleAppliedWidget {
     }
 
     @Override
-    public void styleApply() {
-        getLabel().setStyle(new Label.LabelStyle(getAlterFont(), Color.WHITE));
+    public void styleApply(AlterAssetManager assets) {
+        MenuItemStyle style = assets.getSkin().get(MenuItemStyle.class);
+        style.font = assets.getSkin().getDefaultFont();
+        setStyle(style);
     }
 }

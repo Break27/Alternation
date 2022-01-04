@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <skin>
+    <include classpath="com/kotcrab/vis/ui/skin/x1/uiskin.json"></include>
     <atlas location="skin.atlas"></atlas>
+    <font location="font/font.xml"></font>
 </skin>
