@@ -17,7 +17,6 @@
 
 package com.github.break27.graphics.ui.button;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisTextButton;
@@ -42,8 +41,6 @@ public class AlterTextButton extends VisTextButton implements StyleAppliedWidget
 
     @Override
     public void styleApply(AlterAssetManager assets) {
-        Label.LabelStyle style = assets.getSkin().get(Label.LabelStyle.class);
-        style.font = assets.getSkin().getDefaultFont();
-        getLabel().setStyle(style);
+        setStyle(assets.getSkin().get(TextButtonStyle.class));
     }
 }

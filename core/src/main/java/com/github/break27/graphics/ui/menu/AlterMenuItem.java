@@ -44,7 +44,6 @@ public class AlterMenuItem extends MenuItem implements StyleAppliedWidget {
     @Override
     public void styleApply(AlterAssetManager assets) {
         MenuItemStyle style = assets.getSkin().get(MenuItemStyle.class);
-        style.font = assets.getSkin().getDefaultFont();
         setStyle(style);
     }
 }

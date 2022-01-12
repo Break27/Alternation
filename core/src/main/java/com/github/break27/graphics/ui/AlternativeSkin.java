@@ -21,13 +21,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.XmlReader.Element;
-import com.github.break27.system.misc.SkinBuilder;
 
 /**
  *
@@ -44,8 +44,11 @@ public class AlternativeSkin extends Skin {
         load(file);
     }
 
-    public BitmapFont getDefaultFont() {
-        return getFont("default-font");
+    public @Null BitmapFont getDefaultFont() {
+        try {
+            return getFont("default");
+        } catch (GdxRuntimeException ignored) { }
+        return null;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class AlternativeSkin extends Skin {
     public void load (FileHandle xmlFile) {
         String jsonString = jsonBuild(xmlFile);
         try {
-            getJsonLoader(xmlFile).fromJson(Skin.class, jsonString);
+            super.getJsonLoader(xmlFile).fromJson(Skin.class, jsonString);
         } catch (SerializationException ex) {
             throw new SerializationException("Error reading file: " + xmlFile, ex);
         }
@@ -74,7 +77,59 @@ public class AlternativeSkin extends Skin {
         super.addRegions(atlas);
         AtlasSet.add(atlas);
     }
-    
+
+    @Override
+    protected Json getJsonLoader(FileHandle skinFile) {
+        AlternativeSkin skin = this;
+        Json json = super.getJsonLoader(skinFile);
+        // use an alternative serializer
+        json.setSerializer(BitmapFont.class, new Json.ReadOnlySerializer<BitmapFont>() {
+            public BitmapFont read (Json json, JsonValue jsonData, Class type) {
+                String path = json.readValue("file", String.class, jsonData);
+                int scaledSize = json.readValue("scaledSize", int.class, -1, jsonData);
+                Boolean flip = json.readValue("flip", Boolean.class, false, jsonData);
+                Boolean markupEnabled = json.readValue("markupEnabled", Boolean.class, false, jsonData);
+
+                FileHandle fontFile = skinFile.parent().child(path);
+                if (!fontFile.exists()) fontFile = Gdx.files.internal(path);
+                if (!fontFile.exists()) throw new SerializationException("Font file not found: " + fontFile);
+
+                // Use a region with the same name as the font, else use a PNG file in the same directory as the FNT file.
+                String regionName = fontFile.nameWithoutExtension();
+                try {
+                    BitmapFont font = null;
+                    // replace "default" with a TrueType font loaded beforehand
+                    // if it is available.
+                    if(regionName.equals("default")) font = skin.getDefaultFont();
+                    if(font == null) {
+                        Array<TextureRegion> regions = skin.getRegions(regionName);
+                        if (regions != null)
+                            font = new BitmapFont(new BitmapFont.BitmapFontData(fontFile, flip), regions, true);
+                        else {
+                            TextureRegion region = skin.optional(regionName, TextureRegion.class);
+                            if (region != null)
+                                font = new BitmapFont(fontFile, region, flip);
+                            else {
+                                FileHandle imageFile = fontFile.parent().child(regionName + ".png");
+                                if (imageFile.exists())
+                                    font = new BitmapFont(fontFile, imageFile, flip);
+                                else
+                                    font = new BitmapFont(fontFile, flip);
+                            }
+                        }
+                        font.getData().markupEnabled = markupEnabled;
+                        // Scaled size is the desired cap height to scale the font to.
+                        if (scaledSize != -1) font.getData().setScale(scaledSize / font.getCapHeight());
+                    }
+                    return font;
+                } catch (RuntimeException ex) {
+                    throw new SerializationException("Error loading bitmap font: " + fontFile, ex);
+                }
+            }
+        });
+        return json;
+    }
+
     @Override
     public void dispose() {
         super.dispose();
@@ -84,7 +139,7 @@ public class AlternativeSkin extends Skin {
         }
     }
 
-    private void loadFontXml(FileHandle xmlFile, XmlReader reader, final Array<FileHandle> list) {
+    private void loadFontXml(FileHandle xmlFile, XmlReader reader, final Array<String> list) {
         /* Load XML */
         Element parent = reader.parse(xmlFile);
         parent.getChildrenByNameRecursively("resource").forEach(font -> {
@@ -94,10 +149,10 @@ public class AlternativeSkin extends Skin {
             FileHandle sibling = xmlFile.sibling(location);
 
             // prevent from duplicated loading
-            if(list.contains(sibling, false))
+            if(list.contains(sibling.file().getAbsolutePath(), false))
                 throw new SerializationException(xmlFile + ": Resource has already loaded: " + sibling);
             else
-                list.add(sibling);
+                list.add(sibling.file().getAbsolutePath());
 
             /* Load Params */
             FreeTypeFontParameter parameter = new FreeTypeFontParameter();
@@ -145,46 +200,14 @@ public class AlternativeSkin extends Skin {
         XmlReader reader = new XmlReader();
         Json json = new Json();
         // build json string
-        SkinBuilder builder = parseXml(xmlFile, reader, new SkinBuilder(), new Array<>());
+        SkinBuilder builder = new SkinBuilder();
+        parseXml(xmlFile, reader, builder, new Array<>());
         return json.toJson(builder);
     }
     
-    private SkinBuilder parseXml(FileHandle xmlFile, XmlReader reader, final SkinBuilder builder,
-                                 final Array<FileHandle> list) {
+    private void parseXml(FileHandle xmlFile, XmlReader reader, final SkinBuilder builder,
+                                 final Array<String> list) {
         Element root = reader.parse(xmlFile);
-        /* Includes */
-        if(root.hasChild("include")) {
-            Array<Element> includes = root.getChildrenByNameRecursively("include");
-            includes.forEach(element -> {
-                FileHandle file = null;
-                if(element.hasAttribute("internal"))
-                    file = Gdx.files.internal(element.getAttribute("internal"));
-                else if(element.hasAttribute("external"))
-                    file = Gdx.files.external(element.getAttribute("external"));
-                else if(element.hasAttribute("classpath"))
-                    file = Gdx.files.classpath(element.getAttribute("classpath"));
-                
-                if(file != null && file.exists()) {
-                    // prevent from infinite recursive loop
-                    if(file.equals(xmlFile)) 
-                        Gdx.app.error(getClass().getName(), "Unsupported Operation: File is including itself! Ignored.");
-                    else if(list.contains(file, false)) 
-                        throw new SerializationException(file + ": Target file has already loaded: " + xmlFile);
-                    else {
-                        list.add(file);
-                        if(file.extension().equals("xml"))
-                            parseXml(file, reader, builder, list);
-                        else if(file.extension().equals("json"))
-                            // load json (compatible with the original)
-                            loadJson(file);
-                        else Gdx.app.error(getClass().getName(), xmlFile + ": Invalid Include File: "
-                                    + file + ". Ignored.");
-                    }
-                } else {
-                    Gdx.app.error(getClass().getName(), xmlFile + ": Include file not found: " + file + ". Ignored.");
-                }
-            });
-        }
         /* TextureAtlas */
         FileHandle defaultFile = xmlFile.sibling(xmlFile.nameWithoutExtension() + ".atlas");
         if(root.hasChild("atlas")) {
@@ -194,11 +217,11 @@ public class AlternativeSkin extends Skin {
             // load atlas
             if(sibling.exists()) {
                 // prevent from duplicated loading
-                if(list.contains(sibling, false)) {
+                if(list.contains(sibling.file().getAbsolutePath(), false)) {
                     throw new SerializationException(xmlFile + ": Resource has already loaded: " + sibling);
                 } else {
                     addRegions(new TextureAtlas(sibling));
-                    list.add(sibling);
+                    list.add(sibling.file().getAbsolutePath());
                 }
             }
             else throw new SerializationException("Atlas file not found: " + sibling);
@@ -215,14 +238,48 @@ public class AlternativeSkin extends Skin {
             // load font file
             if(sibling.exists()) {
                 // prevent from duplicated loading
-                if(list.contains(sibling, false)) {
+                if(list.contains(sibling.file().getAbsolutePath(), false)) {
                     throw new SerializationException(xmlFile + ": Resource has already loaded: " + sibling);
                 } else {
                     loadFontXml(sibling, reader, list);
-                    list.add(sibling);
+                    list.add(sibling.file().getAbsolutePath());
                 }
             }
             else Gdx.app.error(getClass().getName(), xmlFile + ": File not found. Ignored.");
+        }
+        /* Includes */
+        if(root.hasChild("include")) {
+            Array<Element> includes = root.getChildrenByNameRecursively("include");
+            includes.forEach(element -> {
+                FileHandle file = null;
+                if(element.hasAttribute("internal"))
+                    file = Gdx.files.internal(element.getAttribute("internal"));
+                else if(element.hasAttribute("external"))
+                    file = Gdx.files.external(element.getAttribute("external"));
+                else if(element.hasAttribute("classpath"))
+                    file = Gdx.files.classpath(element.getAttribute("classpath"));
+                
+                if(file != null && file.exists()) {
+                    // prevent from infinite recursive loop
+                    if(file.equals(xmlFile)) 
+                        Gdx.app.error(getClass().getName(), xmlFile + ": Unsupported Operation: " +
+                                "File is including itself! Ignored.");
+                    else if(list.contains(file.file().getAbsolutePath(), false))
+                        throw new SerializationException(file + ": Target file has already loaded: " + xmlFile);
+                    else {
+                        list.add(file.file().getAbsolutePath());
+                        if(file.extension().equals("xml"))
+                            parseXml(file, reader, builder, list);
+                        else if(file.extension().equals("json"))
+                            // load json (compatible with the original)
+                            loadJson(file);
+                        else Gdx.app.error(getClass().getName(), xmlFile + ": Invalid Include File: "
+                                    + file + ". Ignored.");
+                    }
+                } else {
+                    Gdx.app.error(getClass().getName(), xmlFile + ": Include file not found: " + file + ". Ignored.");
+                }
+            });
         }
         /* Parse <Class> element */
         if(root.hasChild("class")) {
@@ -245,6 +302,84 @@ public class AlternativeSkin extends Skin {
                 builder.endStyle(element.getAttribute("name"));
             });
         }
-        return builder;
+    }
+}
+
+class SkinBuilder implements Json.Serializable {
+    private OrderedMap<String, SkinStyle> Classes;
+    private SkinStyle Styles;
+    private SkinAttribute Attributes;
+
+    public SkinBuilder() {
+        Classes = new OrderedMap<>();
+    }
+
+    public void startStyle() {
+        Styles = new SkinStyle();
+    }
+
+    public void endStyle(String name) {
+        Classes.put(name, Styles);
+    }
+
+    public void startAttribute() {
+        Attributes = new SkinAttribute();
+    }
+
+    public void setAttribute(String name, Object value) {
+        Attributes.put(name, value);
+    }
+
+    public void endAttribute(String name) {
+        Styles.put(name, Attributes);
+    }
+
+    @Override
+    public void write(Json json) {
+        Classes.forEach(entry -> {
+            json.writeValue(entry.key, entry.value);
+        });
+    }
+
+    @Override
+    public void read(Json json, JsonValue jv) {
+    }
+
+    class SkinStyle implements Json.Serializable {
+        private OrderedMap<String, SkinAttribute> Styles = new OrderedMap<>();
+
+        public void put(String name, SkinAttribute attri) {
+            Styles.put(name, attri);
+        }
+
+        @Override
+        public void write(Json json) {
+            Styles.forEach(entry -> {
+                json.writeValue(entry.key, entry.value);
+            });
+        }
+
+        @Override
+        public void read(Json json, JsonValue jv) {
+        }
+    }
+
+    class SkinAttribute implements Json.Serializable {
+        private OrderedMap<String, Object> Attributes = new OrderedMap<>();
+
+        public void put(String name, Object value) {
+            Attributes.put(name, value);
+        }
+
+        @Override
+        public void write(Json json) {
+            Attributes.forEach(entry -> {
+                json.writeValue(entry.key, entry.value);
+            });
+        }
+
+        @Override
+        public void read(Json json, JsonValue jv) {
+        }
     }
 }

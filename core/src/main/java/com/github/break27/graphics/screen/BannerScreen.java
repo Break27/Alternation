@@ -59,11 +59,6 @@ public class BannerScreen extends AbstractScreen {
         }
         stage.draw();
     }
-    
-    @Override
-    public int getId() {
-        return ScreenType.BANNER;
-    }
 
     @Override
     public void pause() {
@@ -91,20 +86,20 @@ class BannerActor extends Actor {
     public BannerActor(float width, float height) {
         this.texture = new Texture(Gdx.files.internal("banner/libgdx.png"));
         // centers the actor itself
-        this.x = width/2-texture.getWidth()/2;
-        this.y = height/2-texture.getHeight()/2;
+        this.x = width/2 - texture.getWidth()/2f;
+        this.y = height/2 - texture.getHeight()/2f;
     }
     
     public void switchBanner() {
         this.texture = new Texture(Gdx.files.internal("banner/cdpt_bk337.png"));
     }
+
+    public void dispose() {
+        this.texture.dispose();
+    }
     
     @Override
     public void draw(Batch batch, float alpha) {
         batch.draw(texture, x, y);
-    }
-    
-    public void dispose() {
-        this.texture.dispose();
     }
 }

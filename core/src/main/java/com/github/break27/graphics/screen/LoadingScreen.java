@@ -36,11 +36,6 @@ public class LoadingScreen extends AbstractScreen {
     }
     
     @Override
-    public int getId() {
-        return ScreenType.LOADING;
-    }
-    
-    @Override
     public void show() {
         initGltfLoader();
         Resource.loadDefault(parent.Asset);

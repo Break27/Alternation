@@ -7,8 +7,13 @@ buildscript {
 		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 	}
 	dependencies {
-            
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 	}
+}
+
+plugins {
+	id 'java'
+	id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
 }
 
 allprojects {
@@ -18,6 +23,7 @@ allprojects {
 
 configure(subprojects) {
 	apply plugin: 'java-library'
+	apply plugin: 'kotlin'
 	sourceCompatibility = 1.8
 	compileJava {
 		options.incremental = true

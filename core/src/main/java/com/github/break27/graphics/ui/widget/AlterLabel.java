@@ -47,7 +47,6 @@ public class AlterLabel extends VisLabel implements StyleAppliedWidget {
     @Override
     public void styleApply(AlterAssetManager assets) {
         LabelStyle style = assets.getSkin().get(LabelStyle.class);
-        style.font = assets.getSkin().getDefaultFont();
         setStyle(style);
     }
 }

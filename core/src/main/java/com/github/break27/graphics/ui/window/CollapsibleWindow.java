@@ -84,7 +84,7 @@ public abstract class CollapsibleWindow extends SerializableWindow {
         }
         Collapsed = !Collapsed;
     }
-    
+
     /** Replaced by {@code resize(int,int)}.
      *  @param width
      *  @param height

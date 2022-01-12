@@ -65,7 +65,7 @@ public class ViewpointWindow extends CollapsibleWindow {
         menu.listenTo(getTitleTable());
 
         // default value: focused
-        setFocus();
+        setFocused();
     }
     
     @Override
@@ -78,11 +78,6 @@ public class ViewpointWindow extends CollapsibleWindow {
     public void destroy() {
         viewpoint.destory();
         destroyed = true;
-    }
-    
-    @Override
-    public int getType() {
-        return WindowType.VIEW;
     }
     
     @Override
@@ -99,7 +94,7 @@ public class ViewpointWindow extends CollapsibleWindow {
     Sprite sprite = new Sprite(getTitleLabel().getStyle().font.getRegion());
     
     private void createViewpoint() {
-        viewpoint.setRenderer(() -> {
+        viewpoint.render(() -> {
             batch.begin();
             sprite.draw(batch);
             batch.end();

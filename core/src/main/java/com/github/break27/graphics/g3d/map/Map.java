@@ -29,12 +29,4 @@ public class Map {
     public Map() {
         
     }
-    
-    public VoxelModel createVoxelModel() {
-        return null;
-    }
-    
-    public ModelInstance createModel() {
-        return null;
-    }
 }

@@ -30,10 +30,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  * @author break27
  */
 public class Viewpoint {
+    public interface ViewpointRenderer {
+        void render();
+    }
     
     protected FrameBuffer fbo;
     protected Image image;
-    protected Renderer renderer;
+    protected ViewpointRenderer renderer;
     protected TextureRegion texture;
     protected TextureRegionDrawable drawable;
     
@@ -65,9 +68,11 @@ public class Viewpoint {
     public boolean update() {
         if(disabled) return false;
         if(isHdpiSupported) HdpiUtils.setMode(HdpiMode.Pixels);
+
         fbo.begin();
         renderer.render();
         fbo.end();
+
         if(isHdpiSupported) HdpiUtils.setMode(HdpiMode.Logical);
         
         // trying to avoid performance issues
@@ -90,7 +95,7 @@ public class Viewpoint {
         return true;
     }
     
-    public void setRenderer(Renderer renderer) {
+    public void render(ViewpointRenderer renderer) {
         this.renderer = renderer;
     }
     

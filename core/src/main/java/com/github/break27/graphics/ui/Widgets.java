@@ -41,7 +41,7 @@ public class Widgets {
         return (temporaryAssets != null);
     }
 
-    public static void setTemporaryAssets(AlterAssetManager manager) {
+    public static void initiate(AlterAssetManager manager) {
         temporaryAssets = manager;
     }
 

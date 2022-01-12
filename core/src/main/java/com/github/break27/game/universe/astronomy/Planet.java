@@ -15,11 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.system;
+package com.github.break27.game.universe.astronomy;
 
 /**
  * @author break27
  */
-public class SaveResolver {
-
+public class Planet extends AstronomicalObject {
 }

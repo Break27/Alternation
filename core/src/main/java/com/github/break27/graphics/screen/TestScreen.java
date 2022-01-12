@@ -77,11 +77,6 @@ public class TestScreen extends AbstractScreen {
     private Texture brdfLUT;
     private SceneSkybox skybox;
     private DirectionalLightEx light;
-    
-    @Override
-    public int getId() {
-        return ScreenType.TEST;
-    }
 
     @Override
     public void show() {

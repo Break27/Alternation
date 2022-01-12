@@ -26,12 +26,6 @@ import java.util.HashMap;
  * @author break27
  */
 public abstract class SerializableWindow extends AlternativeWindow {
-    public static final class WindowType {
-        public static final int TEST = 0;
-        public static final int VIEW = 1;
-        public static final int HTML = 2;
-        public static final int BROW = 3;
-    }
     
     private boolean ignoreFocus = false;
     private boolean Focused = false;
@@ -45,9 +39,7 @@ public abstract class SerializableWindow extends AlternativeWindow {
         if(windows == null) windows = new HashMap<>();
         windows.put(ID, this);
     }
-    
-    public abstract int getType();
-    
+
     public int getId() {
         return this.ID;
     }
@@ -56,7 +48,7 @@ public abstract class SerializableWindow extends AlternativeWindow {
         return this.Focused;
     }
 
-    public void setFocus() {
+    public void setFocused() {
         this.Focused = true;
         this.getColor().a = 1f;
         this.titleBarButtonsTable.getColor().a = 1f;
@@ -93,8 +85,7 @@ public abstract class SerializableWindow extends AlternativeWindow {
              }
          });
     }
-    
-    @Deprecated
+
     @Override
     public void pack() {
         if(!Focused) this.setFocusLost();
@@ -106,7 +97,7 @@ public abstract class SerializableWindow extends AlternativeWindow {
             if(window.ID != this.ID) {
                 window.setFocusLost();
             } else {
-                window.setFocus();
+                window.setFocused();
             }
         });
     }

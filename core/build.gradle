@@ -14,6 +14,9 @@ dependencies {
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
 	api "com.strongjoshua:libgdx-inGameConsole:$inGameConsoleVersion"
 	api "de.tomgrill.gdxdialogs:gdx-dialogs-core:$dialogsVersion"
-        api "net.sf.cssbox:cssbox:$cssboxVersion"
+	api "net.sf.cssbox:cssbox:$cssboxVersion"
+
+	compileOnlyApi "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+	api 'org.jetbrains.kotlinx:ki-shell:0.4.0'
 	api project(':shared')
 }

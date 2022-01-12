@@ -41,7 +41,7 @@ public class AlterSkinLoader extends AsynchronousAssetLoader<AlternativeSkin, Al
     public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, SkinParameter parameter) {
         Array<AssetDescriptor> deps = new Array<>();
         if (parameter != null && parameter.textureAtlasPath != null) {
-            deps.add(new AssetDescriptor(parameter.textureAtlasPath, TextureAtlas.class));
+            deps.add(new AssetDescriptor<>(parameter.textureAtlasPath, TextureAtlas.class));
         }
         return deps;
     }

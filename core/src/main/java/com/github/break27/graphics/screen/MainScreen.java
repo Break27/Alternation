@@ -22,10 +22,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.github.break27.Game3;
 import com.github.break27.graphics.ui.Widgets;
-import com.github.break27.graphics.ui.window.BrowserWindow;
-import com.github.break27.graphics.ui.window.HtmlViewerWindow;
-import com.github.break27.graphics.ui.window.TestWindow;
-import com.github.break27.graphics.ui.window.ViewpointWindow;
+import com.github.break27.graphics.ui.window.*;
+import com.github.break27.system.shell.KotlinShell;
 
 /**
  *
@@ -43,26 +41,29 @@ public class MainScreen extends AbstractScreen {
     BrowserWindow window4;
     
     @Override
-    public int getId() {
-        return ScreenType.MAIN;
-    }
-    
-    @Override
     public void show() {
-        Widgets.setTemporaryAssets(parent.Asset);
+        Widgets.initiate(parent.Asset);
 
         window = new ViewpointWindow(300, 300);
         window2 = new TestWindow("Test Window 中文测试 - 01234");
         window3 = new HtmlViewerWindow(500, 500);
         window4 = new BrowserWindow(500, 500);
-        window.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        window.setPosition(Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()/2f);
         stage = new Stage(defaultViewport);
+
+        KotlinShell shell = new KotlinShell();
+        shell.setOutputCallback(result -> {
+            System.out.println(result);
+        });
+        shell.run();
+        //System.out.println(shell.compileAndEval("println(\"Hello World! test = \" + (2 + 4) )").getMessageOrEmpty());
+        //shell.send("println(\"Hello World! test = \" + (2 + 4) )");
+        shell.send(":help");
 
         window.append(stage);
         window2.append(stage);
         window3.append(stage);
         window4.append(stage);
-
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -100,11 +101,6 @@ class MultiWindowScreen extends AbstractScreen {
     }
 
     @Override
-    public int getId() {
-        return ScreenType.MULTI;
-    }
-
-    @Override
     public void show() {
 
     }
@@ -135,15 +131,10 @@ class MultiWindowScreen extends AbstractScreen {
     }
 }
 
-class SingleWindowScreen extends AbstractScreen {
+class FullScreen extends AbstractScreen {
 
-    public SingleWindowScreen(Game3 game) {
+    public FullScreen(Game3 game) {
         super(game);
-    }
-
-    @Override
-    public int getId() {
-        return ScreenType.SINGLE;
     }
 
     @Override

@@ -45,10 +45,9 @@ public abstract class AlternativeWindow extends VisWindow
     VisTable contentTable;
     VisTable footerTable;
     VisTable titleBarButtonsTable;
-    VisTable subTitleTable;
-    
+
+    Label subTitleLabel;
     Image titleImage;
-    AlterLabel titleLabel;
 
     WindowResizeDialog resizeDialog;
 
@@ -57,16 +56,15 @@ public abstract class AlternativeWindow extends VisWindow
     public AlternativeWindow(String name) {
         super(name);
         titleBarButtonsTable = new VisTable();
-        subTitleTable = new VisTable();
+        subTitleLabel = new AlterLabel();
         // default pad style
         padLeft(4f);
         padRight(4f);
-        // reset the default Title Table
-        getTitleTable().clear();
-        // replace the old label
-        subTitleTable.add(titleLabel);
-        // tables
-        getTitleTable().add(subTitleTable).expand().left();
+        // reset table
+        getTitleTable().clearChildren();
+        getTitleTable().add(getTitleLabel());
+        // labels
+        getTitleTable().add(subTitleLabel).fillX().expandX().left();
         getTitleTable().add(titleBarButtonsTable).padRight(-getPadRight() + 0.7f).right();
         // panel
         add(createPanel());
@@ -90,9 +88,14 @@ public abstract class AlternativeWindow extends VisWindow
     public Table getFooterTable() {
         return footerTable;
     }
-    
-    public Table getSubTitleTable() {
-        return subTitleTable;
+
+    public void setSubTitleLabel(Label label, float width) {
+        getTitleTable().getCell(getSubTitleLabel()).setActor(label).width(width);
+        subTitleLabel = label;
+    }
+
+    public Label getSubTitleLabel() {
+        return subTitleLabel;
     }
 
     public void appendResizeDialog() {
@@ -102,7 +105,7 @@ public abstract class AlternativeWindow extends VisWindow
     public void setTitleImage(Drawable drawable) {
         if(titleImage == null) {
             titleImage = new Image(drawable);
-            subTitleTable.padLeft(titleImage.getWidth() + 5f);
+            getTitleTable().padLeft(titleImage.getWidth() + 5f);
             getTitleTable().addActorAt(0, titleImage);
         } else {
             titleImage.setDrawable(drawable);
@@ -127,19 +130,9 @@ public abstract class AlternativeWindow extends VisWindow
     }
 
     @Override
-    public Label getTitleLabel() {
-        if(titleLabel == null) titleLabel = new AlterLabel(super.getTitleLabel().getText().toString());
-        return titleLabel;
-    }
-
-    @Override
     public void styleApply(AlterAssetManager assets) {
         // window style
         setStyle(assets.getSkin().get(WindowStyle.class));
-        // title label style
-        Label.LabelStyle labelStyle = assets.getSkin().get(Label.LabelStyle.class);
-        labelStyle.font = assets.getSkin().getDefaultFont();
-        getTitleLabel().setStyle(labelStyle);
     }
 
     @Override

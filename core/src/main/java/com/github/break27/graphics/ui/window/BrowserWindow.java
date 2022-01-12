@@ -39,7 +39,6 @@ import com.kotcrab.vis.ui.widget.VisScrollPane;
 public class BrowserWindow extends CollapsibleWindow {
 
     Browser browser;
-    Image optionImage;
     
     public BrowserWindow(int width, int height) {
         super("Browser", width, height);
@@ -54,18 +53,15 @@ public class BrowserWindow extends CollapsibleWindow {
     }
 
     @Override
-    public int getType() {
-        return WindowType.BROW;
-    }
-
-    @Override
     public void create() {
+        browser.load("http://www.china-cer.com.cn/guwen/2021111215603.html");
         //browser.load("https://www.bilibili.com");
-        browser.load("https://www.un.org/zh/about-us/universal-declaration-of-human-rights");
+        //browser.load("https://www.un.org/zh/about-us/universal-declaration-of-human-rights");
         //browser.load("https://www.youtube.com");
         //browser.load(Gdx.files.internal("misc/html/about.html").file().toURI());
         Table table = browser.getBrowserTable();
         Image image = browser.getImage();
+
         VisScrollPane scrollpane = new VisScrollPane(image);
         scrollpane.setOverscroll(false, false);
         scrollpane.setScrollbarsOnTop(true);
@@ -74,7 +70,7 @@ public class BrowserWindow extends CollapsibleWindow {
         TitleMenu menu = new TitleMenu(this);
         menu.listenTo(getTitleTable());
         
-        getSubTitleTable().add(browser.getBrowserLabel()).left();
+        setSubTitleLabel(browser.getBrowserLabel(), getWidth() - 120);
         getContentTable().add(scrollpane);
         getFooterTable().add(table).expand().left();
     }
@@ -123,7 +119,7 @@ public class BrowserWindow extends CollapsibleWindow {
             browser_reload = new AlterMenuItem("Reload", new Image(), new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    //todo
+                    browser.reload();
                 }
             });
             window_close = new AlterMenuItem("Close", new Image(), new ChangeListener() {

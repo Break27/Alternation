@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,52 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.screen;
+package com.github.break27.graphics.g3d.world;
 
-import com.github.break27.Game3;
-import com.github.break27.graphics.ui.Widgets;
-import com.github.break27.system.Resource;
+import com.badlogic.gdx.files.FileHandle;
 
 /**
- *
  * @author break27
  */
-public class FinalizingScreen extends AbstractScreen {
-    
-    public FinalizingScreen(Game3 game) {
-        super(game);
+public class Save {
+
+    long runtime;
+
+    public Save() {
     }
 
-    @Override
-    public void show() {
-        /* FINALIZING */
-        Resource.dispose();
-        Widgets.destroyAll();
-        //debug
-        System.exit(0);
+    public Save(FileHandle saveFile) {
+        load(saveFile);
     }
 
-    @Override
-    public void render(float f) {
-    }
+    public void load(FileHandle saveFile) {
 
-    @Override
-    public void resize(int i, int i1) {
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void hide() {
-    }
-
-    @Override
-    public void dispose() {
     }
 }

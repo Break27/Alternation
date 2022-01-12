@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,47 +15,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.game.universe;
+package com.github.break27.graphics.ui.window;
 
-import com.badlogic.gdx.files.FileHandle;
+import com.github.break27.system.AlterConsole;
 
 /**
  * @author break27
  */
-public class Player {
+public class ConsoleWindow extends CollapsibleWindow {
 
-    float x, y, z;
-    Profiles profiles;
+    AlterConsole console;
 
-    public Player() {
-
+    public ConsoleWindow(int width, int height) {
+        super("Console", width, height);
     }
 
-    public Player(FileHandle saveFile) {
-
+    @Override
+    public void destroy() {
+        console.dispose();
     }
 
-    public Player(float x, float y, float z, Profiles profiles) {
-
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public float getZ() {
-        return z;
-    }
-
-    public Profiles getProfiles() {
-        return profiles;
-    }
-
-    public class Profiles {
-
+    @Override
+    public void create() {
+        console = new AlterConsole();
     }
 }

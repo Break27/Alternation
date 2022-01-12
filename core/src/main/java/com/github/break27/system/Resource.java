@@ -55,14 +55,14 @@ public class Resource {
             // Only manifest with location attribute is a valid one.
             if(element.hasAttribute("location"))
                 sibling = manifest.sibling(element.getAttribute("location"));
-            else throw new GdxRuntimeException(manifest + ": Invalid Manifest: " +
+            else throw new GdxRuntimeException(manifest.path() + ": Invalid Manifest: " +
                     "\"location\" Attribute is not found.");
             if(type.equals("manifest")) {
                 // prevent from infinite recursive loop
                 if(sibling.path().contains("../")) {
-                    throw new GdxRuntimeException("Unsupported Operation: No access to parent directory: " + sibling);
+                    throw new GdxRuntimeException(manifest.path() + ": Unsupported Operation: No access to parent directory: " + sibling);
                 } else if(files.contains(sibling, false) || sibling.equals(manifest)) {
-                    throw new GdxRuntimeException("Unsupported Operation: Manifest has already loaded: " + sibling);
+                    throw new GdxRuntimeException(manifest.path() + ": Unsupported Operation: Manifest has already loaded: " + sibling);
                 } else {
                     files.add(sibling);
                     loadManifest(manager, sibling, files);
@@ -77,14 +77,17 @@ public class Resource {
     }
     
     public static void dispose() {
-        VisUI.dispose();
+        try {
+            VisUI.dispose();
+        } catch(GdxRuntimeException ignored) {
+        }
     }
     
     private static void loadSkin(AlterAssetManager manager, String name, FileHandle skin) {
         if(skin.exists())
             manager.load(name, skin.path(), AlternativeSkin.class);
         else
-            Gdx.app.log(Resource.class.getName(), "Skin file \"" + skin +
+            Gdx.app.log(Resource.class.getName(), "Skin file \"" + skin.path() +
                     "\" does not exist! Skin \"" + name + "\" is not loaded.");
     }
 

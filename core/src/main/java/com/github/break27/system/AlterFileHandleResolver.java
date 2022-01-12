@@ -35,14 +35,15 @@ public class AlterFileHandleResolver implements FileHandleResolver {
     }
 
     private FileHandle parse(String filePath) {
-        String[] val = filePath.split(":",2);
+        String[] val = filePath.split("://",2);
         switch(val.length) {
             case 2:
                 String head = val[0].toLowerCase();
                 String path = val[1];
                 // resolve head
-                switch (head) {
+                switch(head) {
                     case "file":
+                        path = path.replaceFirst("/", "");
                         return Gdx.files.absolute(path);
                     case "http":
                         //todo

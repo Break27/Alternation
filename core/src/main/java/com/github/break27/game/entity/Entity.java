@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,52 +15,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.screen;
-
-import com.github.break27.Game3;
-import com.github.break27.graphics.ui.Widgets;
-import com.github.break27.system.Resource;
+package com.github.break27.game.entity;
 
 /**
- *
  * @author break27
  */
-public class FinalizingScreen extends AbstractScreen {
-    
-    public FinalizingScreen(Game3 game) {
-        super(game);
+public class Entity {
+
+    Profiles profiles;
+    float x, y, z;
+
+    public Entity(EntityProfiles profiles) {
+
     }
 
-    @Override
-    public void show() {
-        /* FINALIZING */
-        Resource.dispose();
-        Widgets.destroyAll();
-        //debug
-        System.exit(0);
+    public float getX() {
+        return x;
     }
 
-    @Override
-    public void render(float f) {
+    public float getY() {
+        return y;
     }
 
-    @Override
-    public void resize(int i, int i1) {
+    public float getZ() {
+        return z;
     }
 
-    @Override
-    public void pause() {
+    public Profiles getProfiles() {
+        return profiles;
     }
 
-    @Override
-    public void resume() {
-    }
+    public static class EntityProfiles extends Profiles {
 
-    @Override
-    public void hide() {
-    }
-
-    @Override
-    public void dispose() {
     }
 }
+

@@ -19,6 +19,7 @@ package com.github.break27.graphics.ui.window;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.github.break27.system.AlterAssetManager;
 
@@ -33,11 +34,6 @@ public class TestWindow extends SerializableWindow {
     public TestWindow(String name) {
         super(name);
         addCloseButton();
-    }
-    
-    @Override
-    public int getType() {
-        return WindowType.TEST;
     }
     
     @Override

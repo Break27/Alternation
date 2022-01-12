@@ -35,6 +35,7 @@ import com.kotcrab.vis.ui.widget.VisLabel;
 import cz.vutbr.web.css.MediaSpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.imageio.ImageIO;
@@ -90,7 +91,7 @@ public class Browser {
     public Browser(int width, int height, int displayWidth, int displayHeight, boolean isClipped) {
         table = new BrowserTable();
         titleLabel = new AlterLabel();
-        titleLabel.setWrap(true);
+        titleLabel.setEllipsis(true);
         
         table.warning("NO-CONTENT");
         windowSize = new Dimension(displayWidth, displayHeight);
@@ -114,7 +115,11 @@ public class Browser {
     public void render() {
         Renderer.render();
     }
-    
+
+    public void reload() {
+
+    }
+
     public void destroy() {
         Parser.halt();
         Renderer.halt();
@@ -172,30 +177,33 @@ public class Browser {
             }
 
             public void parse(String url) {
-                ParserThread = new Thread("Browser$BrowserParser") {
-                    @Override
-                    public void run() {
-                        try {
-                            source = new DefaultDocumentSource(url);
-                            parseHtml(source);
-                        } catch(IOException | SAXException e) {
-                            Gdx.app.error(getClass().getName(), "Browser Error: Failed to load document: " 
-                                    + source.getURL(), e);
-                        }
-                    }
-                };
-                ParserThread.start();
+                try {
+                    source = new DefaultDocumentSource(url);
+                    parse(source);
+                } catch(IOException e) {
+                    Gdx.app.error(getClass().getName(), "Browser Error: Failed to load document: "
+                            + source.getURL(), e);
+                }
             }
 
             public void parse(URI uri) {
+                try {
+                    source = new DefaultDocumentSource(uri.toURL());
+                    parse(source);
+                } catch(IOException e) {
+                    Gdx.app.error(getClass().getName(), "Browser Error: Failed to load document: "
+                            + source.getURL(), e);
+                }
+            }
+
+            private void parse(DocumentSource source) {
                 ParserThread = new Thread("Browser$BrowserParser") {
                     @Override
                     public void run() {
                         try {
-                            source = new DefaultDocumentSource(uri.toURL());
                             parseHtml(source);
                         } catch(IOException | SAXException e) {
-                            Gdx.app.error(getClass().getName(), "Browser Error: Failed to load document: " 
+                            Gdx.app.error(getClass().getName(), "Browser Error: Failed to load document: "
                                     + source.getURL(), e);
                         }
                     }
@@ -205,7 +213,7 @@ public class Browser {
             
             public void halt() {
                 if(ParserThread.isAlive()) {
-                    ParserThread.stop();
+                    ParserThread.interrupt();
                 }
             }
             
@@ -227,6 +235,10 @@ public class Browser {
                     media.setDimensions(windowSize.width, windowSize.height);
                     media.setDeviceDimensions(windowSize.width, windowSize.height);
 
+                    // abort loading if thread interrupted
+                    if(Thread.currentThread().isInterrupted())
+                        throw new InterruptedException();
+
                     // Create the CSS analyzer
                     DOMAnalyzer da = new DOMAnalyzer(doc, source.getURL());
                     da.setDefaultEncoding("UTF-8");
@@ -246,6 +258,10 @@ public class Browser {
                     da.addStyleSheet(null, CSSNorm.formsStyleSheet(), DOMAnalyzer.Origin.AGENT); //render form fields using css
                     da.getStyleSheets(); //load the author style sheets
 
+                    // abort rendering if thread interrupted
+                    if(Thread.currentThread().isInterrupted())
+                        throw new InterruptedException();
+
                     GraphicsEngine contentCanvas = new GraphicsEngine(da.getRoot(), da, source.getURL());
                     contentCanvas.setAutoMediaUpdate(false); //we have a correct media specification, do not update
                     contentCanvas.setAutoSizeUpdate(true);
@@ -253,13 +269,19 @@ public class Browser {
                     contentCanvas.getConfig().setLoadImages(true);
                     contentCanvas.getConfig().setLoadBackgroundImages(true);
 
+                    if(Thread.currentThread().isInterrupted())
+                        throw new InterruptedException();
+
+                    // write to image
                     table.loading("RENDER");
                     contentCanvas.createLayout(windowSize);
                     ImageIO.write(contentCanvas.getImage(), "png", out);
                     
-                } catch(IOException | DOMException | SAXException ex) {
-                    table.error("ERROR", ex.getMessage());
-                    throw ex;
+                } catch(IOException | DOMException | SAXException e) {
+                    table.error("ERROR", e.getMessage());
+                    throw e;
+                } catch(InterruptedException ex) {
+                    Gdx.app.log(Thread.currentThread().getName(), "Browser Loading Aborted.");
                 } finally {
                     source.close();
                 }
@@ -270,7 +292,8 @@ public class Browser {
                 * this is especially important when it
                 * comes to rendering-related functions.
                 */
-                Gdx.app.postRunnable(RendererThread);
+                if(!Thread.currentThread().isInterrupted())
+                    Gdx.app.postRunnable(RendererThread);
             }
             
             /** Strip all Non-Printing Characters of a String Object.
@@ -310,14 +333,15 @@ public class Browser {
                 RendererThread = new Thread("Browser$BrowserRenderer") {
                     @Override
                     public void run() {
-                        render();
+                        if(!currentThread().isInterrupted())
+                            render();
                     }
                 };
             }
             
             public void halt() {
                 if(RendererThread.isAlive())
-                    RendererThread.stop();
+                    RendererThread.interrupt();
             }
             
             public Image getImage() {

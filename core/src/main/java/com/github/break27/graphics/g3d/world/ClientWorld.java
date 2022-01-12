@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.g3d;
+package com.github.break27.graphics.g3d.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
-import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.github.break27.game.universe.Player;
-import com.github.break27.graphics.g3d.voxel.PerlinNoiseGenerator;
+import com.github.break27.game.entity.Player;
 import com.github.break27.graphics.g3d.voxel.VoxelModel;
 import com.github.break27.graphics.g3d.voxel.VoxelWorld;
 import net.mgsx.gltf.scene3d.attributes.PBRCubemapAttribute;
@@ -43,65 +39,31 @@ import net.mgsx.gltf.scene3d.utils.IBLBuilder;
 /**
  * @author break27
  */
-public class World {
+public class ClientWorld extends World {
 
-    Array<Player> PlayerList;
+    public SceneManager sceneManager;
+
+    VoxelDisplay voxelDisplay;
     Player currentPlayer;
 
-    public World() {
-        this(new Player());
-    }
+    public ClientWorld(Save save) {
+        super(save);
+        // resolve save file.
 
-    public World(Player player, Player... players) {
         // register player(s)
         PlayerList = new Array<>();
-        PlayerList.addAll(players);
-        PlayerList.add(currentPlayer = player);
+        //PlayerList.addAll(players);
+        //PlayerList.add(currentPlayer = player);
     }
 
+    public void initialize() {
+
+    }
+
+    @Override
     public void create() {
+        voxelDisplay = new VoxelDisplay(20, 20, 20);
 
-    }
-
-    public void update() {
-
-    }
-
-    public void resize(int width, int height) {
-
-    }
-}
-
-class VoxelDisplay {
-    VoxelModel model;
-
-    int ChunkNumX;
-    int ChunkNumY;
-    int ChunkNumZ;
-
-    public VoxelDisplay(int visibleChunkX, int visibleChunkY, int visibleChunkZ) {
-        model = new VoxelModel(new VoxelWorld(
-                ChunkNumX = visibleChunkX,
-                ChunkNumY = visibleChunkY,
-                ChunkNumZ = visibleChunkZ));
-        create();
-    }
-
-    ModelBatch modelBatch;
-    PerspectiveCamera camera;
-    Environment lights;
-    FirstPersonCameraController controller;
-    VoxelWorld voxelWorld;
-
-    private SceneManager sceneManager;
-    private Cubemap diffuseCubemap;
-    private Cubemap environmentCubemap;
-    private Cubemap specularCubemap;
-    private Texture brdfLUT;
-    private SceneSkybox skybox;
-    private DirectionalLightEx light;
-
-    private void create() {
         // configure shader
         PBRShaderConfig config = PBREmissiveShaderProvider.createDefaultConfig();
         config.numBones = 60;
@@ -114,26 +76,22 @@ class VoxelDisplay {
         sceneManager = new SceneManager(new PBREmissiveShaderProvider(config), new PBRDepthShaderProvider(depthConfig));
 
         // setup camera
-        camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.near = 0.5f;
-        camera.far = 1000;
-        controller = new FirstPersonCameraController(camera);
-        Gdx.input.setInputProcessor(controller);
-        sceneManager.setCamera(camera);
+        sceneManager.setCamera(currentPlayer.Camera);
+        Gdx.input.setInputProcessor(currentPlayer.Controller);
 
         // setup light
-        light = new DirectionalLightEx();
+        DirectionalLightEx light = new DirectionalLightEx();
         light.direction.set(1, -3, 1).nor();
         light.color.set(Color.WHITE);
         sceneManager.environment.add(light);
 
         // setup quick IBL (image based lighting)
         IBLBuilder iblBuilder = IBLBuilder.createOutdoor(light);
-        environmentCubemap = iblBuilder.buildEnvMap(1024);
-        diffuseCubemap = iblBuilder.buildIrradianceMap(256);
-        specularCubemap = iblBuilder.buildRadianceMap(10);
+        Cubemap environmentCubemap = iblBuilder.buildEnvMap(1024);
+        Cubemap diffuseCubemap = iblBuilder.buildIrradianceMap(256);
+        Cubemap specularCubemap = iblBuilder.buildRadianceMap(10);
         iblBuilder.dispose();
-        brdfLUT = new Texture(Gdx.files.classpath("net/mgsx/gltf/shaders/brdfLUT.png"));
+        Texture brdfLUT = new Texture(Gdx.files.classpath("net/mgsx/gltf/shaders/brdfLUT.png"));
 
         sceneManager.setAmbientLight(1f);
         sceneManager.environment.set(new PBRTextureAttribute(PBRTextureAttribute.BRDFLUTTexture, brdfLUT));
@@ -141,31 +99,61 @@ class VoxelDisplay {
         sceneManager.environment.set(PBRCubemapAttribute.createDiffuseEnv(diffuseCubemap));
 
         // setup skybox
-        skybox = new SceneSkybox(environmentCubemap);
+        SceneSkybox skybox = new SceneSkybox(environmentCubemap);
         sceneManager.setSkyBox(skybox);
 
-        MathUtils.random.setSeed(0);
-        voxelWorld = new VoxelWorld(10, 2, 10);
-        PerlinNoiseGenerator.generateVoxels(voxelWorld, 0, 63, 10);
-        Scene scene = new Scene(new VoxelModel(voxelWorld));
+        // create scene with model
+        Scene scene = new Scene(voxelDisplay.model);
         sceneManager.addScene(scene);
-        float camX = voxelWorld.voxelsX / 2f;
-        float camZ = voxelWorld.voxelsZ / 2f;
-        float camY = voxelWorld.getHighest(camX, camZ) + 1.5f;
-        camera.position.set(camX, camY, camZ);
+
+        currentPlayer.Camera.position.set(voxelDisplay.camX, voxelDisplay.camY, voxelDisplay.camZ);
     }
 
-    public void update() {
-        float deltaTime = Gdx.graphics.getDeltaTime();
-        controller.update();
+    public void render() {
+
+    }
+
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        currentPlayer.update();
+
+        // update display
+        voxelDisplay.update(currentPlayer.getX(), currentPlayer.getY());
 
         // render
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        sceneManager.update(deltaTime);
+        sceneManager.update(delta);
         sceneManager.render();
     }
+}
 
-    public void resize(int width, int height) {
-        sceneManager.updateViewport(width, height);
+class VoxelDisplay {
+
+    Scene scene;
+    VoxelWorld world;
+    VoxelModel model;
+
+    int ChunkNumX, ChunkNumY, ChunkNumZ;
+    float camX, camY, camZ;
+
+    public VoxelDisplay(int visibleChunkX, int visibleChunkY, int visibleChunkZ) {
+        MathUtils.random.setSeed(0);
+        world = new VoxelWorld(
+                ChunkNumX = visibleChunkX,
+                ChunkNumY = visibleChunkY,
+                ChunkNumZ = visibleChunkZ
+        );
+
+        model = new VoxelModel(world);
+        camX = world.voxelsX / 2f;
+        camZ = world.voxelsZ / 2f;
+        camY = world.getHighest(camX, camZ) + 1.5f;
+
+        scene = new Scene(model);
+    }
+
+    public void update(float positionX, float positionY) {
+
     }
 }

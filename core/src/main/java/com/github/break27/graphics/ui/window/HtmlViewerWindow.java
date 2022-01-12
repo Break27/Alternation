@@ -43,11 +43,6 @@ public class HtmlViewerWindow extends CollapsibleWindow {
         super.resize(width, height);
         renderer.resize(width, height);
     }
-    
-    @Override
-    public int getType() {
-        return WindowType.HTML;
-    }
 
     @Override
     public void create() {
