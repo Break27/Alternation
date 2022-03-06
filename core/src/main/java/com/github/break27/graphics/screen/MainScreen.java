@@ -20,10 +20,15 @@ package com.github.break27.graphics.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Queue;
 import com.github.break27.Game3;
 import com.github.break27.graphics.ui.Widgets;
 import com.github.break27.graphics.ui.window.*;
 import com.github.break27.system.shell.KotlinShell;
+import com.github.break27.system.shell.ShellOutputCallback;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Stack;
 
 /**
  *
@@ -35,6 +40,8 @@ public class MainScreen extends AbstractScreen {
         super(game);
     }
 
+    KotlinShell shell;
+
     ViewpointWindow window;
     TestWindow window2;
     HtmlViewerWindow window3;
@@ -42,7 +49,7 @@ public class MainScreen extends AbstractScreen {
     
     @Override
     public void show() {
-        Widgets.initiate(parent.Asset);
+        Widgets.initiate(parent.AssetManager);
 
         window = new ViewpointWindow(300, 300);
         window2 = new TestWindow("Test Window 中文测试 - 01234");
@@ -51,14 +58,19 @@ public class MainScreen extends AbstractScreen {
         window.setPosition(Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()/2f);
         stage = new Stage(defaultViewport);
 
-        KotlinShell shell = new KotlinShell();
+        /*
+        // debug
+        shell = new KotlinShell();
         shell.setOutputCallback(result -> {
             System.out.println(result);
         });
         shell.run();
-        //System.out.println(shell.compileAndEval("println(\"Hello World! test = \" + (2 + 4) )").getMessageOrEmpty());
+
         //shell.send("println(\"Hello World! test = \" + (2 + 4) )");
+        shell.send("println(\"Hello World! test = \" + (5 + 9) )");
+        shell.send("Math.pow(10.0, 5.0)");
         shell.send(":help");
+         */
 
         window.append(stage);
         window2.append(stage);
@@ -91,10 +103,11 @@ public class MainScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
+        //shell.halt();
     }
 }
 
-class MultiWindowScreen extends AbstractScreen {
+class MultiWindowScreen extends MainScreen {
 
     public MultiWindowScreen(Game3 game) {
         super(game);
@@ -127,11 +140,11 @@ class MultiWindowScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-
+        super.dispose();
     }
 }
 
-class FullScreen extends AbstractScreen {
+class FullScreen extends MainScreen {
 
     public FullScreen(Game3 game) {
         super(game);
@@ -164,6 +177,6 @@ class FullScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-
+        super.dispose();
     }
 }

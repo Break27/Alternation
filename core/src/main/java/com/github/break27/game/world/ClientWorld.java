@@ -15,14 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.g3d.world;
+package com.github.break27.game.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Predicate;
+import com.github.break27.game.entity.AlterEntity;
 import com.github.break27.game.entity.Player;
+import com.github.break27.game.entity.component.PositionComponent;
 import com.github.break27.graphics.g3d.voxel.VoxelModel;
 import com.github.break27.graphics.g3d.voxel.VoxelWorld;
 import net.mgsx.gltf.scene3d.attributes.PBRCubemapAttribute;
@@ -41,9 +44,11 @@ import net.mgsx.gltf.scene3d.utils.IBLBuilder;
  */
 public class ClientWorld extends World {
 
-    public SceneManager sceneManager;
+    public SceneManager SceneManager;
+    public VoxelWorld VoxelWorld;
 
-    VoxelDisplay voxelDisplay;
+    double visibleRadius = 10.0d;
+    VoxelModel model;
     Player currentPlayer;
 
     public ClientWorld(Save save) {
@@ -51,7 +56,6 @@ public class ClientWorld extends World {
         // resolve save file.
 
         // register player(s)
-        PlayerList = new Array<>();
         //PlayerList.addAll(players);
         //PlayerList.add(currentPlayer = player);
     }
@@ -62,7 +66,9 @@ public class ClientWorld extends World {
 
     @Override
     public void create() {
-        voxelDisplay = new VoxelDisplay(20, 20, 20);
+        MathUtils.random.setSeed(0);
+        VoxelWorld = new VoxelWorld(20, 20 ,20);
+        model = new VoxelModel(VoxelWorld);
 
         // configure shader
         PBRShaderConfig config = PBREmissiveShaderProvider.createDefaultConfig();
@@ -73,17 +79,17 @@ public class ClientWorld extends World {
 
         DepthShader.Config depthConfig = PBREmissiveShaderProvider.createDefaultDepthConfig();
         depthConfig.numBones = 60;
-        sceneManager = new SceneManager(new PBREmissiveShaderProvider(config), new PBRDepthShaderProvider(depthConfig));
+        SceneManager = new SceneManager(new PBREmissiveShaderProvider(config), new PBRDepthShaderProvider(depthConfig));
 
         // setup camera
-        sceneManager.setCamera(currentPlayer.Camera);
+        SceneManager.setCamera(currentPlayer.Camera);
         Gdx.input.setInputProcessor(currentPlayer.Controller);
 
         // setup light
         DirectionalLightEx light = new DirectionalLightEx();
         light.direction.set(1, -3, 1).nor();
         light.color.set(Color.WHITE);
-        sceneManager.environment.add(light);
+        SceneManager.environment.add(light);
 
         // setup quick IBL (image based lighting)
         IBLBuilder iblBuilder = IBLBuilder.createOutdoor(light);
@@ -93,67 +99,46 @@ public class ClientWorld extends World {
         iblBuilder.dispose();
         Texture brdfLUT = new Texture(Gdx.files.classpath("net/mgsx/gltf/shaders/brdfLUT.png"));
 
-        sceneManager.setAmbientLight(1f);
-        sceneManager.environment.set(new PBRTextureAttribute(PBRTextureAttribute.BRDFLUTTexture, brdfLUT));
-        sceneManager.environment.set(PBRCubemapAttribute.createSpecularEnv(specularCubemap));
-        sceneManager.environment.set(PBRCubemapAttribute.createDiffuseEnv(diffuseCubemap));
+        SceneManager.setAmbientLight(1f);
+        SceneManager.environment.set(new PBRTextureAttribute(PBRTextureAttribute.BRDFLUTTexture, brdfLUT));
+        SceneManager.environment.set(PBRCubemapAttribute.createSpecularEnv(specularCubemap));
+        SceneManager.environment.set(PBRCubemapAttribute.createDiffuseEnv(diffuseCubemap));
 
         // setup skybox
         SceneSkybox skybox = new SceneSkybox(environmentCubemap);
-        sceneManager.setSkyBox(skybox);
+        SceneManager.setSkyBox(skybox);
 
-        // create scene with model
-        Scene scene = new Scene(voxelDisplay.model);
-        sceneManager.addScene(scene);
-
-        currentPlayer.Camera.position.set(voxelDisplay.camX, voxelDisplay.camY, voxelDisplay.camZ);
-    }
-
-    public void render() {
-
+        currentPlayer.Camera.position.set(VoxelWorld.getVisibleChunkRadiusXZ(),
+                VoxelWorld.getVisibleChunkRadiusY(),
+                VoxelWorld.getVisibleChunkRadiusXZ());
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        currentPlayer.update();
+        Vector3 playerPos = currentPlayer.getComponent(PositionComponent.class).Position;
 
-        // update display
-        voxelDisplay.update(currentPlayer.getX(), currentPlayer.getY());
+        Entities.select(entity -> {
+            Vector3 pos = entity.getComponent(PositionComponent.class).Position;
 
-        // render
+            return visibilityCheck(playerPos.x, pos.x)
+                    && visibilityCheck(playerPos.y, pos.y)
+                    && visibilityCheck(playerPos.z, pos.z);
+        });
+    }
+
+    public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        sceneManager.update(delta);
-        sceneManager.render();
-    }
-}
-
-class VoxelDisplay {
-
-    Scene scene;
-    VoxelWorld world;
-    VoxelModel model;
-
-    int ChunkNumX, ChunkNumY, ChunkNumZ;
-    float camX, camY, camZ;
-
-    public VoxelDisplay(int visibleChunkX, int visibleChunkY, int visibleChunkZ) {
-        MathUtils.random.setSeed(0);
-        world = new VoxelWorld(
-                ChunkNumX = visibleChunkX,
-                ChunkNumY = visibleChunkY,
-                ChunkNumZ = visibleChunkZ
-        );
-
-        model = new VoxelModel(world);
-        camX = world.voxelsX / 2f;
-        camZ = world.voxelsZ / 2f;
-        camY = world.getHighest(camX, camZ) + 1.5f;
-
-        scene = new Scene(model);
+        SceneManager.update(delta);
+        SceneManager.render();
     }
 
-    public void update(float positionX, float positionY) {
+    @Override
+    public void dispose() {
+        SceneManager.dispose();
+    }
 
+    private boolean visibilityCheck(float pos1, float pos2) {
+        return (pos1 + visibleRadius) >= pos2 || (pos1 - visibleRadius) <= pos2;
     }
 }

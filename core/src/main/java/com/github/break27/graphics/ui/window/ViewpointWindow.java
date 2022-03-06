@@ -65,7 +65,7 @@ public class ViewpointWindow extends CollapsibleWindow {
         menu.listenTo(getTitleTable());
 
         // default value: focused
-        setFocused();
+        setFocused(true);
     }
     
     @Override

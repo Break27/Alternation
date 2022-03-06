@@ -17,6 +17,7 @@
 
 package com.github.break27.graphics.ui.window;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -39,38 +40,41 @@ import com.kotcrab.vis.ui.widget.VisScrollPane;
 public class BrowserWindow extends CollapsibleWindow {
 
     Browser browser;
+    BrowserLinkDialog linkDialog;
     
     public BrowserWindow(int width, int height) {
         super("Browser", width, height);
         padBottom(5f);
         browser = new Browser(width, height, false);
+        linkDialog = new BrowserLinkDialog();
 
         addOptionButton();
     }
 
     public void appendLinkDialog() {
-
+        linkDialog.show(getStage());
     }
 
     @Override
     public void create() {
-        browser.load("http://www.china-cer.com.cn/guwen/2021111215603.html");
+        //browser.load("http://www.china-cer.com.cn/guwen/2021111215603.html");
         //browser.load("https://www.bilibili.com");
         //browser.load("https://www.un.org/zh/about-us/universal-declaration-of-human-rights");
         //browser.load("https://www.youtube.com");
-        //browser.load(Gdx.files.internal("misc/html/about.html").file().toURI());
+        browser.load(Gdx.files.internal("assets/misc/html/about.html").file().toURI());
         Table table = browser.getBrowserTable();
         Image image = browser.getImage();
 
         VisScrollPane scrollpane = new VisScrollPane(image);
         scrollpane.setOverscroll(false, false);
         scrollpane.setScrollbarsOnTop(true);
-        scrollpane.setupFadeScrollBars(0.75f, 1);
+        scrollpane.setupFadeScrollBars(0.75f, 1f);
 
         TitleMenu menu = new TitleMenu(this);
         menu.listenTo(getTitleTable());
-        
-        setSubTitleLabel(browser.getBrowserLabel(), getWidth() - 120);
+
+        browser.setTitleSeparation(" - ");
+        setSubTitleLabel(browser.getBrowserLabel(), getWidth() - 120f);
         getContentTable().add(scrollpane);
         getFooterTable().add(table).expand().left();
     }

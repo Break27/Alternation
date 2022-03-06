@@ -21,6 +21,10 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.math.MathUtils;
 
+/**
+ *
+ *
+ */
 public class PerlinNoiseGenerator {
 	public static float[][] generateWhiteNoise (int width, int height) {
 		float[][] noise = new float[width][height];
@@ -134,7 +138,7 @@ public class PerlinNoiseGenerator {
 		for (int z = 0; z < voxelWorld.voxelsZ; z++) {
 			for (int x = 0; x < voxelWorld.voxelsX; x++) {
 				voxelWorld.setColumn(x, heightMap[idx++], z, (byte)1);
-// voxelWorld.set(x, heightMap[idx++], z, (byte)1);
+				// voxelWorld.set(x, heightMap[idx++], z, (byte)1);
 			}
 		}
 	}

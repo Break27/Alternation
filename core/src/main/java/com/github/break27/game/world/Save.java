@@ -15,10 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.game.universe.astronomy;
+package com.github.break27.game.world;
+
+import com.badlogic.gdx.files.FileHandle;
 
 /**
  * @author break27
  */
-public class Planet extends AstronomicalObject {
+public class Save {
+
+    long uptime;
+
+    public Save() {
+    }
+
+    public Save(FileHandle saveFile) {
+        load(saveFile);
+    }
+
+    public void load(FileHandle saveFile) {
+
+    }
 }

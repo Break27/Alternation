@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2022 Breakerbear
+ * Copyright (c) 2021-2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,25 +15,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.g3d.world;
+package com.github.break27.game.world;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
+import com.github.break27.game.entity.AlterEntity;
+import com.github.break27.game.entity.Player;
 
 /**
  * @author break27
  */
-public class Save {
+public abstract class World implements Disposable {
 
-    long runtime;
+    Array<AlterEntity> Entities;
+    Save save;
 
-    public Save() {
+    public World(Save save) {
+        // resolve save file
+        this.save = save;
+        Entities = new Array<>();
+        // create world
+        initialize();
+        create();
     }
 
-    public Save(FileHandle saveFile) {
-        load(saveFile);
+    public abstract void initialize();
+
+    public abstract void create();
+
+    /** Update current world.
+     * @param delta delta time in seconds.
+     * */
+    public void update(float delta) {
+        save.uptime += (long)(delta * 1000);
     }
 
-    public void load(FileHandle saveFile) {
+    public void save(FileHandle saveFile) {
 
     }
 }

@@ -18,7 +18,9 @@
 package com.github.break27.graphics.ui.window;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.DelayedRemovalArray;
 import com.github.break27.graphics.HtmlRenderer;
 import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisScrollPane;
@@ -28,8 +30,12 @@ import com.kotcrab.vis.ui.widget.VisScrollPane;
  * @author break27
  */
 public class HtmlViewerWindow extends CollapsibleWindow {
-    
+
+    private DelayedRemovalArray<EventListener> scrollPaneCapturedListeners;
+    private DelayedRemovalArray<EventListener> scrollPaneListeners;
+
     HtmlRenderer renderer;
+    VisScrollPane scrollPane;
     
     public HtmlViewerWindow(int width, int height) {
         super("HTML Viewer", width, height);
@@ -49,11 +55,11 @@ public class HtmlViewerWindow extends CollapsibleWindow {
         renderer.load(Gdx.files.internal("misc/html/about.html").readString("UTF-8"));
         renderer.render();
         Image image = renderer.getImage();
-        VisScrollPane scrollpane = new VisScrollPane(image);
-        scrollpane.setOverscroll(false, false);
-        scrollpane.setScrollbarsOnTop(true);
-        scrollpane.setupFadeScrollBars(0.75f, 1);
-        getContentTable().add(scrollpane);
+        scrollPane = new VisScrollPane(image);
+        scrollPane.setOverscroll(false, false);
+        scrollPane.setScrollbarsOnTop(true);
+        scrollPane.setupFadeScrollBars(0.75f, 1);
+        getContentTable().add(scrollPane);
     }
 
     @Override

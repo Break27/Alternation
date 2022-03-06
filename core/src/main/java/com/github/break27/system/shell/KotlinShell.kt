@@ -18,31 +18,46 @@
 package com.github.break27.system.shell
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.utils.Queue
 import org.jetbrains.kotlinx.ki.shell.*
 import org.jetbrains.kotlinx.ki.shell.configuration.CachedInstance
-import org.jetbrains.kotlinx.ki.shell.configuration.ReplConfiguration
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import kotlin.NoSuchElementException
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
 
-class KotlinShell : Shell(
-        defaultReplConfiguration(),
-        defaultJvmScriptingHostConfiguration,
-        defaultScriptCompilationConfiguration(),
-        defaultScriptEvaluationConfiguration()
-    ) {
+class KotlinShell: Shell(defaultReplConfiguration(),
+                         defaultJvmScriptingHostConfiguration,
+                         defaultScriptCompilationConfiguration(),
+                         defaultScriptEvaluationConfiguration()
+) {
 
-    private var io = ShellIO()
+    private val io = ShellIO()
+    private val queue = Queue<ShellTask>()
+    private var initialized = false
 
-    private val shellThread = Thread {
+    private val shellThread = Thread({
         // initialize
         replConfiguration.load()
         replConfiguration.plugins().forEach { it.init(this, replConfiguration) }
         settings = Settings(replConfiguration)
-        if(settings.sayHello) io.put(printMOTD())
+        if(settings.sayHello) io.send(printMOTD())
+        initialized = true
 
-        fun parseKotlinCode(code: String) {
-            val result = compileAndEval(code).getMessageOrEmpty()
-            io.put(result)
+        compileAndEval("println(\"[KotlinShell] " +
+                "${LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))} Shell created.\")")
+
+        fun compileKotlin(code: String) {
+            val result = compileAndEval(code)
+            if(result.isCompiled)
+                io.send(result.getMessageOrEmpty())
+            else {
+                io.newLine("Error: " + result.getMessage())
+                if(result.getErrorCause() != null)
+                    io.feed("Exception: " + result.getErrorCause())
+                io.send()
+            }
         }
 
         fun parseCommand(command: String) {
@@ -50,18 +65,18 @@ class KotlinShell : Shell(
                 val action = commands.first { it.match(command) }
                 when (val result = action.execute(command)) {
                     is Command.Result.Success -> {
-                        result.message.let { io.put(it) }
+                        result.message.let { io.send(it) }
                         currentSnippetNo.incrementAndGet()
                     }
                     is Command.Result.Failure -> {
-                        io.put("Error: ${result.message}")
+                        io.send("Error: ${result.message}")
                     }
                     is Command.Result.RunSnippets -> {
-                        result.snippetsToRun.forEach(::parseKotlinCode)
+                        result.snippetsToRun.forEach(::compileKotlin)
                     }
                 }
             } catch (_: NoSuchElementException) {
-                io.put("Unknown command '$command'")
+                io.send("Unknown command '$command'")
             } catch (e: Exception) {
                 Gdx.app.error(javaClass.name, "Unexpected error occurred " +
                         "while executing command '$command'.", e)
@@ -69,13 +84,16 @@ class KotlinShell : Shell(
         }
 
         do {
-            if(io.isUnread()) {
-                val input = io.read(false)
+            if(queue.notEmpty()) {
+                queue.last().execute()
+                queue.removeLast()
+
+                val input = io.read()
                 if (input.startsWith(':')) parseCommand(input)
-                else parseKotlinCode(input)
+                else compileKotlin(input)
             }
         } while (!Thread.currentThread().isInterrupted)
-    }
+    }, "KotlinShell\$shell")
 
     fun run() {
         shellThread.start()
@@ -89,17 +107,38 @@ class KotlinShell : Shell(
         return shellThread.isAlive
     }
 
-    fun setOutputCallback(listener: ShellOutputCallback) {
-        io.setOutputListener(listener)
+    fun initialized() : Boolean {
+        return initialized
+    }
+
+    fun setOutputCallback(callback: ShellOutputCallback) {
+        io.setOutputCallback(callback)
     }
 
     fun send(line: String) {
-        io.take(line)
+        createTask(object : ShellTask {
+            override fun execute() {
+                io.feed(line)
+            }
+        })
+    }
+
+    private fun createTask(task: ShellTask) {
+        if(shellThread.isAlive)
+            queue.addFirst(task)
+        else
+            Gdx.app.error(javaClass.name, "Error: Shell terminated.")
     }
 
     private fun printMOTD() : String {
-        //todo
-        return "#Test_Feature"
+        var motd = printVersion()
+        (replConfiguration as AlterReplConfiguration).plugins().forEach { motd += ("\n" + it.printMOTD()) }
+        return motd
+    }
+
+    private fun printVersion() : String {
+        val version = ApplicationProperties.version
+        return "ki-shell $version/${KotlinVersion.CURRENT}"
     }
 }
 
@@ -108,51 +147,52 @@ interface ShellOutputCallback {
     fun receive(result: String)
 }
 
+private interface ShellTask {
+
+    fun execute()
+}
+
 private class ShellIO {
 
-    private val io = StringBuilder()
-    private var unread = false
-    private lateinit var callback : ShellOutputCallback
+    private val pool = StringBuilder()
+    private var callback : ShellOutputCallback? = null
 
-    fun setOutputListener(callback: ShellOutputCallback) {
+    fun setOutputCallback(callback: ShellOutputCallback) {
         this.callback = callback
     }
 
-    fun take(line: String?) {
-        io.append(line)
-        unread = true
-    }
-
-    fun put(line: String?) {
-        take(line)
-        read(true)
+    fun feed(line: String?) {
+        pool.append(line)
     }
 
     fun newLine(line: String?) {
-        io.appendLine(line)
-        read(true)
+        pool.appendLine(line)
     }
 
-    fun read(process: Boolean) : String {
-        val ret = io.toString()
-        io.clear()
-        unread = false
+    fun send(line: String?) {
+        feed(line)
+        send()
+    }
 
-        if(process) callback.receive(ret)
+    fun send() {
+        if(pool.isNotBlank())
+            callback?.receive(pool.toString())
+        pool.clear()
+    }
+
+    fun read() : String {
+        val ret = pool.toString()
+        pool.clear()
         return ret
-    }
-
-    fun isUnread() : Boolean {
-        return unread
     }
 }
 
-private fun defaultReplConfiguration() : ReplConfiguration {
-    val instance = CachedInstance<ReplConfiguration>()
+private fun defaultReplConfiguration() : AlterReplConfiguration {
+    val instance = CachedInstance<AlterReplConfiguration>()
     val klassName: String? = System.getProperty("config.class")
 
     return if (klassName != null) {
-        instance.load(klassName, ReplConfiguration::class)
+        instance.load(klassName, AlterReplConfiguration::class)
     } else {
         instance.get { object : AlterReplConfiguration() {}  }
     }

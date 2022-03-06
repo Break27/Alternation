@@ -48,18 +48,16 @@ public abstract class SerializableWindow extends AlternativeWindow {
         return this.Focused;
     }
 
-    public void setFocused() {
-        this.Focused = true;
-        this.getColor().a = 1f;
-        this.titleBarButtonsTable.getColor().a = 1f;
-    }
-    
-    public void setFocusLost() {
-        // it never "loses focus" if true
-        if(!ignoreFocus) {
+    public void setFocused(boolean focused) {
+        if(focused) {
+            this.Focused = true;
+            this.getColor().a = 1f;
+            this.titleBarButtonsTable.getColor().a = 1f;
+        } else if(!ignoreFocus) {
             this.Focused = false;
             this.getColor().a = 0.75f;
             this.titleBarButtonsTable.getColor().a = 0;
+            if(getStage() != null) getStage().unfocus(this);
         }
     }
     
@@ -69,7 +67,7 @@ public abstract class SerializableWindow extends AlternativeWindow {
     
     @Override
     public void setListeners() {
-        this.addListener(new ClickListener() {
+        addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 focusProcess();
@@ -88,17 +86,12 @@ public abstract class SerializableWindow extends AlternativeWindow {
 
     @Override
     public void pack() {
-        if(!Focused) this.setFocusLost();
+        if(!Focused) setFocused(false);
         super.pack();
     }
     
     private void focusProcess() {
-        windows.values().forEach(window -> {
-            if(window.ID != this.ID) {
-                window.setFocusLost();
-            } else {
-                window.setFocused();
-            }
-        });
+        windows.values().forEach(window ->
+                window.setFocused(window.ID == this.ID));
     }
 }

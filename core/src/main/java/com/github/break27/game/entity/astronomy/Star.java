@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.game.universe.astronomy;
+package com.github.break27.game.entity.astronomy;
 
 /**
  * @author break27

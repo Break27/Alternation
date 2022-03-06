@@ -38,12 +38,12 @@ public class LoadingScreen extends AbstractScreen {
     @Override
     public void show() {
         initGltfLoader();
-        Resource.loadDefault(parent.Asset);
+        Resource.loadDefault(parent.AssetManager);
     }
 
     @Override
     public void render(float delta) {
-        parent.Asset.update();
+        parent.AssetManager.update();
         // 将背景设为黑色
         Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -74,7 +74,7 @@ public class LoadingScreen extends AbstractScreen {
     
     private void initGltfLoader() {
         // 设定 GLTF 模型加载器
-        parent.Asset.setLoader(SceneAsset.class, ".gltf", new GLTFAssetLoader());
-        parent.Asset.setLoader(SceneAsset.class, ".glb", new GLBAssetLoader());
+        parent.AssetManager.setLoader(SceneAsset.class, ".gltf", new GLTFAssetLoader());
+        parent.AssetManager.setLoader(SceneAsset.class, ".glb", new GLBAssetLoader());
     }
 }

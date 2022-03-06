@@ -20,33 +20,5 @@ package com.github.break27.game.entity;
 /**
  * @author break27
  */
-public class Entity {
-
-    Profiles profiles;
-    float x, y, z;
-
-    public Entity(EntityProfiles profiles) {
-
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public float getZ() {
-        return z;
-    }
-
-    public Profiles getProfiles() {
-        return profiles;
-    }
-
-    public static class EntityProfiles extends Profiles {
-
-    }
+public class PlayerProfiles {
 }
-

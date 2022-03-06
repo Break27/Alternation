@@ -17,7 +17,7 @@
 
 package com.github.break27.graphics.ui.window;
 
-import com.github.break27.system.AlterConsole;
+import com.github.break27.system.console.AlterConsole;
 
 /**
  * @author break27

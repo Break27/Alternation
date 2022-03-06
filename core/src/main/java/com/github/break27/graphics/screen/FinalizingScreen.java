@@ -36,8 +36,6 @@ public class FinalizingScreen extends AbstractScreen {
         /* FINALIZING */
         Resource.dispose();
         Widgets.destroyAll();
-        //debug
-        System.exit(0);
     }
 
     @Override

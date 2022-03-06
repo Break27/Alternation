@@ -24,6 +24,8 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import net.dermetfan.utils.ArrayUtils;
+import sun.security.util.ArrayUtil;
 
 /**
  *
@@ -31,16 +33,54 @@ import com.badlogic.gdx.utils.Pool;
  */
 public class VoxelModel extends ModelInstance {
     VoxelWorld world;
-    
+
+    float posX, posY, posZ;
+    //int[] visibleChunkIndices = null;
+    //boolean dataUpdated = true;
+
     public VoxelModel(VoxelWorld world) {
         super(new Model());
         this.world = world;
     }
-    
+
+    public void updatePosition(float x, float y, float z) {
+        posX = x;
+        posY = y;
+        posZ = z;
+        //dataUpdated = false;
+    }
+
+    /* Experimental
     @Override
     public void getRenderables (Array<Renderable> renderables, Pool<Renderable> pool) {
-        for (int i = 0; i < world.chunks.length; i++) {
-            VoxelChunk chunk = world.chunks[i];
+        if(visibleChunkIndices == null || !dataUpdated) {
+            visibleChunkIndices = world.getVisibleChunkIndices(posX, posY, posX);
+            dataUpdated = true;
+        }
+        for(int i : visibleChunkIndices) {
+            VoxelChunk chunk = world.chunks.get(i);
+            Mesh mesh = world.meshes[i];
+            if (world.dirty[i]) {
+                int numVerts = chunk.calculateVertices(world.vertices);
+                world.numVertices[i] = numVerts / 4 * 6;
+                mesh.setVertices(world.vertices, 0, numVerts * VoxelChunk.VERTEX_SIZE);
+                world.dirty[i] = false;
+            }
+            if (world.numVertices[i] == 0) continue;
+            Renderable renderable = pool.obtain();
+            renderable.material = world.materials[i];
+            renderable.meshPart.mesh = mesh;
+            renderable.meshPart.offset = 0;
+            renderable.meshPart.size = world.numVertices[i];
+            renderable.meshPart.primitiveType = GL20.GL_TRIANGLES;
+            renderables.add(renderable);
+        }
+    }
+     */
+    @Override
+    public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
+        for (int i = 0; i < world.chunks.size; i++) {
+            VoxelChunk chunk = world.chunks.get(i);
             Mesh mesh = world.meshes[i];
             if (world.dirty[i]) {
                 int numVerts = chunk.calculateVertices(world.vertices);

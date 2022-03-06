@@ -17,6 +17,6 @@ dependencies {
 	api "net.sf.cssbox:cssbox:$cssboxVersion"
 
 	compileOnlyApi "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-	api 'org.jetbrains.kotlinx:ki-shell:0.4.0'
+	api 'org.jetbrains.kotlinx:ki-shell:0.4.5'
 	api project(':shared')
 }

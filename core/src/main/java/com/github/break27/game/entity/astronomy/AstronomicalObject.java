@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2022 Breakerbear
+ * Copyright (c) 2021 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,29 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.g3d.world;
+package com.github.break27.game.entity.astronomy;
+
+import com.github.break27.game.entity.AlterEntity;
 
 /**
+ *
  * @author break27
  */
-public class ServerWorld extends World {
-
-    public ServerWorld(Save save) {
-        super(save);
-    }
-
-    @Override
-    public void initialize() {
-
-    }
-
-    @Override
-    public void create() {
-
-    }
-
-    @Override
-    public void update(float delta) {
-        super.update(delta);
-    }
+public abstract class AstronomicalObject extends AlterEntity {
+    
 }

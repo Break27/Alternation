@@ -31,13 +31,10 @@ import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.widget.AlterLabel;
 import com.github.break27.system.AlterAssetManager;
-import com.kotcrab.vis.ui.widget.VisLabel;
 import cz.vutbr.web.css.MediaSpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import javax.imageio.ImageIO;
 import org.fit.cssbox.awt.GraphicsEngine;
 import org.fit.cssbox.css.CSSNorm;
@@ -120,12 +117,16 @@ public class Browser {
 
     }
 
+    public void setTitleSeparation(String separation) {
+        Parser.separation = separation;
+    }
+
     public void destroy() {
         Parser.halt();
         Renderer.halt();
     }
     
-    /** To load a html document from URL.
+    /** To load an html document from URL.
      * Note: the protocol should be announced,
      * otherwise it is considered as following HTTP Protocol.
      * @param url
@@ -136,14 +137,10 @@ public class Browser {
             && !url.startsWith("ftp:") 
             && !url.startsWith("file:"))
             url = "http://" + url;
-        try {
-            load(new URI(url));
-        } catch (URISyntaxException ex) {
-            Gdx.app.error(getClass().getName(), "Error loading: " + url);
-        }
+        Parser.parse(url);
     }
     
-    /** To load a html document from URI
+    /** To load an html document from URI
      * @param uri
      */
     public void load(URI uri) {
@@ -168,6 +165,7 @@ public class Browser {
         
         public static class BrowserParser {
 
+            String separation = "";
             Dimension windowSize;
             DocumentSource source;
 
@@ -210,7 +208,7 @@ public class Browser {
                 };
                 ParserThread.start();
             }
-            
+
             public void halt() {
                 if(ParserThread.isAlive()) {
                     ParserThread.interrupt();
@@ -244,11 +242,11 @@ public class Browser {
                     da.setDefaultEncoding("UTF-8");
                     // get the title of the webpage
                     // if not available, use URL as title.
-                    titleLabel.setText(" - " + source.getURL().toString());
+                    titleLabel.setText(separation + source.getURL().toString());
                     NodeList titleTag = da.getHead().getElementsByTagName("title");
                     if(titleTag.getLength() > 0) {
                         String title = titleTag.item(0).getTextContent();
-                        if(!title.isEmpty()) titleLabel.setText(" - " + stripNPC(title));
+                        if(!title.isEmpty()) titleLabel.setText(separation + stripNPC(title));
                     }
                     
                     da.setMediaSpec(media);

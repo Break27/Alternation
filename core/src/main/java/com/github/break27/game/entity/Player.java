@@ -21,35 +21,32 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
-import com.github.break27.game.entity.Entity;
-import com.github.break27.game.entity.Profiles;
 
 /**
  * @author break27
  */
-public class Player extends Entity {
+public class Player extends AlterEntity {
 
+    public PlayerProfiles profiles;
     public FirstPersonCameraController Controller;
     public PerspectiveCamera Camera;
 
     public Player(FileHandle saveFile) {
-        super(new PlayerProfiles(saveFile));
         // setup camera
-        Camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Camera = new PerspectiveCamera(67f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Camera.near = 0.5f;
         Camera.far = 1000;
 
         Controller = new FirstPersonCameraController(Camera);
     }
 
-    public void update() {
-        Camera.update();
+    public PlayerProfiles getProfiles() {
+        return profiles;
     }
 
-    public static class PlayerProfiles extends EntityProfiles {
-
-        public PlayerProfiles(FileHandle saveFile) {
-
-        }
+    @Override
+    public void update() {
+        super.update();
+        Camera.update();
     }
 }

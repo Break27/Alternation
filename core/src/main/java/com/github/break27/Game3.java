@@ -28,14 +28,14 @@ import com.github.break27.system.AlterFileHandleResolver;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Game3 extends Game {
-    public AlterAssetManager Asset;
+    public AlterAssetManager AssetManager;
     public static LauncherAdapter Launcher;
     
     public Game3() {
     }
     
     public Game3(LauncherAdapter launcher) {
-        this.Launcher = launcher;
+        Launcher = launcher;
     }
     
     @Override
@@ -47,7 +47,7 @@ public class Game3 extends Game {
     }
     
     private void initialize() {
-        this.Asset = new AlterAssetManager(new AlterFileHandleResolver());
+        this.AssetManager = new AlterAssetManager(new AlterFileHandleResolver());
         Gdx.app.addLifecycleListener(new GameExitEventListener(this));
     }
 }
@@ -64,6 +64,7 @@ class GameExitEventListener implements LifecycleListener {
     public void resume() { }
     @Override
     public void dispose() {
+        parent.getScreen().dispose();
         parent.setScreen(new FinalizingScreen(parent));
     }
 }   

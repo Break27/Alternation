@@ -44,13 +44,6 @@ public class AlternativeSkin extends Skin {
         load(file);
     }
 
-    public @Null BitmapFont getDefaultFont() {
-        try {
-            return getFont("default");
-        } catch (GdxRuntimeException ignored) { }
-        return null;
-    }
-
     @Override
     public Drawable getDrawable(String name) {
         try {
@@ -97,10 +90,9 @@ public class AlternativeSkin extends Skin {
                 // Use a region with the same name as the font, else use a PNG file in the same directory as the FNT file.
                 String regionName = fontFile.nameWithoutExtension();
                 try {
-                    BitmapFont font = null;
-                    // replace "default" with a TrueType font loaded beforehand
-                    // if it is available.
-                    if(regionName.equals("default")) font = skin.getDefaultFont();
+                    // use the font loaded beforehand with the same name as regionName
+                    // if available
+                    BitmapFont font = skin.getFontOrNull(regionName);
                     if(font == null) {
                         Array<TextureRegion> regions = skin.getRegions(regionName);
                         if (regions != null)
@@ -134,9 +126,16 @@ public class AlternativeSkin extends Skin {
     public void dispose() {
         super.dispose();
         // dispose all atlases
-        for(int i=0; i<AtlasSet.size; i++) {
-            AtlasSet.pop().dispose();
+        for(TextureAtlas atlas : AtlasSet) {
+            atlas.dispose();
         }
+    }
+
+    private @Null BitmapFont getFontOrNull(String name) {
+        try {
+            return getFont(name);
+        } catch (GdxRuntimeException ignored) { }
+        return null;
     }
 
     private void loadFontXml(FileHandle xmlFile, XmlReader reader, final Array<String> list) {
@@ -306,7 +305,7 @@ public class AlternativeSkin extends Skin {
 }
 
 class SkinBuilder implements Json.Serializable {
-    private OrderedMap<String, SkinStyle> Classes;
+    private final OrderedMap<String, SkinStyle> Classes;
     private SkinStyle Styles;
     private SkinAttribute Attributes;
 
@@ -345,8 +344,8 @@ class SkinBuilder implements Json.Serializable {
     public void read(Json json, JsonValue jv) {
     }
 
-    class SkinStyle implements Json.Serializable {
-        private OrderedMap<String, SkinAttribute> Styles = new OrderedMap<>();
+    private static class SkinStyle implements Json.Serializable {
+        private final OrderedMap<String, SkinAttribute> Styles = new OrderedMap<>();
 
         public void put(String name, SkinAttribute attri) {
             Styles.put(name, attri);
@@ -364,8 +363,8 @@ class SkinBuilder implements Json.Serializable {
         }
     }
 
-    class SkinAttribute implements Json.Serializable {
-        private OrderedMap<String, Object> Attributes = new OrderedMap<>();
+    private static class SkinAttribute implements Json.Serializable {
+        private final OrderedMap<String, Object> Attributes = new OrderedMap<>();
 
         public void put(String name, Object value) {
             Attributes.put(name, value);

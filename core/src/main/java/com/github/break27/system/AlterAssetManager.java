@@ -20,6 +20,7 @@ package com.github.break27.system;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.AbsoluteFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
@@ -37,6 +38,7 @@ public class AlterAssetManager extends AssetManager {
     private final HashMap<String, String> Table = new HashMap<>();
 
     public AlterAssetManager() {
+        this(new AbsoluteFileHandleResolver());
     }
 
     public AlterAssetManager(FileHandleResolver resolver) {

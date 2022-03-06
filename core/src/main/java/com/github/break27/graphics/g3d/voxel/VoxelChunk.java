@@ -19,6 +19,10 @@ package com.github.break27.graphics.g3d.voxel;
 
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ *
+ *
+ */
 public class VoxelChunk {
 	public static final int VERTEX_SIZE = 6;
 	public final byte[] voxels;
