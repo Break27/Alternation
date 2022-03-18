@@ -21,10 +21,13 @@ import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.AbsoluteFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.loader.AlterSkinLoader;
 
@@ -70,6 +73,14 @@ public class AlterAssetManager extends AssetManager {
         return get("default", AlternativeSkin.class);
     }
 
+    public synchronized Sound getSound() {
+        return get("default", Sound.class);
+    }
+
+    public synchronized Music getMusic() {
+        return get("default", Music.class);
+    }
+
     @Deprecated
     @Override
     public synchronized <T> void load(String fileName, Class<T> type) {
@@ -92,7 +103,7 @@ public class AlterAssetManager extends AssetManager {
         return super.get(Table.get(parse(name, type)), type, required);
     }
 
-    private String parse(String name, Class type) {
+    private String parse(String name, Class<?> type) {
         return name + "@" + type;
     }
 }

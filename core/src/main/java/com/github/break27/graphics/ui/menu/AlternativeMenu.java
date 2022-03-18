@@ -35,8 +35,10 @@ import com.kotcrab.vis.ui.widget.VisWindow;
 public abstract class AlternativeMenu extends VisWindow
         implements StyleAppliedWidget, LocalizableWidget {
 
-    AlterPopupMenu menu;
-    boolean isEntered = false;
+    private final AlterPopupMenu menu;
+    private boolean isEntered = false;
+
+    protected boolean shown = false;
     
     public AlternativeMenu(String name, Stage stage) {
         super(name, false);
@@ -58,7 +60,7 @@ public abstract class AlternativeMenu extends VisWindow
     
     protected abstract void create(PopupMenu menu);
     
-    public void createListeners() {
+    protected void listeners() {
         getStage().addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -88,25 +90,25 @@ public abstract class AlternativeMenu extends VisWindow
         });
     }
     
-    public void show (float x, float y) {
+    public void show(float x, float y) {
         if(Gdx.input.getY() < getHeight()) y -= getHeight();
         setPosition(x, y);
         setVisible(true);
+        shown = true;
     }
     
     public void hide() {
         setVisible(false);
-    }
-    
-    public void setFocus() {
-        this.toFront();
+        getStage().unfocus(this);
+        setPosition(0, 0);
+        shown = false;
     }
     
     @Override
     public void pack() {
         create(this.menu);
         add(menu).expand().fill();
-        createListeners();
+        listeners();
         super.pack();
     }
     

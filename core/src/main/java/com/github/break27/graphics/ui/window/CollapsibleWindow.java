@@ -32,10 +32,10 @@ public abstract class CollapsibleWindow extends SerializableWindow {
     private boolean Collapsed = false;
 
     int labelHeight;
-    int width;
-    int height;
+    float width;
+    float height;
     
-    public CollapsibleWindow(String name, int width, int height) {
+    public CollapsibleWindow(String name, float width, float height) {
         super(name);
         this.width = width;
         this.height = height;

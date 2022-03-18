@@ -18,121 +18,152 @@
 package com.github.break27.system.shell
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.utils.Queue
+import com.badlogic.gdx.utils.Array
+import org.jetbrains.kotlin.com.google.common.base.Objects
 import org.jetbrains.kotlinx.ki.shell.*
 import org.jetbrains.kotlinx.ki.shell.configuration.CachedInstance
+import org.jetbrains.kotlinx.ki.shell.wrappers.ResultWrapper
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.NoSuchElementException
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.util.LinkedSnippet
+import kotlin.script.experimental.util.LinkedSnippetImpl
 
-class KotlinShell: Shell(defaultReplConfiguration(),
-                         defaultJvmScriptingHostConfiguration,
-                         defaultScriptCompilationConfiguration(),
-                         defaultScriptEvaluationConfiguration()
+class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
+                                                defaultJvmScriptingHostConfiguration,
+                                                defaultScriptCompilationConfiguration(),
+                                                defaultScriptEvaluationConfiguration()
 ) {
-
-    private val io = ShellIO()
-    private val queue = Queue<ShellTask>()
+    private val queue = Array<String>()
+    private var shellThread: Thread? = null
+    private var name: String = "kotlin"
     private var initialized = false
+    private var active = false
 
-    private val shellThread = Thread({
-        // initialize
-        replConfiguration.load()
-        replConfiguration.plugins().forEach { it.init(this, replConfiguration) }
-        settings = Settings(replConfiguration)
-        if(settings.sayHello) io.send(printMOTD())
-        initialized = true
+    internal lateinit var handler: ShellHandler
+    var sleepInterval = 100L
 
-        compileAndEval("println(\"[KotlinShell] " +
-                "${LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))} Shell created.\")")
+    fun create(handler: ShellHandler) {
+        this.handler = handler
+        shellThread = Thread({
+            initialize()
+            if (settings.sayHello) handler.success(printMOTD())
+            handler.feed()
 
-        fun compileKotlin(code: String) {
-            val result = compileAndEval(code)
-            if(result.isCompiled)
-                io.send(result.getMessageOrEmpty())
-            else {
-                io.newLine("Error: " + result.getMessage())
-                if(result.getErrorCause() != null)
-                    io.feed("Exception: " + result.getErrorCause())
-                io.send()
-            }
-        }
-
-        fun parseCommand(command: String) {
-            try {
-                val action = commands.first { it.match(command) }
-                when (val result = action.execute(command)) {
-                    is Command.Result.Success -> {
-                        result.message.let { io.send(it) }
-                        currentSnippetNo.incrementAndGet()
+            fun compileKotlin(code: String) {
+                val time = System.nanoTime()
+                val eval = eval(code)
+                evaluationTimeMillis = (System.nanoTime() - time) / 1_000_000
+                when (eval.getStatus()) {
+                    ResultWrapper.Status.ERROR, ResultWrapper.Status.INCOMPLETE -> {
+                        // INCOMPLETE is not yet implemented
+                        eval.result.reports.forEach {
+                            handler.failed(it.render(withStackTrace = eval.isCompiled))
+                        }
                     }
-                    is Command.Result.Failure -> {
-                        io.send("Error: ${result.message}")
-                    }
-                    is Command.Result.RunSnippets -> {
-                        result.snippetsToRun.forEach(::compileKotlin)
+                    ResultWrapper.Status.SUCCESS -> {
+                        val result = eval.result.valueOrNull()?.asSuccess()?.value as LinkedSnippet<*>
+                        if(result.get() is KJvmEvaluatedSnippet) {
+                            @Suppress("UNCHECKED_CAST")
+                            eventManager.emitEvent(OnEval(result as LinkedSnippet<KJvmEvaluatedSnippet>))
+                        }
+                        val message = eval.getMessageOrEmpty()
+                        if(message.isNotEmpty())
+                            handler.success(message)
+                        else {
+                            val typeResult = getEvalResult(eval.result)?.get(0)
+                            val type = typeResult?.split(' ', limit = 2)
+                            if(type?.size == 2) handler.success(type[1])
+                        }
                     }
                 }
-            } catch (_: NoSuchElementException) {
-                io.send("Unknown command '$command'")
-            } catch (e: Exception) {
-                Gdx.app.error(javaClass.name, "Unexpected error occurred " +
-                        "while executing command '$command'.", e)
             }
-        }
 
-        do {
-            if(queue.notEmpty()) {
-                queue.last().execute()
-                queue.removeLast()
-
-                val input = io.read()
-                if (input.startsWith(':')) parseCommand(input)
-                else compileKotlin(input)
+            fun parseCommand(command: String) {
+                try {
+                    val action = commands.first { it.match(command) }
+                    when (val result = action.execute(command)) {
+                        is Command.Result.Success -> {
+                            result.message.let { handler.success(it) }
+                            currentSnippetNo.incrementAndGet()
+                        }
+                        is Command.Result.Failure -> {
+                            handler.failed("ERROR ${result.message}")
+                        }
+                        is Command.Result.RunSnippets -> {
+                            result.snippetsToRun.forEach(::compileKotlin)
+                        }
+                    }
+                } catch (_: NoSuchElementException) {
+                    handler.failed("Unknown command.")
+                } catch (e: Exception) {
+                    Gdx.app.error(
+                        javaClass.name, "An error occurred " +
+                                "while executing command '$command'.", e
+                    )
+                }
             }
-        } while (!Thread.currentThread().isInterrupted)
-    }, "KotlinShell\$shell")
 
-    fun run() {
-        shellThread.start()
+            do if(queue.notEmpty()) {
+                    val input = queue.pop()
+                    if (input.startsWith(':')) parseCommand(input)
+                    else compileKotlin(input)
+                    handler.feed()
+                } else try {
+                    Thread.sleep(sleepInterval)
+                } catch (_: InterruptedException) {
+                    break
+                }
+            while (!Thread.currentThread().isInterrupted)
+        }, "KotlinShell\$shell")
+        shellThread?.start()
     }
 
-    fun halt() {
-        shellThread.interrupt()
+    fun getShellName() : String {
+        return name
+    }
+
+    fun update() {
+
+    }
+
+    fun destroy() {
+        shellThread?.interrupt()
+        evalThread.interrupt()
     }
 
     fun isRunning() : Boolean {
-        return shellThread.isAlive
+        return shellThread != null && shellThread?.isAlive == true
     }
 
-    fun initialized() : Boolean {
-        return initialized
+    fun execute(command: String) {
+        queue.add(command.trim().ifEmpty {";"})
     }
 
-    fun setOutputCallback(callback: ShellOutputCallback) {
-        io.setOutputCallback(callback)
+    override fun hashCode(): Int {
+        return Objects.hashCode(queue, shellThread, name, initialized, sleepInterval)
     }
 
-    fun send(line: String) {
-        createTask(object : ShellTask {
-            override fun execute() {
-                io.feed(line)
-            }
-        })
+    override fun equals(other: Any?): Boolean {
+        return (this === other || javaClass != other?.javaClass)
     }
 
-    private fun createTask(task: ShellTask) {
-        if(shellThread.isAlive)
-            queue.addFirst(task)
-        else
-            Gdx.app.error(javaClass.name, "Error: Shell terminated.")
+    fun getEvalResult(result: ResultWithDiagnostics<*>): List<String>? {
+        val resultOrNull = result.valueOrNull()
+        return if(resultOrNull != null) {
+            val resultStr = ((resultOrNull.asSuccess().value as LinkedSnippetImpl<*>).get() as KJvmEvaluatedSnippet).result
+            resultStr.toString().split(" = ", limit = 2)
+        } else null
     }
 
     private fun printMOTD() : String {
         var motd = printVersion()
-        (replConfiguration as AlterReplConfiguration).plugins().forEach { motd += ("\n" + it.printMOTD()) }
+        (replConfiguration as AlterReplConfiguration).plugins().forEach {
+            val message = it.printMOTD()
+            if(!message.isNullOrEmpty()) motd += ("\n" + it.printMOTD())
+        }
         return motd
     }
 
@@ -140,50 +171,22 @@ class KotlinShell: Shell(defaultReplConfiguration(),
         val version = ApplicationProperties.version
         return "ki-shell $version/${KotlinVersion.CURRENT}"
     }
-}
 
-interface ShellOutputCallback {
-
-    fun receive(result: String)
-}
-
-private interface ShellTask {
-
-    fun execute()
-}
-
-private class ShellIO {
-
-    private val pool = StringBuilder()
-    private var callback : ShellOutputCallback? = null
-
-    fun setOutputCallback(callback: ShellOutputCallback) {
-        this.callback = callback
-    }
-
-    fun feed(line: String?) {
-        pool.append(line)
-    }
-
-    fun newLine(line: String?) {
-        pool.appendLine(line)
-    }
-
-    fun send(line: String?) {
-        feed(line)
-        send()
-    }
-
-    fun send() {
-        if(pool.isNotBlank())
-            callback?.receive(pool.toString())
-        pool.clear()
-    }
-
-    fun read() : String {
-        val ret = pool.toString()
-        pool.clear()
-        return ret
+    private fun initialize() {
+        if(!initialized) {
+            replConfiguration.load()
+            replConfiguration.plugins().forEach { it.init(this, replConfiguration) }
+            settings = Settings(replConfiguration)
+            queue.clear()
+            initialized = true
+            active = true
+            // pre-defined script constants
+            compileAndEval("val _HASH_ = ${hashCode()}; " +
+                    "fun echo(message: Any?) { com.github.break27.system.shell.SysKshell.setSystemOut(_HASH_, message) };" +
+                    "println(\"[KotlinShell@\$_HASH_] " +
+                "${LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))} Shell created.\")"
+            )
+        }
     }
 }
 
@@ -202,8 +205,9 @@ private fun defaultScriptCompilationConfiguration() : ScriptCompilationConfigura
     return ScriptCompilationConfiguration {
         jvm {
             dependenciesFromClassloader(
-                    classLoader = KotlinShell::class.java.classLoader,
-                    wholeClasspath = true
+                "core",
+                classLoader = KotlinShell::class.java.classLoader,
+                wholeClasspath = false
             )
         }
     }
@@ -212,7 +216,7 @@ private fun defaultScriptCompilationConfiguration() : ScriptCompilationConfigura
 private fun defaultScriptEvaluationConfiguration() : ScriptEvaluationConfiguration {
     return ScriptEvaluationConfiguration {
         jvm {
-            baseClassLoader(Shell::class.java.classLoader)
+            baseClassLoader(KotlinShell::class.java.classLoader)
         }
     }
 }

@@ -19,6 +19,7 @@ package com.github.break27.graphics.ui.button;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisImageButton;
@@ -46,8 +47,8 @@ public class AlterImageButton extends VisImageButton implements StyleAppliedWidg
     }
     
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        setStyle(assets.getSkin().get(VisImageButtonStyle.class));
+    public void styleApply(AlternativeSkin skin) {
+        setStyle(skin.get(VisImageButtonStyle.class));
     }
 
     @Override

@@ -21,5 +21,5 @@ import com.github.break27.system.AlterAssetManager;
 
 public interface StyleAppliedWidget extends AlternativeWidget {
 
-    void styleApply(AlterAssetManager assets);
+    void styleApply(AlternativeSkin skin);
 }

@@ -12,7 +12,7 @@ import java.util.Comparator;
 
 public class RenderingSystem extends SortedIteratingSystem {
     private float visibleRadius = 10.0f;
-    private ComponentMapper<VisibleComponent> vm;
+    private final ComponentMapper<VisibleComponent> vm;
 
     public RenderingSystem() {
         super(Family.all(VisibleComponent.class, ModelComponent.class, PositionComponent.class).get(), new VisibilityComparator());
@@ -29,7 +29,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     }
 
     private static class VisibilityComparator implements Comparator<Entity> {
-        private ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
+        private final ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
 
         @Override
         public int compare(Entity e1, Entity e2) {

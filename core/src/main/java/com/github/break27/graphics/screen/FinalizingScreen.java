@@ -20,6 +20,7 @@ package com.github.break27.graphics.screen;
 import com.github.break27.Game3;
 import com.github.break27.graphics.ui.Widgets;
 import com.github.break27.system.Resource;
+import com.kotcrab.vis.ui.VisUI;
 
 /**
  *
@@ -34,8 +35,11 @@ public class FinalizingScreen extends AbstractScreen {
     @Override
     public void show() {
         /* FINALIZING */
-        Resource.dispose();
-        Widgets.destroyAll();
+        try {
+            Widgets.destroyAll();
+            VisUI.dispose();
+        } catch(Exception ignored) {
+        }
     }
 
     @Override

@@ -3,4 +3,16 @@
     <include classpath="com/kotcrab/vis/ui/skin/x1/uiskin.json"></include>
     <atlas location="skin.atlas"></atlas>
     <font location="font/font.xml"></font>
+
+    <class name="com.github.break27.graphics.ui.window.ConsoleWindow$ConsoleTextArea$ConsoleTextAreaStyle">
+        <default>
+            <font>console</font>
+            <fontColor>white</fontColor>
+            <disabledFontColor>grey</disabledFontColor>
+            <selection>selection</selection>
+            <background>textfield</background>
+            <backgroundOver>textfield-over</backgroundOver>
+            <cursor>cursor</cursor>
+        </default>
+    </class>
 </skin>

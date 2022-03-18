@@ -34,7 +34,7 @@ public interface AlternativeWidget {
             Widgets.Map.put(this.getClass(), new Array<>(new AlternativeWidget[]{this}));
         }
         // apply immediately if available
-        if(Widgets.isAssetsSet())
+        if(Widgets.assetsSet())
             Widgets.applyAll(Widgets.temporaryAssets);
     }
 

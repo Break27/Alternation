@@ -17,9 +17,10 @@
 
 package com.github.break27.graphics.ui;
 
-import com.github.break27.system.AlterAssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 
 public interface AudioAppliedWidget extends AlternativeWidget {
 
-    void audioApply(AlterAssetManager assets);
+    void audioApply(Music music, Sound sound);
 }

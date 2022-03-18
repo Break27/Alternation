@@ -26,8 +26,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.window.CollapsibleWindow;
-import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.PopupMenu;
 
 /**
@@ -67,7 +67,7 @@ public class TitleMenu extends AlternativeMenu {
         parent.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                setFocus();
+                toFront();
                 return true;
             }
             @Override
@@ -85,31 +85,31 @@ public class TitleMenu extends AlternativeMenu {
         window_restore = new AlterMenuItem("Restore", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                System.out.println("Restore!");
+                if(shown) System.out.println("Restore!");
             }
         });
         window_resize = new AlterMenuItem("Resize", new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                window.appendResizeDialog();
+                if(shown) window.appendResizeDialog();
             }
         });
         window_collapse = new AlterMenuItem("Collapse", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                window.collapse();
+                if(shown) window.collapse();
             }
         });
         window_maximize = new AlterMenuItem("Maximize", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                System.out.println("Maximize!");
+                if(shown) System.out.println("Maximize!");
             }
         });
         window_close = new AlterMenuItem("Close", new Image(), new ChangeListener() {
             @Override
             public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                window.close();
+                if(shown) window.close();
             }
         });
         // layout
@@ -122,13 +122,13 @@ public class TitleMenu extends AlternativeMenu {
     }
     
     @Override
-    public void styleApply(AlterAssetManager assets) {
+    public void styleApply(AlternativeSkin skin) {
         // image styles
-        window_restore.getImage().setDrawable(icon_restore = assets.getSkin().getDrawable("icon-window-restore"));
-        window_collapse.getImage().setDrawable(icon_collapse = assets.getSkin().getDrawable("icon-window-collapse"));
-        icon_extend = assets.getSkin().getDrawable("icon-window-extend");
-        window_maximize.getImage().setDrawable(icon_maximize = assets.getSkin().getDrawable("icon-window-maximize"));
-        window_close.getImage().setDrawable(icon_close = assets.getSkin().getDrawable("icon-window-close"));
+        window_restore.getImage().setDrawable(icon_restore = skin.getDrawable("icon-window-restore"));
+        window_collapse.getImage().setDrawable(icon_collapse = skin.getDrawable("icon-window-collapse"));
+        icon_extend = skin.getDrawable("icon-window-extend");
+        window_maximize.getImage().setDrawable(icon_maximize = skin.getDrawable("icon-window-maximize"));
+        window_close.getImage().setDrawable(icon_close = skin.getDrawable("icon-window-close"));
     }
     
     @Override

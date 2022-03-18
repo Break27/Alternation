@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.ui.button;
-
-import com.github.break27.graphics.ui.AlternativeSkin;
-import com.github.break27.system.AlterAssetManager;
+package com.github.break27.util;
 
 /**
- *
  * @author break27
  */
-public class CloseButton extends TitleButton {
+public abstract class Utils {
 
-    @Override
-    public void styleApply(AlternativeSkin skin) {
-        super.styleApply(skin);
-        setImage(skin.getDrawable("icon-close"));
+    /** Strip all Non-Printing Characters of a String Object.
+     * Any character with an ASCII Code below 32 or of 127
+     * will be deleted.
+     */
+    public static String stripNPC(String string) {
+        char[] chars = string.toCharArray();
+        if(chars.length > 0) {
+            for(int i=0; i<chars.length; i++) {
+                if(chars[i] < 0x20 || chars[i] == 0x7F)
+                    chars[i] = 0x0;
+            }
+        }
+        return new String(chars);
     }
 }

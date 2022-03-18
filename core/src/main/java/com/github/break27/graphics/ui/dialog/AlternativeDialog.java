@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.CloseButton;
@@ -86,12 +87,12 @@ public abstract class AlternativeDialog extends VisDialog
     }
     
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        setStyle(assets.getSkin().get(WindowStyle.class));
+    public void styleApply(AlternativeSkin skin) {
+        setStyle(skin.get(WindowStyle.class));
     }
     
     @Override
     public void destroy() {
-        closeButton.getColor().a = 0;
+        if(closeButton != null) closeButton.getColor().a = 0;
     }
 }

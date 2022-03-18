@@ -154,24 +154,36 @@ public class AlternativeSkin extends Skin {
                 list.add(sibling.file().getAbsolutePath());
 
             /* Load Params */
-            FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+            AlterFreeTypeFontParameter parameter = new AlterFreeTypeFontParameter();
             // Font size
             int size = 12;
             if(font.hasChild("size"))
                 size = Integer.parseInt(font.getChildByName("size").getText());
             parameter.size = size;
+            // load flags
+            if(font.hasChild("flags")) {
+                String data = font.getChildByName("flags").getText().toLowerCase();
+                parameter.incremental = data.contains("incremental");
+                parameter.borderStraight = data.contains("borderstraight");
+                parameter.flip = data.contains("flip");
+                parameter.kerning = data.contains("kerning");
+                parameter.genMipMaps = data.contains("genmipmaps");
+                parameter.mono = data.contains("mono");
+                // extended font data
+                parameter.useMissingGlyphs = data.contains("usemissingglyphs");
+                parameter.markupEnabled = data.contains("markupenabled");
+            }
             // load Inherited and Extended Characters
             if(parent.hasChild("inherit"))
                 parameter.characters = parent.getChildByName("inherit").getText();
             if(font.hasChild("extended"))
                 parameter.characters += font.getChildByName("extended").getText();
-
             /* Load Font */
             loadFont(name, sibling, parameter);
         });
     }
 
-    private void loadFont(String name, FileHandle fontFile, FreeTypeFontParameter parameter) {
+    private void loadFont(String name, FileHandle fontFile, AlterFreeTypeFontParameter parameter) {
         if(!fontFile.exists()) {
             throw new GdxRuntimeException(fontFile + ": TrueTypeFont resource unavailable: File not found.");
         } else {
@@ -181,6 +193,12 @@ public class AlternativeSkin extends Skin {
             parameter.characters += FreeTypeFontGenerator.DEFAULT_CHARS;
             // generate
             BitmapFont font = generator.generateFont(parameter);
+            // data
+            BitmapFont.BitmapFontData fontData = font.getData();
+            if(!parameter.useMissingGlyphs)
+                fontData.missingGlyph = new BitmapFont.Glyph();
+            fontData.markupEnabled = parameter.markupEnabled;
+
             generator.dispose();
             /* load font to skin */
             add(name, font, BitmapFont.class);
@@ -301,6 +319,12 @@ public class AlternativeSkin extends Skin {
                 builder.endStyle(element.getAttribute("name"));
             });
         }
+    }
+
+    public static class AlterFreeTypeFontParameter extends FreeTypeFontParameter {
+        // extended font data
+        public boolean useMissingGlyphs = true;
+        public boolean markupEnabled = false;
     }
 }
 

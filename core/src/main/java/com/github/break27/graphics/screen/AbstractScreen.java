@@ -40,16 +40,17 @@ public abstract class AbstractScreen extends InputAdapter implements Screen {
     Stage stage;
     
     AbstractScreen(Game3 game) {
-        this.parent = game;
-        this.defaultViewport = new ScreenViewport();
+        parent = game;
+        defaultViewport = new ScreenViewport();
     }
     
     void change(AbstractScreen screen) {
-        this.parent.setScreen(screen);
+        parent.getScreen().dispose();
+        parent.setScreen(screen);
     }
     
     @Override
     public void resize(int width, int height) {
-        this.defaultViewport.update(width, height);
+        defaultViewport.update(width, height);
     }
 }

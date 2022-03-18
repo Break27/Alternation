@@ -24,9 +24,9 @@ import java.util.HashMap;
 /**
  * @author break27
  */
-public class Locales {
+public abstract class Locales {
 
-    private static HashMap<String, I18NBundle> Bundles = new HashMap<>();
+    private static final HashMap<String, I18NBundle> Bundles = new HashMap<>();
 
     public static I18NBundle getBundle(String name) {
         return Bundles.get(name);

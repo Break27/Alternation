@@ -20,15 +20,10 @@ package com.github.break27.graphics.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Queue;
 import com.github.break27.Game3;
 import com.github.break27.graphics.ui.Widgets;
 import com.github.break27.graphics.ui.window.*;
 import com.github.break27.system.shell.KotlinShell;
-import com.github.break27.system.shell.ShellOutputCallback;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Stack;
 
 /**
  *
@@ -46,15 +41,17 @@ public class MainScreen extends AbstractScreen {
     TestWindow window2;
     HtmlViewerWindow window3;
     BrowserWindow window4;
+    ConsoleWindow window5;
     
     @Override
     public void show() {
-        Widgets.initiate(parent.AssetManager);
+        Widgets.init(parent.AssetManager);
 
         window = new ViewpointWindow(300, 300);
         window2 = new TestWindow("Test Window 中文测试 - 01234");
         window3 = new HtmlViewerWindow(500, 500);
         window4 = new BrowserWindow(500, 500);
+        window5 = new ConsoleWindow(500, 500);
         window.setPosition(Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()/2f);
         stage = new Stage(defaultViewport);
 
@@ -76,6 +73,7 @@ public class MainScreen extends AbstractScreen {
         window2.append(stage);
         window3.append(stage);
         window4.append(stage);
+        window5.append(stage);
         Gdx.input.setInputProcessor(stage);
     }
 

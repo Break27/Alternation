@@ -21,6 +21,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.system.AlterAssetManager;
 
 /**
@@ -50,9 +51,9 @@ public class TestWindow extends SerializableWindow {
     }
     
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        super.styleApply(assets);
-        setTitleImage(assets.getSkin().getDrawable("icon20-application"));
+    public void styleApply(AlternativeSkin skin) {
+        super.styleApply(skin);
+        setTitleImage(skin.getDrawable("icon20-application"));
     }
 
     @Override

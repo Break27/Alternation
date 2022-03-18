@@ -7,10 +7,10 @@ import org.jetbrains.kotlinx.ki.shell.Shell
 import org.jetbrains.kotlinx.ki.shell.configuration.ReplConfiguration
 import org.jetbrains.kotlinx.ki.shell.match
 
-class HelpPlugin : AlterShellPlugin {
+class HelpPlugin: AlterShellPlugin {
     inner class Help(conf: ReplConfiguration): BaseCommand() {
-        override val name: String by conf.get(default = "help")
-        override val short: String by conf.get(default = "h")
+        override val name: String by conf.get("help")
+        override val short: String by conf.get("h")
         override val description: String = "print this summary or command-specific help"
 
         override val params = "[command]"
@@ -30,7 +30,7 @@ class HelpPlugin : AlterShellPlugin {
                         val res = commands.first { it.match(":$command") }
                         output += ("\n" + res.help())
                     } catch (_: NoSuchElementException) {
-                        return Command.Result.Failure("$command: no such command. Type :help for help.")
+                        return Command.Result.Failure("No such command or documentation unavailable.")
                     }
                 }
             }
@@ -42,7 +42,6 @@ class HelpPlugin : AlterShellPlugin {
 
     override fun init(repl: Shell, config: ReplConfiguration) {
         this.repl = repl
-
         repl.registerCommand(Help(config))
     }
 
@@ -51,7 +50,7 @@ class HelpPlugin : AlterShellPlugin {
     }
 
     override fun cleanUp() {}
-
+    /*
     class StringHelpPrinter(private val syntaxWidth: Int = 24): HelpPrinter {
         private val sb = StringBuilder()
 
@@ -75,4 +74,5 @@ class HelpPlugin : AlterShellPlugin {
 
         override fun toString(): String = sb.toString()
     }
+     */
 }

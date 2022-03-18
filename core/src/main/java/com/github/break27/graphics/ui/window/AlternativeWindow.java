@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.CloseButton;
@@ -130,9 +131,9 @@ public abstract class AlternativeWindow extends VisWindow
     }
 
     @Override
-    public void styleApply(AlterAssetManager assets) {
+    public void styleApply(AlternativeSkin skin) {
         // window style
-        setStyle(assets.getSkin().get(WindowStyle.class));
+        setStyle(skin.get(WindowStyle.class));
     }
 
     @Override

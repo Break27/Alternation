@@ -37,7 +37,7 @@ public class Lwjgl3Launcher {
 
     private static Lwjgl3ApplicationConfiguration getConfiguration(Launcher launcher) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        Preferences prefs = Gdx.app.getPreferences(launcher.getGameDataPath());
+        Preferences prefs = Gdx.app.getPreferences(launcher.gameDataPath());
         // todo
         return config;
     }
@@ -60,7 +60,7 @@ public class Lwjgl3Launcher {
 class Launcher implements LauncherAdapter {
 
     @Override
-    public String getGameDataPath() {
+    public String gameDataPath() {
         String osName = System.getProperty("os.name").toLowerCase();
         String home = System.getProperty("user.home");
         if (osName.contains("windows")) return home + "/Documents/MyLibGdxGame/";

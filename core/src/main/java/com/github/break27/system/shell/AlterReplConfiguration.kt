@@ -17,13 +17,12 @@
 
 package com.github.break27.system.shell
 
-import com.github.break27.system.shell.plugin.AlterShellPlugin
-import com.github.break27.system.shell.plugin.HelpPlugin
+import com.github.break27.system.shell.plugin.*
 import org.jetbrains.kotlinx.ki.shell.configuration.CachedInstance
 import org.jetbrains.kotlinx.ki.shell.configuration.ListConverter
 import org.jetbrains.kotlinx.ki.shell.configuration.PropertyBasedReplConfiguration
 import org.jetbrains.kotlinx.ki.shell.configuration.TrimConverter
-import java.util.*
+import java.util.Properties
 
 abstract class AlterReplConfiguration(defaultPlugins: List<String> = DEFAULT_PLUGINS) :
     PropertyBasedReplConfiguration(Properties(), defaultPlugins) {
@@ -39,7 +38,11 @@ abstract class AlterReplConfiguration(defaultPlugins: List<String> = DEFAULT_PLU
             DependenciesPlugin::class.qualifiedName!!,
             ExecutionEnvironmentPlugin::class.qualifiedName!!
              */
-            HelpPlugin::class.qualifiedName!!
+            HelpPlugin::class.qualifiedName!!,
+            EnvironmentPlugin::class.qualifiedName!!,
+            EchoPlugin::class.qualifiedName!!,
+            LoadFilePlugin::class.qualifiedName!!,
+            RuntimePlugin::class.qualifiedName!!
         )
     }
 

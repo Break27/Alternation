@@ -1,5 +1,5 @@
-/**************************************************************************
- * Copyright (c) 2021 Breakerbear
+/*
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,22 +13,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *************************************************************************/
-
-package com.github.break27.graphics.ui.button;
-
-import com.github.break27.graphics.ui.AlternativeSkin;
-import com.github.break27.system.AlterAssetManager;
-
-/**
- *
- * @author break27
  */
-public class CloseButton extends TitleButton {
 
-    @Override
-    public void styleApply(AlternativeSkin skin) {
-        super.styleApply(skin);
-        setImage(skin.getDrawable("icon-close"));
-    }
+package com.github.break27.system.shell
+
+abstract class ShellHandler {
+
+    abstract fun feed()
+
+    abstract fun feed(message: String?)
+
+    abstract fun success(message: String?)
+
+    abstract fun failed(message: String?)
 }

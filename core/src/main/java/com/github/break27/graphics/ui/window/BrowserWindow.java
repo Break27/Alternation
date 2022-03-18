@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.github.break27.graphics.Browser;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.button.OptionButton;
@@ -90,9 +91,9 @@ public class BrowserWindow extends CollapsibleWindow {
     }
     
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        super.styleApply(assets);
-        setTitleImage(assets.getSkin().getDrawable("icon20-application"));
+    public void styleApply(AlternativeSkin skin) {
+        super.styleApply(skin);
+        setTitleImage(skin.getDrawable("icon20-application"));
     }
     
     private void addOptionButton() {
@@ -140,9 +141,9 @@ public class BrowserWindow extends CollapsibleWindow {
         }
 
         @Override
-        public void styleApply(AlterAssetManager assets) {
-            window_close.getImage().setDrawable(assets.getSkin().getDrawable("icon-window-close"));
-            setStyle(assets.getSkin().get(WindowStyle.class));
+        public void styleApply(AlternativeSkin skin) {
+            window_close.getImage().setDrawable(skin.getDrawable("icon-window-close"));
+            setStyle(skin.get(WindowStyle.class));
         }
 
         @Override

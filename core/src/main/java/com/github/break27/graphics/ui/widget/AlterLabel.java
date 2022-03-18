@@ -18,6 +18,7 @@
 package com.github.break27.graphics.ui.widget;
 
 import com.badlogic.gdx.graphics.Color;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisLabel;
@@ -45,8 +46,8 @@ public class AlterLabel extends VisLabel implements StyleAppliedWidget {
     }
 
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        LabelStyle style = assets.getSkin().get(LabelStyle.class);
+    public void styleApply(AlternativeSkin skin) {
+        LabelStyle style = skin.get(LabelStyle.class);
         setStyle(style);
     }
 }

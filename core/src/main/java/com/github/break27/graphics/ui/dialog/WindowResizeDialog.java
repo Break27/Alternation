@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.button.AlterTextButton;
 import com.github.break27.graphics.ui.widget.AlterLabel;
 import com.github.break27.graphics.ui.window.AlternativeWindow;
@@ -77,9 +78,9 @@ public class WindowResizeDialog extends AlternativeDialog {
     }
 
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        super.styleApply(assets);
-        setTitleImage(assets.getSkin().getDrawable("icon20-application"));
+    public void styleApply(AlternativeSkin skin) {
+        super.styleApply(skin);
+        setTitleImage(skin.getDrawable("icon20-application"));
     }
     
     @Override

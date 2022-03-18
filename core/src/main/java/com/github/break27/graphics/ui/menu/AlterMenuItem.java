@@ -19,6 +19,7 @@ package com.github.break27.graphics.ui.menu;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.MenuItem;
@@ -42,8 +43,8 @@ public class AlterMenuItem extends MenuItem implements StyleAppliedWidget {
     }
 
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        MenuItemStyle style = assets.getSkin().get(MenuItemStyle.class);
+    public void styleApply(AlternativeSkin skin) {
+        MenuItemStyle style = skin.get(MenuItemStyle.class);
         setStyle(style);
     }
 }

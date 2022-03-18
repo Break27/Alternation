@@ -7,5 +7,7 @@ interface AlterShellPlugin : Plugin {
     @Deprecated("Outdated")
     override fun sayHello() { }
 
-    fun printMOTD(): String
+    fun printMOTD(): String? {
+        return null
+    }
 }

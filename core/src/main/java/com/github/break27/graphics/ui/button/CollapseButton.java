@@ -17,6 +17,7 @@
 
 package com.github.break27.graphics.ui.button;
 
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.system.AlterAssetManager;
 
 /**
@@ -26,8 +27,8 @@ import com.github.break27.system.AlterAssetManager;
 public class CollapseButton extends TitleButton {
 
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        super.styleApply(assets);
-        setImage(assets.getSkin().getDrawable("icon-collapse"));
+    public void styleApply(AlternativeSkin skin) {
+        super.styleApply(skin);
+        setImage(skin.getDrawable("icon-collapse"));
     }
 }

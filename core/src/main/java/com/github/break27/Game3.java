@@ -30,6 +30,7 @@ import com.github.break27.system.AlterFileHandleResolver;
 public class Game3 extends Game {
     public AlterAssetManager AssetManager;
     public static LauncherAdapter Launcher;
+    public static AlterFileHandleResolver FileResolver = new AlterFileHandleResolver();
     
     public Game3() {
     }
@@ -47,24 +48,21 @@ public class Game3 extends Game {
     }
     
     private void initialize() {
-        this.AssetManager = new AlterAssetManager(new AlterFileHandleResolver());
-        Gdx.app.addLifecycleListener(new GameExitEventListener(this));
+        this.AssetManager = new AlterAssetManager(FileResolver);
+        Gdx.app.addLifecycleListener(new GameExitEventListener());
+    }
+
+    private class GameExitEventListener implements LifecycleListener {
+        @Override
+        public void pause() {
+        }
+        @Override
+        public void resume() {
+        }
+        @Override
+        public void dispose() {
+            getScreen().dispose();
+            setScreen(new FinalizingScreen(Game3.this));
+        }
     }
 }
-
-class GameExitEventListener implements LifecycleListener {
-    Game3 parent;
-    
-    public GameExitEventListener(Game3 parent) {
-        this.parent = parent;
-    }
-    @Override
-    public void pause() { }
-    @Override
-    public void resume() { }
-    @Override
-    public void dispose() {
-        parent.getScreen().dispose();
-        parent.setScreen(new FinalizingScreen(parent));
-    }
-}   

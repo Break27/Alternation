@@ -17,6 +17,7 @@
 
 package com.github.break27.graphics.ui.button;
 
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.system.AlterAssetManager;
 import com.kotcrab.vis.ui.widget.VisTextButton;
@@ -40,7 +41,7 @@ public class AlterTextButton extends VisTextButton implements StyleAppliedWidget
     }
 
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        setStyle(assets.getSkin().get(TextButtonStyle.class));
+    public void styleApply(AlternativeSkin skin) {
+        setStyle(skin.get(TextButtonStyle.class));
     }
 }

@@ -1,5 +1,5 @@
 /**************************************************************************
- * Copyright (c) 2021 Breakerbear
+ * Copyright (c) 2022 Breakerbear
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.graphics.ui.button;
+package com.github.break27.system.console;
 
-import com.github.break27.graphics.ui.AlternativeSkin;
-import com.github.break27.system.AlterAssetManager;
+import com.badlogic.gdx.utils.Disposable;
 
 /**
- *
  * @author break27
  */
-public class CloseButton extends TitleButton {
+public abstract class Command implements Disposable {
 
-    @Override
-    public void styleApply(AlternativeSkin skin) {
-        super.styleApply(skin);
-        setImage(skin.getDrawable("icon-close"));
-    }
+    public abstract void execute(String[] args) throws Exception;
+
+    public abstract String getDescription();
+
+    public abstract String getSource();
+
+    public abstract String getUsage();
 }

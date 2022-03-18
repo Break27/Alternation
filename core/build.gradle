@@ -12,11 +12,10 @@ dependencies {
 	api "com.github.tommyettinger:libgdx-utils:$utilsVersion"
 	api "com.github.ykrasik:jaci-libgdx-cli-java:$jaciVersion"
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
-	api "com.strongjoshua:libgdx-inGameConsole:$inGameConsoleVersion"
 	api "de.tomgrill.gdxdialogs:gdx-dialogs-core:$dialogsVersion"
 	api "net.sf.cssbox:cssbox:$cssboxVersion"
 
 	compileOnlyApi "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-	api 'org.jetbrains.kotlinx:ki-shell:0.4.5'
+	api "org.jetbrains.kotlinx:ki-shell:$ki_shellVersion"
 	api project(':shared')
 }

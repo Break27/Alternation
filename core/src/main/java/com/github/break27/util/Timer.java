@@ -78,8 +78,8 @@ public class Timer {
     }
 
     private class TimerThread extends Thread {
-        private long timeout;
-        private Trigger trigger;
+        private final long timeout;
+        private final Trigger trigger;
 
         public TimerThread() {
             this(0, null);

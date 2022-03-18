@@ -18,11 +18,9 @@
 package com.github.break27.graphics.ui.window;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.DelayedRemovalArray;
 import com.github.break27.graphics.HtmlRenderer;
-import com.github.break27.system.AlterAssetManager;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.kotcrab.vis.ui.widget.VisScrollPane;
 
 /**
@@ -30,10 +28,6 @@ import com.kotcrab.vis.ui.widget.VisScrollPane;
  * @author break27
  */
 public class HtmlViewerWindow extends CollapsibleWindow {
-
-    private DelayedRemovalArray<EventListener> scrollPaneCapturedListeners;
-    private DelayedRemovalArray<EventListener> scrollPaneListeners;
-
     HtmlRenderer renderer;
     VisScrollPane scrollPane;
     
@@ -68,8 +62,8 @@ public class HtmlViewerWindow extends CollapsibleWindow {
     }
 
     @Override
-    public void styleApply(AlterAssetManager assets) {
-        super.styleApply(assets);
-        setTitleImage(assets.getSkin().getDrawable("icon20-info-wb"));
+    public void styleApply(AlternativeSkin skin) {
+        super.styleApply(skin);
+        setTitleImage(skin.getDrawable("icon20-info-wb"));
     }
 }

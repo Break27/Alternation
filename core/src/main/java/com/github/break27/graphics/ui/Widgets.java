@@ -25,33 +25,29 @@ import java.util.HashMap;
 /**
  * @author break27
  */
-public class Widgets {
+public abstract class Widgets {
+    protected static final HashMap<Class<?>, Array<AlternativeWidget>> Map = new HashMap<>();
+    protected static AlterAssetManager temporaryAssets;
 
-    static final HashMap<Class, Array<AlternativeWidget>> Map = new HashMap<>();
-
-    static AlterAssetManager temporaryAssets = new AlterAssetManager();
-
-    private static final class Methods {
-        private static final int STYLE = 0;
-        private static final int LOCALE = 1;
-        private static final int AUDIO = 2;
+    private enum Method {
+        ALL(),
+        STYLE(),
+        LOCALE(),
+        AUDIO()
     }
 
-    static boolean isAssetsSet() {
+    static boolean assetsSet() {
         return (temporaryAssets != null);
     }
 
-    public static void initiate(AlterAssetManager manager) {
+    public static void init(AlterAssetManager manager) {
         temporaryAssets = manager;
     }
 
     public static void applyAll(AlterAssetManager assets) {
-        apply(assets, null, null, -1);
+        apply(assets, null, null, Method.ALL);
     }
 
-    /** Apply style attributes to all widgets
-     *
-     * */
     public static void applyStyle(AlterAssetManager assets) {
         applyStyle(assets, null, null);
     }
@@ -60,20 +56,17 @@ public class Widgets {
         applyStyle(assets, widget, null);
     }
 
-    public static void applyStyle(AlterAssetManager assets, Class type) {
+    public static void applyStyle(AlterAssetManager assets, Class<?> type) {
         applyStyle(assets, null, type);
     }
 
     /** Apply style attribute to a specific widget with
      * a specific type.
      * */
-    public static void applyStyle(AlterAssetManager assets, AlternativeWidget widget, Class type) {
-        apply(assets, widget, type, Methods.STYLE);
+    public static void applyStyle(AlterAssetManager assets, AlternativeWidget widget, Class<?> type) {
+        apply(assets, widget, type, Method.STYLE);
     }
 
-    /** Apply locale attribute to all widgets.
-     *
-     * */
     public static void applyLocale() {
         applyLocale(null, null);
     }
@@ -82,20 +75,17 @@ public class Widgets {
         applyLocale(widget, null);
     }
 
-    public static void applyLocale(Class type) {
+    public static void applyLocale(Class<?> type) {
         applyLocale(null, type);
     }
 
     /** Apply locale attribute to a specific widget
      * with a specific type.
      * */
-    public static void applyLocale(LocalizableWidget widget, Class type) {
-        apply(null, widget, type, Methods.LOCALE);
+    public static void applyLocale(LocalizableWidget widget, Class<?> type) {
+        apply(null, widget, type, Method.LOCALE);
     }
 
-    /** Apply audio attribute to all widgets.
-     *
-     * */
     public static void applyAudio(AlterAssetManager assets) {
         applyAudio(assets, null, null);
     }
@@ -104,38 +94,38 @@ public class Widgets {
         applyAudio(assets, widget, null);
     }
 
-    public static void applyAudio(AlterAssetManager assets, Class type) {
+    public static void applyAudio(AlterAssetManager assets, Class<?> type) {
         applyAudio(assets, null, type);
     }
 
     /** Apply audio attribute to a specific widget
      * with a specific type.
      * */
-    public static void applyAudio(AlterAssetManager assets, AudioAppliedWidget widget, Class type) {
-        apply(assets, widget, type, Methods.AUDIO);
+    public static void applyAudio(AlterAssetManager assets, AudioAppliedWidget widget, Class<?> type) {
+        apply(assets, widget, type, Method.AUDIO);
     }
 
     /** Apply specific attributes to specific widgets.
      *
      * */
-    private static void apply(AlterAssetManager assets, AlternativeWidget widget, Class type, int invoke) {
-        Map.forEach((Class C, Array<AlternativeWidget> A) -> {
+    private static void apply(AlterAssetManager assets, AlternativeWidget widget, Class<?> type, Method method) {
+        Map.forEach((Class<?> C, Array<AlternativeWidget> A) -> {
             // check if the specific type is of the same class
             if (type == null || C.getName().equals(type.getName())) {
                 A.forEach((AlternativeWidget W) -> {
                     // check if hashcode equals
                     if (widget == null || widget.hashCode() == W.hashCode()) {
-                        if (invoke == -1 || invoke == Methods.STYLE) {
+                        if (method == Method.ALL || method == Method.STYLE) {
                             if (W instanceof StyleAppliedWidget)
-                                ((StyleAppliedWidget) W).styleApply(assets);
+                                ((StyleAppliedWidget) W).styleApply(assets.getSkin());
                         }
-                        if (invoke == -1 || invoke == Methods.LOCALE) {
+                        if (method == Method.ALL || method == Method.LOCALE) {
                             if (W instanceof LocalizableWidget)
                                 ((LocalizableWidget) W).localeApply();
                         }
-                        if (invoke == -1 || invoke == Methods.AUDIO) {
+                        if (method == Method.ALL || method == Method.AUDIO) {
                             if (W instanceof AudioAppliedWidget) {
-                                ((AudioAppliedWidget) W).audioApply(assets);
+                                ((AudioAppliedWidget) W).audioApply(assets.getMusic(), assets.getSound());
                             }
                         }
                     }
@@ -150,7 +140,7 @@ public class Widgets {
     public static void destroyAll() {
         Map.values().forEach(Widgets -> {
             for(AlternativeWidget widget : Widgets) {
-                widget.destroy();
+                if(widget != null) widget.destroy();
             }
         });
     }

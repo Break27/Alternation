@@ -27,7 +27,7 @@ public interface LauncherAdapter {
     String RELEASE = "SNAPSHOT";
     
     // game file-paths
-    String getGameDataPath();
+    String gameDataPath();
 
     String tmpDataPath();
 }

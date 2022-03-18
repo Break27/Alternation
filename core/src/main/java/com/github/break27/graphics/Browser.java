@@ -19,7 +19,6 @@ package com.github.break27.graphics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -27,10 +26,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.widget.AlterLabel;
-import com.github.break27.system.AlterAssetManager;
+import com.github.break27.util.Utils;
 import cz.vutbr.web.css.MediaSpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,14 +53,12 @@ import org.xml.sax.SAXException;
  * @author break27
  */
 public class Browser {
+    private final BrowserTable table;
+    private final AlterLabel titleLabel;
 
-    static BrowserTable table;
-    static AlterLabel titleLabel;
-
-    Dimension windowSize;
-
-    BrowserModule.BrowserParser Parser;
-    BrowserModule.BrowserRenderer Renderer;
+    protected BrowserModule Module;
+    protected BrowserModule.BrowserParser Parser;
+    protected BrowserModule.BrowserRenderer Renderer;
     
     public Browser(int imageWidth, int imageHeight) {
         this(imageWidth, imageHeight, false);
@@ -86,14 +84,16 @@ public class Browser {
      * clipped to the expected size.
      */
     public Browser(int width, int height, int displayWidth, int displayHeight, boolean isClipped) {
+        Dimension windowSize = new Dimension(displayWidth, displayHeight);
         table = new BrowserTable();
         titleLabel = new AlterLabel();
         titleLabel.setEllipsis(true);
         
         table.warning("NO-CONTENT");
-        windowSize = new Dimension(displayWidth, displayHeight);
-        Parser = new BrowserModule.BrowserParser(windowSize);
-        Renderer = new BrowserModule.BrowserRenderer(width, height, isClipped);
+        Module = new BrowserModule();
+
+        Parser = Module.createParser(windowSize);
+        Renderer = Module.createRenderer(width, height, isClipped);
     }
     
     public Image getImage() {
@@ -144,27 +144,33 @@ public class Browser {
      * @param uri
      */
     public void load(URI uri) {
-        if(!BrowserModule.isLoading) {
+        if(!Module.isLoading) {
             Parser.parse(uri);
         } else {
             Gdx.app.error(getClass().getName(), "Unsupported Operation: "
                     + "Browser could only load once at a time!");
         }
     }
-    
+
     /** Basic Modules of the Browser.
      * @author break27
      */
-    protected static class BrowserModule {
-    
-        static volatile ByteArrayOutputStream out;
-        static volatile boolean isLoading = false;
+    protected class BrowserModule {
+        protected volatile ByteArrayOutputStream out;
+        protected volatile boolean isLoading = false;
 
-        static Thread ParserThread;
-        static Thread RendererThread;
-        
-        public static class BrowserParser {
+        private Thread ParserThread;
+        private Thread RendererThread;
 
+        public BrowserParser createParser(Dimension size) {
+            return new BrowserParser(size);
+        }
+
+        public BrowserRenderer createRenderer(int width, int height, boolean isClipped) {
+            return new BrowserRenderer(width, height, isClipped);
+        }
+
+        public class BrowserParser {
             String separation = "";
             Dimension windowSize;
             DocumentSource source;
@@ -214,7 +220,7 @@ public class Browser {
                     ParserThread.interrupt();
                 }
             }
-            
+
             /** Get the HTML Document from the given source
              *  then parse and render it into an image.
              */
@@ -246,9 +252,9 @@ public class Browser {
                     NodeList titleTag = da.getHead().getElementsByTagName("title");
                     if(titleTag.getLength() > 0) {
                         String title = titleTag.item(0).getTextContent();
-                        if(!title.isEmpty()) titleLabel.setText(separation + stripNPC(title));
+                        if(!title.isEmpty()) titleLabel.setText(separation + Utils.stripNPC(title));
                     }
-                    
+
                     da.setMediaSpec(media);
                     da.attributesToStyles(); //convert the HTML presentation attributes to inline styles
                     da.addStyleSheet(null, CSSNorm.stdStyleSheet(), DOMAnalyzer.Origin.AGENT); //use the standard style sheet
@@ -256,7 +262,6 @@ public class Browser {
                     da.addStyleSheet(null, CSSNorm.formsStyleSheet(), DOMAnalyzer.Origin.AGENT); //render form fields using css
                     da.getStyleSheets(); //load the author style sheets
 
-                    // abort rendering if thread interrupted
                     if(Thread.currentThread().isInterrupted())
                         throw new InterruptedException();
 
@@ -274,7 +279,7 @@ public class Browser {
                     table.loading("RENDER");
                     contentCanvas.createLayout(windowSize);
                     ImageIO.write(contentCanvas.getImage(), "png", out);
-                    
+
                 } catch(IOException | DOMException | SAXException e) {
                     table.error("ERROR", e.getMessage());
                     throw e;
@@ -286,32 +291,16 @@ public class Browser {
                 table.success("READY");
                 isLoading = false;
                 /*
-                * post Rendering thread to render thread
-                * this is especially important when it
-                * comes to rendering-related functions.
-                */
+                 * post Rendering thread to render thread
+                 * this is especially important when it
+                 * comes to rendering-related functions.
+                 */
                 if(!Thread.currentThread().isInterrupted())
                     Gdx.app.postRunnable(RendererThread);
             }
-            
-            /** Strip all Non-Printing Characters of a String Object.
-            * Any character with an ASCII Code below 32 or of 127
-            * will be deleted.
-            */
-            private String stripNPC(String string) {
-                char[] chars = string.toCharArray();
-                if(chars.length > 0) {
-                    for(int i=0; i<chars.length; i++) {
-                        if(chars[i] < 0x20 || chars[i] == 0x7F) 
-                            chars[i] = 0x0;
-                    }
-                }
-                return new String(chars);
-            }
         }
 
-        public static class BrowserRenderer {
-
+        public class BrowserRenderer {
             volatile TextureRegion region;
             volatile Image image;
 
@@ -336,16 +325,16 @@ public class Browser {
                     }
                 };
             }
-            
+
             public void halt() {
                 if(RendererThread.isAlive())
                     RendererThread.interrupt();
             }
-            
+
             public Image getImage() {
                 // if no image available, create a new blank image.
                 if(image.getDrawable() == null) {
-                    image.setDrawable(new TextureRegionDrawable(new Texture(new Pixmap(Width, Height, Format.RGBA8888))));
+                    image.setDrawable(new TextureRegionDrawable(new Texture(new Pixmap(Width, Height, Pixmap.Format.RGBA8888))));
                 }
                 return image;
             }
@@ -360,9 +349,8 @@ public class Browser {
 }
 
 class BrowserTable extends Table implements StyleAppliedWidget, LocalizableWidget {
-    
-    private Image badge;
-    private AlterLabel label;
+    private final Image badge;
+    private final AlterLabel label;
     private Drawable info, loading, warning, error, success;
     
     public BrowserTable() {
@@ -405,13 +393,13 @@ class BrowserTable extends Table implements StyleAppliedWidget, LocalizableWidge
     }
     
     @Override
-    public void styleApply(AlterAssetManager assets) {
+    public void styleApply(AlternativeSkin skin) {
         // image styles
-        info = assets.getSkin().getDrawable("icon-info-circle");
-        loading = assets.getSkin().getDrawable("icon-monitor-go");
-        warning = assets.getSkin().getDrawable("icon-warning");
-        error = assets.getSkin().getDrawable("icon-world-delete");
-        success = assets.getSkin().getDrawable("icon-tick");
+        info = skin.getDrawable("icon-info-circle");
+        loading = skin.getDrawable("icon-monitor-go");
+        warning = skin.getDrawable("icon-warning");
+        error = skin.getDrawable("icon-world-delete");
+        success = skin.getDrawable("icon-tick");
     }
 
     @Override
