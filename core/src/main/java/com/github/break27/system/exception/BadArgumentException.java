@@ -15,20 +15,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.system.console.exception;
+package com.github.break27.system.exception;
 
 /**
  * @author break27
  */
-public class UnknownCommandException extends Exception {
-    private final String command;
+public class BadArgumentException extends Exception {
+    private final String message;
 
-    public UnknownCommandException(String command) {
-        this.command = command;
+    public BadArgumentException(String message) {
+        this.message = message;
     }
 
     @Override
     public String getMessage() {
-        return command;
+        return message;
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        //todo
+        return super.getLocalizedMessage();
     }
 }

@@ -15,26 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.system.console.exception;
+package com.github.break27.system.exception;
 
 /**
  * @author break27
  */
-public class BadArgumentException extends Exception {
-    private final String message;
+public class TypeMismatchException extends Exception {
 
-    public BadArgumentException(String message) {
-        this.message = message;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public String getLocalizedMessage() {
-        //todo
-        return super.getLocalizedMessage();
+    public TypeMismatchException(String message) {
+        super(message);
     }
 }

@@ -22,12 +22,12 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.github.break27.Game3;
-import com.github.break27.system.console.exception.BadArgumentException;
-import com.github.break27.system.console.exception.TooManyArgException;
-import com.github.break27.system.console.exception.UnknownCommandException;
+import com.github.break27.system.exception.BadArgumentException;
+import com.github.break27.system.exception.TooManyArgException;
+import com.github.break27.system.exception.UnknownCommandException;
 import com.github.break27.system.shell.KotlinShell;
 import com.github.break27.system.shell.ShellHandler;
-import com.github.break27.system.shell.SysKshell;
+import com.github.break27.system.shell.KShell;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -214,14 +214,13 @@ public abstract class CommandExecutor implements Disposable {
     }
 
     protected final class KotlinCommand extends Command {
-        private final KotlinShell shell = SysKshell.Companion.createKotlinShell();
+        private final KotlinShell shell = KShell.System.createKotlinShell();
         private boolean active = false;
 
         @Override
         public void execute(String[] args) {
             if(!shell.isRunning()) {
                 clear();
-
                 shell.create(new ShellHandler() {
                     @Override
                     public void feed() {

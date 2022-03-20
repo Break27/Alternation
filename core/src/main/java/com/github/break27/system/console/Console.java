@@ -20,8 +20,9 @@ package com.github.break27.system.console;
 import com.badlogic.gdx.ApplicationLogger;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.github.break27.system.console.exception.BadArgumentException;
-import com.github.break27.system.console.exception.UnknownCommandException;
+import com.github.break27.system.exception.BadArgumentException;
+import com.github.break27.system.exception.UnknownCommandException;
+import com.github.break27.system.shell.KShell;
 
 /**
  * @author break27
@@ -60,8 +61,10 @@ public class Console implements Disposable {
     }
 
     public void setApplicationLogger(ApplicationLogger logger) {
-        if(logger != null)
+        if(logger != null) {
             this.logger = logger;
+            KShell.System.setLogger(logger);
+        }
     }
 
     public void setCommandExecutor(CommandExecutor executor) {

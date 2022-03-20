@@ -30,7 +30,7 @@ import com.github.break27.graphics.ui.AlternativeSkin;
 import com.github.break27.graphics.ui.LocalizableWidget;
 import com.github.break27.graphics.ui.StyleAppliedWidget;
 import com.github.break27.graphics.ui.widget.AlterLabel;
-import com.github.break27.util.Utils;
+import com.github.break27.util.KUtilsKt;
 import cz.vutbr.web.css.MediaSpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -252,7 +252,8 @@ public class Browser {
                     NodeList titleTag = da.getHead().getElementsByTagName("title");
                     if(titleTag.getLength() > 0) {
                         String title = titleTag.item(0).getTextContent();
-                        if(!title.isEmpty()) titleLabel.setText(separation + Utils.stripNPC(title));
+                        if(!title.isEmpty()) titleLabel.setText(
+                                separation + KUtilsKt.stripNPC(title.toCharArray()));
                     }
 
                     da.setMediaSpec(media);

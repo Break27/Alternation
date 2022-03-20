@@ -15,25 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.util;
+package com.github.break27.system;
 
 /**
  * @author break27
  */
-public abstract class Utils {
+public class GeneralFileHandleResolver extends AlterFileHandleResolver{
 
-    /** Strip all Non-Printing Characters of a String Object.
-     * Any character with an ASCII Code below 32 or of 127
-     * will be deleted.
-     */
-    public static String stripNPC(String string) {
-        char[] chars = string.toCharArray();
-        if(chars.length > 0) {
-            for(int i=0; i<chars.length; i++) {
-                if(chars[i] < 0x20 || chars[i] == 0x7F)
-                    chars[i] = 0x0;
-            }
-        }
-        return new String(chars);
-    }
+
 }

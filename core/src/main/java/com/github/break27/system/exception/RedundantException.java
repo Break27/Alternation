@@ -15,14 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *************************************************************************/
 
-package com.github.break27.system.console.exception;
+package com.github.break27.system.exception;
 
 /**
  * @author break27
  */
-public class TooManyArgException extends BadArgumentException {
+public class RedundantException extends Exception {
 
-    public TooManyArgException(String message) {
+    public RedundantException() {
+    }
+
+    public RedundantException(String message) {
         super(message);
     }
 }

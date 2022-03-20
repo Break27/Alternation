@@ -17,14 +17,18 @@
 
 package com.github.break27.system.shell
 
+import com.badlogic.gdx.ApplicationLogger
 import com.badlogic.gdx.utils.Array
 
-class SysKshell private constructor() {
+class KShell private constructor() {
+    private var Log: ApplicationLogger? = null
     private val shells = Array<KotlinShell>()
     private val maxShellNum = 5
 
-    companion object {
-        private val sys = SysKshell()
+    companion object System {
+        private val sys = KShell()
+        private var tempDest: ShellHandler? = null
+        private var record = 0
 
         fun createKotlinShell(): KotlinShell {
             val shell = KotlinShell()
@@ -36,14 +40,39 @@ class SysKshell private constructor() {
             return shell
         }
 
-        fun setSystemOut(hash: Int, message: Any?) {
-            synchronized(this) {
-                findShell(hash)?.handler?.feed(message.toString())
+        fun setLogger(logger: ApplicationLogger) {
+            sys.Log = logger
+        }
+
+        fun getLogger(): ApplicationLogger? {
+            return sys.Log
+        }
+
+        fun echo(message: Any? = null) {
+            val direct = getDirect()
+            if(message != null) direct?.success(message.toString())
+            else direct?.feed("\n")
+        }
+
+        fun puts(message: Any?) {
+            getDirect()?.feed(message.toString())
+        }
+
+        fun error(message: String?) {
+            getDirect()?.failed(message)
+        }
+
+        fun setSystemDirection(hash: Int) {
+            if(record != hash) {
+                tempDest = findShell(hash)?.handler
+                record = hash
             }
         }
 
-        fun setSystemErr(hash: Int, message: Any?) {
-            findShell(hash)?.handler?.failed(message.toString())
+        private fun getDirect(): ShellHandler? {
+            if(tempDest == null) sys.Log?.error(KShell::class.qualifiedName,
+                "System Destination has not been set!")
+            return tempDest
         }
 
         private fun findShell(hash: Int): KotlinShell? {

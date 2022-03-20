@@ -17,7 +17,6 @@
 
 package com.github.break27.system.shell
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.Array
 import org.jetbrains.kotlin.com.google.common.base.Objects
 import org.jetbrains.kotlinx.ki.shell.*
@@ -26,6 +25,7 @@ import org.jetbrains.kotlinx.ki.shell.wrappers.ResultWrapper
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import kotlin.NoSuchElementException
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.LinkedSnippet
@@ -37,6 +37,7 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
                                                 defaultScriptEvaluationConfiguration()
 ) {
     private val queue = Array<String>()
+    private var logger = KShell.getLogger()
     private var shellThread: Thread? = null
     private var name: String = "kotlin"
     private var initialized = false
@@ -48,10 +49,6 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
     fun create(handler: ShellHandler) {
         this.handler = handler
         shellThread = Thread({
-            initialize()
-            if (settings.sayHello) handler.success(printMOTD())
-            handler.feed()
-
             fun compileKotlin(code: String) {
                 val time = System.nanoTime()
                 val eval = eval(code)
@@ -61,6 +58,8 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
                         // INCOMPLETE is not yet implemented
                         eval.result.reports.forEach {
                             handler.failed(it.render(withStackTrace = eval.isCompiled))
+                            val except = eval.getErrorCause()
+                            if(except != null) logger?.error(javaClass.name, "Error", except)
                         }
                     }
                     ResultWrapper.Status.SUCCESS -> {
@@ -73,9 +72,9 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
                         if(message.isNotEmpty())
                             handler.success(message)
                         else {
-                            val typeResult = getEvalResult(eval.result)?.get(0)
-                            val type = typeResult?.split(' ', limit = 2)
-                            if(type?.size == 2) handler.success(type[1])
+                            val evalResult = getEvalResult(eval.result)
+                            if(evalResult is EvalResult.Value)
+                                handler.success(evalResult.typeName)
                         }
                     }
                 }
@@ -90,7 +89,7 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
                             currentSnippetNo.incrementAndGet()
                         }
                         is Command.Result.Failure -> {
-                            handler.failed("ERROR ${result.message}")
+                            result.message.let { handler.failed("ERROR $it") }
                         }
                         is Command.Result.RunSnippets -> {
                             result.snippetsToRun.forEach(::compileKotlin)
@@ -99,12 +98,29 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
                 } catch (_: NoSuchElementException) {
                     handler.failed("Unknown command.")
                 } catch (e: Exception) {
-                    Gdx.app.error(
-                        javaClass.name, "An error occurred " +
+                    logger?.error(javaClass.name, "An error occurred " +
                                 "while executing command '$command'.", e
                     )
                 }
             }
+
+            fun initialize() {
+                if(!initialized) {
+                    replConfiguration.load()
+                    replConfiguration.plugins().forEach { it.init(this, replConfiguration) }
+                    settings = Settings(replConfiguration)
+                    queue.clear()
+
+                    parseCommand(":init")
+                    initialized = true
+                    active = true
+                    logger?.log("[KotlinShell@${hashCode()}]",
+                        "${LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))} Shell created.)")
+                }
+            }
+            initialize()
+            if (settings.sayHello) handler.success(printMOTD())
+            handler.feed()
 
             do if(queue.notEmpty()) {
                     val input = queue.pop()
@@ -125,17 +141,17 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
         return name
     }
 
-    fun update() {
-
-    }
-
     fun destroy() {
         shellThread?.interrupt()
         evalThread.interrupt()
     }
 
-    fun isRunning() : Boolean {
+    fun isRunning(): Boolean {
         return shellThread != null && shellThread?.isAlive == true
+    }
+
+    fun initialized(): Boolean {
+        return initialized
     }
 
     fun execute(command: String) {
@@ -143,18 +159,22 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
     }
 
     override fun hashCode(): Int {
-        return Objects.hashCode(queue, shellThread, name, initialized, sleepInterval)
+        return Objects.hashCode(queue, shellThread, name, sleepInterval)
     }
 
     override fun equals(other: Any?): Boolean {
         return (this === other || javaClass != other?.javaClass)
     }
 
-    fun getEvalResult(result: ResultWithDiagnostics<*>): List<String>? {
+    fun getEvalResult(result: ResultWithDiagnostics<*>): EvalResult? {
         val resultOrNull = result.valueOrNull()
         return if(resultOrNull != null) {
-            val resultStr = ((resultOrNull.asSuccess().value as LinkedSnippetImpl<*>).get() as KJvmEvaluatedSnippet).result
-            resultStr.toString().split(" = ", limit = 2)
+            val resolved = ((resultOrNull.asSuccess().value as LinkedSnippetImpl<*>).get() as KJvmEvaluatedSnippet).result
+            val rawResult = resolved.toString().split(" = ", limit = 2)
+            val rawType = rawResult[0].split(' ', limit = 2)
+            if(rawResult.size > 1) {
+                EvalResult.Value(rawType[0], rawType[1], rawResult[1])
+            } else EvalResult.Unit(rawType[0])
         } else null
     }
 
@@ -171,22 +191,31 @@ class KotlinShell internal constructor(): Shell(defaultReplConfiguration(),
         val version = ApplicationProperties.version
         return "ki-shell $version/${KotlinVersion.CURRENT}"
     }
+}
 
-    private fun initialize() {
-        if(!initialized) {
-            replConfiguration.load()
-            replConfiguration.plugins().forEach { it.init(this, replConfiguration) }
-            settings = Settings(replConfiguration)
-            queue.clear()
-            initialized = true
-            active = true
-            // pre-defined script constants
-            compileAndEval("val _HASH_ = ${hashCode()}; " +
-                    "fun echo(message: Any?) { com.github.break27.system.shell.SysKshell.setSystemOut(_HASH_, message) };" +
-                    "println(\"[KotlinShell@\$_HASH_] " +
-                "${LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))} Shell created.\")"
-            )
+sealed class EvalResult(val name: String, val typeName: String? = null) {
+    class Unit(name: String): EvalResult(name, "Unit")
+    class Value(name: String, typename: String? = null, value: String? = null): EvalResult(name, typename) {
+        var type: Class<*>? = try {
+            Class.forName(typename)
+        } catch (_: Exception) {
+            null
         }
+        val value: Any? = if(value != null && type == null) {
+            val result = when (typename?.replace("kotlin.", "")) {
+                "Int" -> value.toInt()
+                "Byte" -> value.toByte()
+                "Long" -> value.toLong()
+                "Float" -> value.toFloat()
+                "Short" -> value.toShort()
+                "Double" -> value.toDouble()
+                "Boolean" -> value.toBoolean()
+                else -> value
+            }
+            type = result.javaClass
+            result
+        }
+        else null
     }
 }
 

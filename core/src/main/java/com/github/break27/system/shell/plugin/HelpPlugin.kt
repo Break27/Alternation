@@ -18,23 +18,21 @@ class HelpPlugin: AlterShellPlugin {
         override fun execute(line: String): Command.Result {
             val args = line.split(' ')
             val commands = repl.listCommands()
-            var output = ""
 
             repl.apply {
-                if (args.size == 1) {
-                    val help = commands.joinToString(separator = "\n") { it.desc() }
-                    output = help
+                return if (args.size == 1) {
+                    val help = commands.joinToString(separator = "") { if(it !is SystemCommand) "${it.desc()}\n" else "" }
+                    Command.Result.Success(help)
                 } else {
                     val command = args[1]
                     try {
                         val res = commands.first { it.match(":$command") }
-                        output += ("\n" + res.help())
+                        Command.Result.Success("\n" + res.help())
                     } catch (_: NoSuchElementException) {
-                        return Command.Result.Failure("No such command or documentation unavailable.")
+                        Command.Result.Failure("No such command or documentation unavailable.")
                     }
                 }
             }
-            return Command.Result.Success(output)
         }
     }
 
@@ -50,29 +48,4 @@ class HelpPlugin: AlterShellPlugin {
     }
 
     override fun cleanUp() {}
-    /*
-    class StringHelpPrinter(private val syntaxWidth: Int = 24): HelpPrinter {
-        private val sb = StringBuilder()
-
-        override fun printText(text: String) {
-            sb.appendLine(text)
-        }
-
-        override fun printSeparator() {
-            sb.appendLine()
-        }
-
-        override fun printEntry(helpEntry: String, description: String) {
-            if (helpEntry.length <= syntaxWidth) {
-                sb.appendLine("  ${helpEntry.padEnd(syntaxWidth)}  $description")
-            }
-            else {
-                sb.appendLine("  $helpEntry")
-                sb.appendLine("  ${"".padEnd(syntaxWidth)}  $description")
-            }
-        }
-
-        override fun toString(): String = sb.toString()
-    }
-     */
 }

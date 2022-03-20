@@ -25,11 +25,13 @@ import com.github.break27.graphics.screen.LoadingScreen;
 import com.github.break27.launcher.LauncherAdapter;
 import com.github.break27.system.AlterAssetManager;
 import com.github.break27.system.AlterFileHandleResolver;
+import com.github.break27.system.GeneralFileHandleResolver;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Game3 extends Game {
     public AlterAssetManager AssetManager;
     public static LauncherAdapter Launcher;
+    public static GeneralFileHandleResolver GeneralFileResolver = new GeneralFileHandleResolver();
     public static AlterFileHandleResolver FileResolver = new AlterFileHandleResolver();
     
     public Game3() {

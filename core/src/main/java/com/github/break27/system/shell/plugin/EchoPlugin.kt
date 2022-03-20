@@ -17,6 +17,7 @@
 
 package com.github.break27.system.shell.plugin
 
+import com.github.break27.system.shell.EvalResult
 import com.github.break27.system.shell.KotlinShell
 import org.jetbrains.kotlinx.ki.shell.BaseCommand
 import org.jetbrains.kotlinx.ki.shell.Command
@@ -38,17 +39,18 @@ class EchoPlugin: AlterShellPlugin {
         override fun execute(line: String): Command.Result {
             val args = line.split(' ', limit = 2)
 
-            repl.apply {
-                return when(args.size) {
-                    1 -> Command.Result.Success("")
-                    else -> {
-                        val eval = eval(args[1])
-                        val result = repl.getEvalResult(eval.result)
-                        if(result != null) {
-                            Command.Result.Success(if(result.size==2) result[1] else result[0])
-                        } else {
-                            Command.Result.Failure(eval.getMessageOrEmpty())
-                        }
+            return when(args.size) {
+                1 -> Command.Result.Success("")
+                else -> {
+                    val eval = repl.eval(args[1])
+                    val result = repl.getEvalResult(eval.result)
+                    if(result != null) {
+                        // return value, or type if value == null.
+                        Command.Result.Success(
+                            if(result is EvalResult.Value) result.value.toString()
+                            else result.typeName)
+                    } else {
+                        Command.Result.Failure(eval.getMessageOrEmpty())
                     }
                 }
             }

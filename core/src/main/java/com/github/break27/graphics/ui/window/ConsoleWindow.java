@@ -18,16 +18,17 @@
 package com.github.break27.graphics.ui.window;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Queue;
 import com.github.break27.system.console.CommandExecutor;
 import com.github.break27.system.console.Console;
+import com.github.break27.util.ColorMarkup;
 import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.util.highlight.*;
 import com.kotcrab.vis.ui.widget.HighlightTextArea;
-import com.kotcrab.vis.ui.widget.VisTextField;
 
 /**
  * @author break27
@@ -35,7 +36,6 @@ import com.kotcrab.vis.ui.widget.VisTextField;
 public class ConsoleWindow extends CollapsibleWindow {
     Console console;
     ConsoleTextArea textArea;
-    VisTextField textField;
     ScrollPane scrollPane;
 
     float width, height;
@@ -49,11 +49,14 @@ public class ConsoleWindow extends CollapsibleWindow {
         textArea = new ConsoleTextArea();
         scrollPane = textArea.createCompatibleScrollPane();
         scrollPane.setScrollingDisabled(true, false);
-        textField = new VisTextField();
 
         console.printMOTD();
         this.width = width;
         this.height = height;
+    }
+
+    public void update() {
+        textArea.updateDisplay();
     }
 
     @Override
@@ -91,6 +94,7 @@ public class ConsoleWindow extends CollapsibleWindow {
     @Override
     public void destroy() {
         console.dispose();
+        textArea.dispose();
     }
 
     public class DefaultCommandExecutor extends CommandExecutor {
@@ -100,11 +104,11 @@ public class ConsoleWindow extends CollapsibleWindow {
                 case DEFAULT:
                     break;
                 case FAILED:
-                    message = "\033\011" + message + "\033\011";
+                    message = ColorMarkup.RED.wrap(message);
                 default:
                     message += "\n";
             }
-            textArea.appendText(message);
+            textArea.queue(message);
         }
 
         @Override
@@ -118,7 +122,9 @@ public class ConsoleWindow extends CollapsibleWindow {
         }
     }
 
-    public static class ConsoleTextArea extends HighlightTextArea {
+    public static class ConsoleTextArea extends HighlightTextArea implements Disposable {
+        private final Queue<String> queue = new Queue<>();
+        private boolean active = true;
 
         public ConsoleTextArea() {
             this("");
@@ -135,19 +141,26 @@ public class ConsoleWindow extends CollapsibleWindow {
             return getText().split("\n");
         }
 
+        public void queue(String text) {
+            if(active) queue.addFirst(text);
+        }
+
+        public void updateDisplay() {
+            if(active && !queue.isEmpty())
+                appendText(queue.removeLast());
+        }
+
         public BaseHighlighter createHighlighter() {
             BaseHighlighter highlighter = new BaseHighlighter();
-            highlighter.addRule(new RegexHighlightRule(Color.WHITE, "\033\010([^\033\010]*)\033\010"));
-            highlighter.addRule(new RegexHighlightRule(Color.RED, "\033\011([^\033\011]*)\033\011"));
-            highlighter.addRule(new RegexHighlightRule(Color.GREEN, "\033\012([^\033\012]*)\033\012"));
-            highlighter.addRule(new RegexHighlightRule(Color.BLUE, "\033\013([^\033\013]*)\033\013"));
-            highlighter.addRule(new RegexHighlightRule(Color.YELLOW, "\033\014([^\033\014]*)\033\014"));
-            highlighter.addRule(new RegexHighlightRule(Color.ORANGE, "\033\015([^\033\015]*)\033\015"));
-            highlighter.addRule(new RegexHighlightRule(Color.PINK, "\033\016([^\033\016]*)\033\016"));
-            highlighter.addRule(new RegexHighlightRule(Color.PURPLE, "\033\017([^\033\017]*)\033\017"));
-            highlighter.addRule(new RegexHighlightRule(Color.CYAN, "\033\020([^\033\018]*)\033\020"));
-            highlighter.addRule(new RegexHighlightRule(Color.FOREST, "\033\021([^\033\011]*)\033\021"));
+            for(ColorMarkup markup : ColorMarkup.values()) {
+                highlighter.addRule(new ColorMarkupHighlightRule(markup));
+            }
             return highlighter;
+        }
+
+        @Override
+        public void dispose() {
+            active = false;
         }
 
         public class ConsoleTextAreaClickListener extends TextAreaListener {
@@ -163,6 +176,13 @@ public class ConsoleWindow extends CollapsibleWindow {
         }
 
         public static class ConsoleTextAreaStyle extends VisTextFieldStyle {
+        }
+    }
+
+    public static class ColorMarkupHighlightRule extends RegexHighlightRule {
+
+        public ColorMarkupHighlightRule(ColorMarkup markup) {
+            super(markup.getColor(), markup.wrap("([^" + markup.getMark() + "]*)"));
         }
     }
 }

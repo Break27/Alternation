@@ -17,16 +17,16 @@
 package com.github.break27.system.shell.plugin
 
 import com.github.break27.Game3
-import org.jetbrains.kotlinx.ki.shell.*
+import com.github.break27.system.shell.KotlinShell
+import org.jetbrains.kotlinx.ki.shell.Command
+import org.jetbrains.kotlinx.ki.shell.Shell
 import org.jetbrains.kotlinx.ki.shell.configuration.ReplConfiguration
-import org.jetbrains.kotlinx.ki.shell.plugins.SymbolsTable
-import kotlin.script.experimental.api.ResultValue
 
 /**
  * @author break27
  */
 class LoadFilePlugin: AlterShellPlugin {
-    inner class Load(config: ReplConfiguration): BaseCommand() {
+    inner class Load(config: ReplConfiguration): AlterCommand() {
         override val name: String by config.get("load")
         override val short: String by config.get("l")
         override val description = "load and evaluate a script"
@@ -38,7 +38,8 @@ class LoadFilePlugin: AlterShellPlugin {
             return when(args.size) {
                 1 -> Command.Result.Failure("Too less argument. (Minimum of 1)")
                 2 -> try {
-                    val content = Game3.FileResolver.resolve(args[1]).readString("UTF-8")
+                    val path = evalValue<String>(repl, args[1])
+                    val content = Game3.FileResolver.resolve(path).readString("UTF-8")
                     Command.Result.RunSnippets(listOf(content))
                 } catch (e: Exception) {
                     Command.Result.Failure(e.message!!)
@@ -51,7 +52,11 @@ class LoadFilePlugin: AlterShellPlugin {
     override fun cleanUp() {
     }
 
+    lateinit var repl: KotlinShell
+
     override fun init(repl: Shell, config: ReplConfiguration) {
+        this.repl = repl as KotlinShell
+
         repl.registerCommand(Load(config))
     }
 

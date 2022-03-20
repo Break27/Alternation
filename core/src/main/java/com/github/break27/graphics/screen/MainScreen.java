@@ -80,6 +80,7 @@ public class MainScreen extends AbstractScreen {
     @Override
     public void render(float delta) {
         state += Gdx.graphics.getDeltaTime();
+        window5.update();
         //window.update();
         Gdx.gl.glClearColor(1f,1f,1f,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

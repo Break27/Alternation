@@ -41,8 +41,7 @@ abstract class AlterReplConfiguration(defaultPlugins: List<String> = DEFAULT_PLU
             HelpPlugin::class.qualifiedName!!,
             EnvironmentPlugin::class.qualifiedName!!,
             EchoPlugin::class.qualifiedName!!,
-            LoadFilePlugin::class.qualifiedName!!,
-            RuntimePlugin::class.qualifiedName!!
+            LoadFilePlugin::class.qualifiedName!!
         )
     }
 

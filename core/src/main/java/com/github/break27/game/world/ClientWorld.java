@@ -43,7 +43,6 @@ import net.mgsx.gltf.scene3d.utils.IBLBuilder;
  * @author break27
  */
 public class ClientWorld extends World {
-
     public SceneManager SceneManager;
     public VoxelWorld VoxelWorld;
 
